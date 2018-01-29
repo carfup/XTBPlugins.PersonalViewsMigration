@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PersonalViewsMigration));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonCloseTool = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonLoadUsers = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxWhatUsersToDisplayDestination = new System.Windows.Forms.ComboBox();
@@ -65,7 +67,8 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonCloseTool,
-            this.toolStripButtonLoadUsers});
+            this.toolStripButtonLoadUsers,
+            this.toolStripButtonOptions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1042, 25);
@@ -90,6 +93,15 @@
             this.toolStripButtonLoadUsers.Size = new System.Drawing.Size(113, 22);
             this.toolStripButtonLoadUsers.Text = "Load CRM Users";
             this.toolStripButtonLoadUsers.Click += new System.EventHandler(this.toolStripButtonLoadUsers_Click);
+            // 
+            // toolStripButtonOptions
+            // 
+            this.toolStripButtonOptions.Image = global::Carfup.XTBPlugins.Properties.Resources.gear;
+            this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+            this.toolStripButtonOptions.Size = new System.Drawing.Size(69, 22);
+            this.toolStripButtonOptions.Text = "Options";
+            this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -328,12 +340,12 @@
             this.labelDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelDisclaimer.AutoSize = true;
+            this.labelDisclaimer.ForeColor = System.Drawing.Color.Black;
             this.labelDisclaimer.Location = new System.Drawing.Point(83, 26);
             this.labelDisclaimer.Name = "labelDisclaimer";
-            this.labelDisclaimer.Size = new System.Drawing.Size(458, 13);
+            this.labelDisclaimer.Size = new System.Drawing.Size(904, 26);
             this.labelDisclaimer.TabIndex = 4;
-            this.labelDisclaimer.Text = "Disclaimer : Plugin is using Access mode : Non interactive to handle actions with" +
-    " disabled users.";
+            this.labelDisclaimer.Text = resources.GetString("labelDisclaimer.Text");
             // 
             // label1
             // 
@@ -357,6 +369,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Name = "PersonalViewsMigration";
             this.Size = new System.Drawing.Size(1042, 492);
+            this.Load += new System.EventHandler(this.PersonalViewsMigration_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -396,5 +409,6 @@
         private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplayDestination;
         private System.Windows.Forms.Label labelDisclaimer;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
     }
 }

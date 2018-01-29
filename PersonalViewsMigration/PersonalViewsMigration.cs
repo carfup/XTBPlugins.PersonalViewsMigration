@@ -17,6 +17,8 @@ using System;
 using Microsoft.Xrm.Sdk.Messages;
 using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
+using System.Diagnostics;
+using Carfup.XTBPlugins.Forms;
 
 namespace Carfup.XTBPlugins.PersonalViewsMigration
 {
@@ -26,6 +28,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private List<Entity> listOfUsers = null;
         private List<Entity> listOfUserViews = null;
         public ControllerManager connectionManager = null;
+        internal PluginSettings settings = new PluginSettings();
+        LogUsageManager log = null;
 
         public string RepositoryName
         {
@@ -47,18 +51,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public PersonalViewsMigration()
         {
             InitializeComponent();
-            comboBoxWhatUsersToDisplay.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplay.Enabled = false;
-            comboBoxWhatUsersToDisplayDestination.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplayDestination.Enabled = false;
-            buttonLoadUserViews.Enabled = false;
-            buttonCopySelectedViews.Enabled = false;
-            buttonMigrateSelectedViews.Enabled = false;
-            labelDisclaimer.Text = $"To handle disabled user this plugin perform a change regarding the Access Mode of the systemuser and switch it to Non Interactive during the actions and then change it back to Read/Write.{Environment.NewLine}Make sure you have one Non Interactive access mode free to perform any actions (limited to 5 by default)";
         }
 
         private void toolStripButtonCloseTool_Click(object sender, System.EventArgs e)
         {
+            this.log.LogData(EventType.Event, LogAction.PluginClosed);
+
+            // Saving settings for the next usage of plugin
+            SaveSettings();
+
+            // Making sure that all message are sent if stats are enabled
+            this.log.Flush();
+
             CloseTool();
         }
 
@@ -452,6 +456,103 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                 listViewUsersDestination.Items.Add(item);
             }
+        }
+
+        private void PersonalViewsMigration_Load(object sender, EventArgs e)
+        {
+            comboBoxWhatUsersToDisplay.SelectedIndex = 0;
+            comboBoxWhatUsersToDisplay.Enabled = false;
+            comboBoxWhatUsersToDisplayDestination.SelectedIndex = 0;
+            comboBoxWhatUsersToDisplayDestination.Enabled = false;
+            buttonLoadUserViews.Enabled = false;
+            buttonCopySelectedViews.Enabled = false;
+            buttonMigrateSelectedViews.Enabled = false;
+
+            log = new AppCode.LogUsageManager(this);
+            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+            LoadSetting();
+            ManageDisplayUsingSettings();
+
+            isOnlineOrg();
+        }
+
+        private void isOnlineOrg()
+        {
+            if(!ConnectionDetail.UseOnline)
+            {
+                MessageBox.Show($"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
+                this.log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
+            }
+        }
+
+        public void SaveSettings()
+        {
+            this.log.LogData(EventType.Event, LogAction.SettingsSaved);
+            SettingsManager.Instance.Save(typeof(PersonalViewsMigration), settings);
+        }
+
+        private void LoadSetting()
+        {
+            try
+            {
+                if (SettingsManager.Instance.TryLoad<PluginSettings>(typeof(PersonalViewsMigration), out settings))
+                {
+                    return;
+                }
+                else
+                    settings = new PluginSettings();
+            }
+            catch (InvalidOperationException ex)
+            {
+                this.log.LogData(EventType.Exception, LogAction.SettingLoaded, ex);
+            }
+
+            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+
+            if (!settings.AllowLogUsage.HasValue)
+            {
+                this.log.PromptToLog();
+                this.SaveSettings();
+            }
+        }
+
+        public static string CurrentVersion
+        {
+            get
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+                return fileVersionInfo.ProductVersion;
+            }
+        }
+
+        private void toolStripButtonOptions_Click(object sender, EventArgs e)
+        {
+            var allowLogUsage = settings.AllowLogUsage;
+            var optionDlg = new Options(this);
+            if (optionDlg.ShowDialog(this) == DialogResult.OK)
+            {
+                settings = optionDlg.GetSettings();
+                if (allowLogUsage != settings.AllowLogUsage)
+                {
+                    if (settings.AllowLogUsage == true)
+                    {
+                        this.log.updateForceLog();
+                        this.log.LogData(EventType.Event, LogAction.StatsAccepted);
+                    }
+                    else if (!settings.AllowLogUsage == true)
+                    {
+                        this.log.updateForceLog();
+                        this.log.LogData(EventType.Event, LogAction.StatsDenied);
+                    }
+                }
+            }
+        }
+
+        private void ManageDisplayUsingSettings()
+        {
+            comboBoxWhatUsersToDisplay.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
+            comboBoxWhatUsersToDisplayDestination.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
         }
     }
 }

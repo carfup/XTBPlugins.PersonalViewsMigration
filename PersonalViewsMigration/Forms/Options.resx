@@ -117,11 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="labelDisclaimer.Text" xml:space="preserve">
-    <value>To handle disabled user this plugin perform a change regarding the Access Mode of the systemuser and switch it to Non Interactive during the actions and then change it back to Read/Write.
-Make sure you have one Non Interactive access mode free to perform any actions (limited to 5 by default)</value>
-  </data>
 </root>
