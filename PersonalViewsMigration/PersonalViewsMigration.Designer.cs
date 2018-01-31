@@ -55,6 +55,7 @@
             this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -306,6 +307,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
             this.groupBox3.Controls.Add(this.buttonMigrateSelectedViews);
             this.groupBox3.Controls.Add(this.buttonCopySelectedViews);
             this.groupBox3.Location = new System.Drawing.Point(619, 3);
@@ -359,6 +361,16 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
+            // buttonDeleteSelectedViews
+            // 
+            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
+            this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
+            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonDeleteSelectedViews.TabIndex = 4;
+            this.buttonDeleteSelectedViews.Text = "Delete";
+            this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
+            this.buttonDeleteSelectedViews.Click += new System.EventHandler(this.buttonDeleteSelectedViews_Click);
+            // 
             // PersonalViewsMigration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -410,5 +422,6 @@
         private System.Windows.Forms.Label labelDisclaimer;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
+        private System.Windows.Forms.Button buttonDeleteSelectedViews;
     }
 }

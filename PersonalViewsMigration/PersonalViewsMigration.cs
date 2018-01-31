@@ -86,6 +86,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -110,6 +111,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         buttonLoadUserViews.Enabled = true;
                         buttonCopySelectedViews.Enabled = true;
                         buttonMigrateSelectedViews.Enabled = true;
+
+                        this.log.LogData(EventType.Event, LogAction.UsersLoaded);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -202,12 +205,90 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsCopied, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
+                        this.log.LogData(EventType.Event, LogAction.ViewsCopied);
                         MessageBox.Show("View(s) are Copied !");
+                    }
+                },
+                ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
+            });
+        }
+
+        private void buttonDeleteSelectedViews_Click(object sender, EventArgs evt)
+        {
+            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+
+            // We make sure that the user really want to delete the view
+            var areYouSure = MessageBox.Show($"Are you sure about the deletion of {listViewUserViewsList.CheckedItems.Count} view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (areYouSure == DialogResult.Cancel)
+                return;
+
+            if (viewsGuid.Count() == 0)
+            {
+                MessageBox.Show($"Please select at least one view to perform the Delete action.");
+                return;
+            }
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Deleting the user view(s) ...",
+                Work = (bw, e) =>
+                {
+
+                    Invoke(new Action(() =>
+                    {
+                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                    }));
+
+                    if (viewsGuid == null)
+                        return;
+
+                    foreach (ListViewItem itemView in viewsGuid)
+                    {
+                        bw.ReportProgress(0, "Deleting the user view(s)...");
+
+                        bool isUserModified = false;
+                        this.connectionManager.UpdateCallerId(this.connectionManager.userFrom.Value);
+                        this.connectionManager.userDestination = this.connectionManager.userFrom.Value;
+
+                        // Check if we need to switch to NonInteractive mode
+                        bw.ReportProgress(0, "Checking destination user accessibility...");
+                        isUserModified = this.connectionManager.userManager.manageImpersonification();
+
+                        DeleteRequest dr = new DeleteRequest
+                        {
+                            Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                        };
+
+                        this.connectionManager.proxy.Execute(dr);
+
+                        if (isUserModified)
+                        {
+                            bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
+                            this.connectionManager.userManager.manageImpersonification(isUserModified);
+                        }
+                    }
+                },
+                PostWorkCallBack = e =>
+                {
+                    if (e.Error != null)
+                    {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
+                        MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        foreach (ListViewItem view in viewsGuid.ToList())
+                            listViewUserViewsList.Items.Remove(view);
+
+                        this.log.LogData(EventType.Event, LogAction.ViewsDeleted);
+                        MessageBox.Show("View(s) are now deleted !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -224,6 +305,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 MessageBox.Show($"You can't select more than one user for the ReAssign functionality");
                 return;
             }
+
+            if (usersGuid.Count() == 0)
+            {
+                MessageBox.Show($"Please select at least one destination user to perform the ReAssign action.");
+                return;
+            }
+
             if (viewsGuid.Count() == 0)
             {
                 MessageBox.Show($"Please select at least one view to perform a ReAssign action.");
@@ -240,28 +328,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     Invoke(new Action(() =>
                     {
                         listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
-                    }));
-
-                    Invoke(new Action(() =>
-                    {
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-
                     if (viewsGuid == null && usersGuid == null)
                         return;
-
-                    var requestWithResults = new ExecuteMultipleRequest()
-                    {
-                        // Assign settings that define execution behavior: continue on error, return responses. 
-                        Settings = new ExecuteMultipleSettings()
-                        {
-                            ContinueOnError = false,
-                            ReturnResponses = true
-                        },
-                        // Create an empty organization request collection.
-                        Requests = new OrganizationRequestCollection()
-                    };
 
                     foreach (ListViewItem itemView in viewsGuid)
                     {
@@ -301,6 +372,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -311,6 +383,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.Items.Remove(view);
                         }
 
+                        this.log.LogData(EventType.Event, LogAction.ViewsReAssigned);
                         MessageBox.Show("View(s) are reassigned !");
                     }
                 },
@@ -365,6 +438,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -381,6 +455,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                             listViewUserViewsList.Items.Add(item);
                         }
+
+                        this.log.LogData(EventType.Event, LogAction.UsersLoaded);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -485,9 +561,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
         }
 
-        public void SaveSettings()
+        public void SaveSettings(bool closeApp = false)
         {
-            this.log.LogData(EventType.Event, LogAction.SettingsSaved);
+            if(closeApp)
+                this.log.LogData(EventType.Event, LogAction.SettingsSavedWhenClosing);
+            else
+                this.log.LogData(EventType.Event, LogAction.SettingsSaved);
             SettingsManager.Instance.Save(typeof(PersonalViewsMigration), settings);
         }
 

@@ -36,6 +36,7 @@ namespace Carfup.XTBPlugins.AppCode
         public const string StatsAccepted = "StatsAccepted";
         public const string StatsDenied = "StatsDenied";
         public const string SettingsSaved = "SettingsSaved";
+        public const string SettingsSavedWhenClosing = "SettingsSavedWhenClosing";
         public const string SettingLoaded = "SettingLoaded";
         public const string SolutionsCompared = "SolutionsCompared";
         public const string CRMAssembliesLoaded = "CRMAssembliesLoaded";
@@ -43,5 +44,9 @@ namespace Carfup.XTBPlugins.AppCode
         public const string PluginsLoaded = "PluginsLoaded";
         public const string PluginsCompared = "PluginsCompared";
         public const string EnvironmentOnPremise = "EnvironmentOnPremise";
+        public const string UsersLoaded = "UsersLoaded";
+        public const string ViewsCopied = "ViewsCopied";
+        public const string ViewsDeleted = "ViewsDeleted";
+        public const string ViewsReAssigned = "ViewsReAssigned";
     }
 }
