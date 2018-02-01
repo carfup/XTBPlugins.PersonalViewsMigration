@@ -111,6 +111,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         buttonLoadUserViews.Enabled = true;
                         buttonCopySelectedViews.Enabled = true;
                         buttonMigrateSelectedViews.Enabled = true;
+                        buttonDeleteSelectedViews.Enabled = true;
 
                         this.log.LogData(EventType.Event, LogAction.UsersLoaded);
                     }
@@ -224,8 +225,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
 
             // We make sure that the user really want to delete the view
-            var areYouSure = MessageBox.Show($"Are you sure about the deletion of {listViewUserViewsList.CheckedItems.Count} view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (areYouSure == DialogResult.Cancel)
+            var areYouSure = MessageBox.Show($"Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (areYouSure == DialogResult.No)
                 return;
 
             if (viewsGuid.Count() == 0)
@@ -257,7 +258,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         this.connectionManager.userDestination = this.connectionManager.userFrom.Value;
 
                         // Check if we need to switch to NonInteractive mode
-                        bw.ReportProgress(0, "Checking destination user accessibility...");
+                        bw.ReportProgress(0, "Checking user accessibility...");
                         isUserModified = this.connectionManager.userManager.manageImpersonification();
 
                         DeleteRequest dr = new DeleteRequest
@@ -269,7 +270,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         if (isUserModified)
                         {
-                            bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
+                            bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
                             this.connectionManager.userManager.manageImpersonification(isUserModified);
                         }
                     }
@@ -543,6 +544,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonLoadUserViews.Enabled = false;
             buttonCopySelectedViews.Enabled = false;
             buttonMigrateSelectedViews.Enabled = false;
+            buttonDeleteSelectedViews.Enabled = false;
 
             log = new AppCode.LogUsageManager(this);
             this.log.LogData(EventType.Event, LogAction.SettingLoaded);
@@ -554,7 +556,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void isOnlineOrg()
         {
-            if(!ConnectionDetail.UseOnline)
+            if(ConnectionDetail != null && !ConnectionDetail.UseOnline)
             {
                 MessageBox.Show($"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
                 this.log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
@@ -625,6 +627,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         this.log.LogData(EventType.Event, LogAction.StatsDenied);
                     }
                 }
+
+                ManageDisplayUsingSettings();
             }
         }
 

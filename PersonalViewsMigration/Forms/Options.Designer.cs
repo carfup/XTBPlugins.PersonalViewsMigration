@@ -31,12 +31,12 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOk = new System.Windows.Forms.Button();
             this.bgStats = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.checkboxAllowStats = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkBoxUserDisplayDisabled = new System.Windows.Forms.CheckBox();
             this.checkBoxUserDisplayEnabled = new System.Windows.Forms.CheckBox();
             this.checkBoxUserDisplayAll = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.bgStats.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -44,7 +44,7 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(450, 219);
+            this.buttonCancel.Location = new System.Drawing.Point(364, 238);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
             this.buttonCancel.TabIndex = 12;
@@ -55,7 +55,7 @@
             // buttonOk
             // 
             this.buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOk.Location = new System.Drawing.Point(369, 219);
+            this.buttonOk.Location = new System.Drawing.Point(283, 238);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(75, 23);
             this.buttonOk.TabIndex = 11;
@@ -69,29 +69,17 @@
             this.bgStats.Controls.Add(this.checkboxAllowStats);
             this.bgStats.Location = new System.Drawing.Point(12, 120);
             this.bgStats.Name = "bgStats";
-            this.bgStats.Size = new System.Drawing.Size(513, 93);
+            this.bgStats.Size = new System.Drawing.Size(427, 112);
             this.bgStats.TabIndex = 10;
             this.bgStats.TabStop = false;
             this.bgStats.Text = "Statistics";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Location = new System.Drawing.Point(7, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(500, 45);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "This plugin collects ONLY anonymous usage statistics. No information related your" +
-    " CRM / Organization will be retrieve. This will help us to improve the most used" +
-    " features !";
             // 
             // checkboxAllowStats
             // 
             this.checkboxAllowStats.AutoSize = true;
             this.checkboxAllowStats.Checked = true;
             this.checkboxAllowStats.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkboxAllowStats.Location = new System.Drawing.Point(10, 68);
+            this.checkboxAllowStats.Location = new System.Drawing.Point(10, 89);
             this.checkboxAllowStats.Name = "checkboxAllowStats";
             this.checkboxAllowStats.Size = new System.Drawing.Size(94, 17);
             this.checkboxAllowStats.TabIndex = 5;
@@ -149,11 +137,23 @@
             this.checkBoxUserDisplayAll.UseVisualStyleBackColor = true;
             this.checkBoxUserDisplayAll.CheckedChanged += new System.EventHandler(this.checkBoxUserDisplayAll_CheckedChanged);
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Location = new System.Drawing.Point(7, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(303, 71);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "This plugin collects ONLY anonymous usage statistics. \r\nNo information related yo" +
+    "ur CRM / Organization will be retrieve. \r\n\r\nThis will help us to improve the mos" +
+    "t used features !\r\n";
+            // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(537, 298);
+            this.ClientSize = new System.Drawing.Size(448, 271);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
@@ -174,11 +174,11 @@
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.GroupBox bgStats;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkboxAllowStats;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBoxUserDisplayDisabled;
         private System.Windows.Forms.CheckBox checkBoxUserDisplayEnabled;
         private System.Windows.Forms.CheckBox checkBoxUserDisplayAll;
+        private System.Windows.Forms.Label label1;
     }
 }
