@@ -10,9 +10,9 @@ namespace Carfup.XTBPlugins.AppCode
     {
         public bool? AllowLogUsage { get; set; }
         public string CurrentVersion { get; set; } = PersonalViewsMigration.PersonalViewsMigration.CurrentVersion;
-        public bool UsersDisplayAll { get; set; }
-        public bool UsersDisplayEnabled { get; set; }
-        public bool UsersDisplayDisabled { get; set; }
+        public bool UsersDisplayAll { get; set; } = true;
+        public bool UsersDisplayEnabled { get; set; } = true;
+        public bool UsersDisplayDisabled { get; set; } = true;
     }
 
     // EventType to qualify which type of telemetry we send
