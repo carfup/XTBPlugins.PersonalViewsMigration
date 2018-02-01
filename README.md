@@ -3,6 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/rvll3u7w8gq19ryd?svg=true)](https://ci.appveyor.com/project/carfup/xtbplugins-personalviewsmigration)
 
 This plugin allows you to migrate views from all users to others users. 
+
 *This is only working for Online instances for now, i'm working on checking how to adapt it for OnPremise instances too.*
 
 When an user leaves a company and had tons of views shared with a lot of people, this can be annoying to have shared views you can't get rid of because the owner left the company since too much time and even the administrator can't delete the record.
