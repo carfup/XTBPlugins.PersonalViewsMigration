@@ -96,13 +96,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         listViewUsers.Items.Clear();
                         listViewUsersDestination.Items.Clear();
 
-                        foreach (Entity user in listOfUsers)
+                        // We filter the results based on the selection defined
+                        var userToKeep = manageUsersToDisplay();
+                        if (userToKeep == null)
+                            return;
+                        
+                        foreach (Entity user in userToKeep)
                         {
                             var item = new ListViewItem(user["domainname"].ToString());
                             item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
                             item.Tag = user.Id;
 
-                            listViewUsers.Items.Add(item);
                             listViewUsersDestination.Items.Add((ListViewItem)item.Clone());
                         }
 
@@ -489,50 +493,49 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void comboBoxWhatUsersToDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // avoid exception on first load
-            if (listOfUsers == null)
-                return;
-
             listViewUsers.Items.Clear();
-            var usersToKeep = listOfUsers;
-
-            if (comboBoxWhatUsersToDisplay.Text == "Enabled")
-                usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == false).ToList();
-            else if (comboBoxWhatUsersToDisplay.Text == "Disabled")
-                usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
-
-            foreach (Entity user in usersToKeep)
-            {
-                var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Active");
-                item.Tag = user.Id;
-
-                listViewUsers.Items.Add(item);
-            }
+            manageUsersToDisplay();   
         }
 
         private void comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged(object sender, EventArgs e)
         {
+            listViewUsersDestination.Items.Clear();
+            manageUsersToDisplay("destination");
+        }
+
+        private List<Entity> manageUsersToDisplay(string type = "source")
+        {
             // avoid exception on first load
             if (listOfUsers == null)
-                return;
+                return null;
 
-            listViewUsersDestination.Items.Clear();
             var usersToKeep = listOfUsers;
 
-            if (comboBoxWhatUsersToDisplayDestination.Text == "Enabled")
+            string comboxBoxValue = comboBoxWhatUsersToDisplay.Text;
+            if (type == "destination")
+            {
+                comboxBoxValue = comboBoxWhatUsersToDisplayDestination.Text;
+            }
+
+            if (comboxBoxValue == "Enabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == false).ToList();
-            else if (comboBoxWhatUsersToDisplayDestination.Text == "Disabled")
+            else if (comboxBoxValue == "Disabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
+
 
             foreach (Entity user in usersToKeep)
             {
                 var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Active");
+                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
                 item.Tag = user.Id;
 
-                listViewUsersDestination.Items.Add(item);
+                if(type == "source")
+                    listViewUsers.Items.Add(item);
+                else
+                    listViewUsersDestination.Items.Add(item);
             }
+
+            return usersToKeep;
         }
 
         private void PersonalViewsMigration_Load(object sender, EventArgs e)
