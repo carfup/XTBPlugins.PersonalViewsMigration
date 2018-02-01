@@ -1,25 +1,32 @@
 ﻿<package>
   <metadata>
     <id>Carfup.XTBPlugins.PersonalViewsMigration</id>
-    <version>1.0</version>
-    <title>Personal Views Migration</title>
+    <version>1.2018.2.1</version>
+    <title>Personal User Views Migration</title>
     <authors>Clement O.</authors>
     <owners>Clement O.</owners>
     <projectUrl>https://github.com/carfup/XTBPlugins.DeltaAssemblyvsCrm</projectUrl>
+	<iconUrl>http://www.gravatar.com/avatar/8b87aef303e872503c47ef3fdf83c801?s=64</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This tool will allow you to reassign or copy personal views from one user to another. This is really useful when someone left a company and forgot to migrate his own views to somebody else.</description>
     <summary>Really sweet plugin that does awesome things</summary>
     <releaseNotes>
+1.2018.2.1
+Allow the plugin to log anonymous data or not, in order to improve the most used features and develop the others.
+Added the ability to delete a view.
+Various bug fixes / improving processes.
+
 1.2017.12.1
 Retrieve users from your organization, get user views and copy or reassign them to someone else.
-    </releaseNotes>
+	</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>XrmToolBox Plugin PersonalViewsMigration</tags>
     <dependencies>
-      <dependency id="XrmToolBox" version="1.2017.6.16" />
+		<dependency id="XrmToolBox" version="1.2018.1.20" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Carfup.XTBPlugins.*.dll" target="lib\net452\Plugins" />
+	<file src="bin\Release\Carfup.XTBPlugins.*.dll" target="lib\net462\Plugins" />
+	<file src="bin\Release\Microsoft.ApplicationInsights.dll" target="lib\net46\Plugins" />
   </files>
 </package>

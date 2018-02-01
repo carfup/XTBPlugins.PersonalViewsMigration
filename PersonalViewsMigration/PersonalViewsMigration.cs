@@ -17,6 +17,8 @@ using System;
 using Microsoft.Xrm.Sdk.Messages;
 using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
+using System.Diagnostics;
+using Carfup.XTBPlugins.Forms;
 
 namespace Carfup.XTBPlugins.PersonalViewsMigration
 {
@@ -26,6 +28,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private List<Entity> listOfUsers = null;
         private List<Entity> listOfUserViews = null;
         public ControllerManager connectionManager = null;
+        internal PluginSettings settings = new PluginSettings();
+        LogUsageManager log = null;
 
         public string RepositoryName
         {
@@ -47,18 +51,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public PersonalViewsMigration()
         {
             InitializeComponent();
-            comboBoxWhatUsersToDisplay.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplay.Enabled = false;
-            comboBoxWhatUsersToDisplayDestination.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplayDestination.Enabled = false;
-            buttonLoadUserViews.Enabled = false;
-            buttonCopySelectedViews.Enabled = false;
-            buttonMigrateSelectedViews.Enabled = false;
-            labelDisclaimer.Text = $"To handle disabled user this plugin perform a change regarding the Access Mode of the systemuser and switch it to Non Interactive during the actions and then change it back to Read/Write.{Environment.NewLine}Make sure you have one Non Interactive access mode free to perform any actions (limited to 5 by default)";
         }
 
         private void toolStripButtonCloseTool_Click(object sender, System.EventArgs e)
         {
+            this.log.LogData(EventType.Event, LogAction.PluginClosed);
+
+            // Saving settings for the next usage of plugin
+            SaveSettings();
+
+            // Making sure that all message are sent if stats are enabled
+            this.log.Flush();
+
             CloseTool();
         }
 
@@ -82,6 +86,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -91,13 +96,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         listViewUsers.Items.Clear();
                         listViewUsersDestination.Items.Clear();
 
-                        foreach (Entity user in listOfUsers)
+                        // We filter the results based on the selection defined
+                        var userToKeep = manageUsersToDisplay();
+                        if (userToKeep == null)
+                            return;
+                        
+                        foreach (Entity user in userToKeep)
                         {
                             var item = new ListViewItem(user["domainname"].ToString());
                             item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
                             item.Tag = user.Id;
 
-                            listViewUsers.Items.Add(item);
                             listViewUsersDestination.Items.Add((ListViewItem)item.Clone());
                         }
 
@@ -106,6 +115,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         buttonLoadUserViews.Enabled = true;
                         buttonCopySelectedViews.Enabled = true;
                         buttonMigrateSelectedViews.Enabled = true;
+                        buttonDeleteSelectedViews.Enabled = true;
+
+                        this.log.LogData(EventType.Event, LogAction.UsersLoaded);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -198,12 +210,90 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsCopied, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
+                        this.log.LogData(EventType.Event, LogAction.ViewsCopied);
                         MessageBox.Show("View(s) are Copied !");
+                    }
+                },
+                ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
+            });
+        }
+
+        private void buttonDeleteSelectedViews_Click(object sender, EventArgs evt)
+        {
+            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+
+            // We make sure that the user really want to delete the view
+            var areYouSure = MessageBox.Show($"Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (areYouSure == DialogResult.No)
+                return;
+
+            if (viewsGuid.Count() == 0)
+            {
+                MessageBox.Show($"Please select at least one view to perform the Delete action.");
+                return;
+            }
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = "Deleting the user view(s) ...",
+                Work = (bw, e) =>
+                {
+
+                    Invoke(new Action(() =>
+                    {
+                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                    }));
+
+                    if (viewsGuid == null)
+                        return;
+
+                    foreach (ListViewItem itemView in viewsGuid)
+                    {
+                        bw.ReportProgress(0, "Deleting the user view(s)...");
+
+                        bool isUserModified = false;
+                        this.connectionManager.UpdateCallerId(this.connectionManager.userFrom.Value);
+                        this.connectionManager.userDestination = this.connectionManager.userFrom.Value;
+
+                        // Check if we need to switch to NonInteractive mode
+                        bw.ReportProgress(0, "Checking user accessibility...");
+                        isUserModified = this.connectionManager.userManager.manageImpersonification();
+
+                        DeleteRequest dr = new DeleteRequest
+                        {
+                            Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                        };
+
+                        this.connectionManager.proxy.Execute(dr);
+
+                        if (isUserModified)
+                        {
+                            bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
+                            this.connectionManager.userManager.manageImpersonification(isUserModified);
+                        }
+                    }
+                },
+                PostWorkCallBack = e =>
+                {
+                    if (e.Error != null)
+                    {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
+                        MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        foreach (ListViewItem view in viewsGuid.ToList())
+                            listViewUserViewsList.Items.Remove(view);
+
+                        this.log.LogData(EventType.Event, LogAction.ViewsDeleted);
+                        MessageBox.Show("View(s) are now deleted !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -220,6 +310,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 MessageBox.Show($"You can't select more than one user for the ReAssign functionality");
                 return;
             }
+
+            if (usersGuid.Count() == 0)
+            {
+                MessageBox.Show($"Please select at least one destination user to perform the ReAssign action.");
+                return;
+            }
+
             if (viewsGuid.Count() == 0)
             {
                 MessageBox.Show($"Please select at least one view to perform a ReAssign action.");
@@ -236,28 +333,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     Invoke(new Action(() =>
                     {
                         listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
-                    }));
-
-                    Invoke(new Action(() =>
-                    {
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-
                     if (viewsGuid == null && usersGuid == null)
                         return;
-
-                    var requestWithResults = new ExecuteMultipleRequest()
-                    {
-                        // Assign settings that define execution behavior: continue on error, return responses. 
-                        Settings = new ExecuteMultipleSettings()
-                        {
-                            ContinueOnError = false,
-                            ReturnResponses = true
-                        },
-                        // Create an empty organization request collection.
-                        Requests = new OrganizationRequestCollection()
-                    };
 
                     foreach (ListViewItem itemView in viewsGuid)
                     {
@@ -297,6 +377,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -307,6 +388,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.Items.Remove(view);
                         }
 
+                        this.log.LogData(EventType.Event, LogAction.ViewsReAssigned);
                         MessageBox.Show("View(s) are reassigned !");
                     }
                 },
@@ -361,6 +443,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
+                        this.log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -377,6 +460,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                             listViewUserViewsList.Items.Add(item);
                         }
+
+                        this.log.LogData(EventType.Event, LogAction.UsersLoaded);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -408,50 +493,152 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void comboBoxWhatUsersToDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // avoid exception on first load
-            if (listOfUsers == null)
-                return;
-
             listViewUsers.Items.Clear();
-            var usersToKeep = listOfUsers;
-
-            if (comboBoxWhatUsersToDisplay.Text == "Enabled")
-                usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == false).ToList();
-            else if (comboBoxWhatUsersToDisplay.Text == "Disabled")
-                usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
-
-            foreach (Entity user in usersToKeep)
-            {
-                var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Active");
-                item.Tag = user.Id;
-
-                listViewUsers.Items.Add(item);
-            }
+            manageUsersToDisplay();   
         }
 
         private void comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged(object sender, EventArgs e)
         {
+            listViewUsersDestination.Items.Clear();
+            manageUsersToDisplay("destination");
+        }
+
+        private List<Entity> manageUsersToDisplay(string type = "source")
+        {
             // avoid exception on first load
             if (listOfUsers == null)
-                return;
+                return null;
 
-            listViewUsersDestination.Items.Clear();
             var usersToKeep = listOfUsers;
 
-            if (comboBoxWhatUsersToDisplayDestination.Text == "Enabled")
+            string comboxBoxValue = comboBoxWhatUsersToDisplay.Text;
+            if (type == "destination")
+            {
+                comboxBoxValue = comboBoxWhatUsersToDisplayDestination.Text;
+            }
+
+            if (comboxBoxValue == "Enabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == false).ToList();
-            else if (comboBoxWhatUsersToDisplayDestination.Text == "Disabled")
+            else if (comboxBoxValue == "Disabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
+
 
             foreach (Entity user in usersToKeep)
             {
                 var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Active");
+                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
                 item.Tag = user.Id;
 
-                listViewUsersDestination.Items.Add(item);
+                if(type == "source")
+                    listViewUsers.Items.Add(item);
+                else
+                    listViewUsersDestination.Items.Add(item);
             }
+
+            return usersToKeep;
+        }
+
+        private void PersonalViewsMigration_Load(object sender, EventArgs e)
+        {
+            comboBoxWhatUsersToDisplay.SelectedIndex = 0;
+            comboBoxWhatUsersToDisplay.Enabled = false;
+            comboBoxWhatUsersToDisplayDestination.SelectedIndex = 0;
+            comboBoxWhatUsersToDisplayDestination.Enabled = false;
+            buttonLoadUserViews.Enabled = false;
+            buttonCopySelectedViews.Enabled = false;
+            buttonMigrateSelectedViews.Enabled = false;
+            buttonDeleteSelectedViews.Enabled = false;
+
+            log = new AppCode.LogUsageManager(this);
+            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+            LoadSetting();
+            ManageDisplayUsingSettings();
+
+            isOnlineOrg();
+        }
+
+        private void isOnlineOrg()
+        {
+            if(ConnectionDetail != null && !ConnectionDetail.UseOnline)
+            {
+                MessageBox.Show($"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
+                this.log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
+            }
+        }
+
+        public void SaveSettings(bool closeApp = false)
+        {
+            if(closeApp)
+                this.log.LogData(EventType.Event, LogAction.SettingsSavedWhenClosing);
+            else
+                this.log.LogData(EventType.Event, LogAction.SettingsSaved);
+            SettingsManager.Instance.Save(typeof(PersonalViewsMigration), settings);
+        }
+
+        private void LoadSetting()
+        {
+            try
+            {
+                if (SettingsManager.Instance.TryLoad<PluginSettings>(typeof(PersonalViewsMigration), out settings))
+                {
+                    return;
+                }
+                else
+                    settings = new PluginSettings();
+            }
+            catch (InvalidOperationException ex)
+            {
+                this.log.LogData(EventType.Exception, LogAction.SettingLoaded, ex);
+            }
+
+            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+
+            if (!settings.AllowLogUsage.HasValue)
+            {
+                this.log.PromptToLog();
+                this.SaveSettings();
+            }
+        }
+
+        public static string CurrentVersion
+        {
+            get
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+                return fileVersionInfo.ProductVersion;
+            }
+        }
+
+        private void toolStripButtonOptions_Click(object sender, EventArgs e)
+        {
+            var allowLogUsage = settings.AllowLogUsage;
+            var optionDlg = new Options(this);
+            if (optionDlg.ShowDialog(this) == DialogResult.OK)
+            {
+                settings = optionDlg.GetSettings();
+                if (allowLogUsage != settings.AllowLogUsage)
+                {
+                    if (settings.AllowLogUsage == true)
+                    {
+                        this.log.updateForceLog();
+                        this.log.LogData(EventType.Event, LogAction.StatsAccepted);
+                    }
+                    else if (!settings.AllowLogUsage == true)
+                    {
+                        this.log.updateForceLog();
+                        this.log.LogData(EventType.Event, LogAction.StatsDenied);
+                    }
+                }
+
+                ManageDisplayUsingSettings();
+            }
+        }
+
+        private void ManageDisplayUsingSettings()
+        {
+            comboBoxWhatUsersToDisplay.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
+            comboBoxWhatUsersToDisplayDestination.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
         }
     }
 }
