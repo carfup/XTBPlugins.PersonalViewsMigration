@@ -30,6 +30,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public ControllerManager connectionManager = null;
         internal PluginSettings settings = new PluginSettings();
         LogUsageManager log = null;
+        private int currentColumnOrder;
 
         public string RepositoryName
         {
@@ -640,5 +641,41 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             comboBoxWhatUsersToDisplay.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
             comboBoxWhatUsersToDisplayDestination.SelectedItem = settings.UsersDisplayAll ? "All" : (settings.UsersDisplayDisabled ? "Disabled" : "Enabled");
         }
+
+        #region handling reorder of listview items
+        public void sortListView(ListView listView, int columnIndex, SortOrder? sort = null)
+        {
+            if (sort != null)
+            {
+                listView.ListViewItemSorter = new ListViewItemComparer(columnIndex, sort.Value);
+            }
+            else if (columnIndex == currentColumnOrder)
+            {
+                listView.Sorting = listView.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+
+                listView.ListViewItemSorter = new ListViewItemComparer(columnIndex, listView.Sorting);
+            }
+            else
+            {
+                currentColumnOrder = columnIndex;
+                listView.ListViewItemSorter = new ListViewItemComparer(columnIndex, SortOrder.Ascending);
+            }
+        }
+
+        private void listViewUsers_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            sortListView(listViewUsers, e.Column);
+        }
+
+        private void listViewUserViewsList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            sortListView(listViewUserViewsList, e.Column);
+        }
+
+        private void listViewUsersDestination_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            sortListView(listViewUsersDestination, e.Column);
+        }
+        #endregion handling reorder of listview items
     }
 }
