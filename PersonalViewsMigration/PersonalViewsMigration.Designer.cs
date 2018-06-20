@@ -51,11 +51,11 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
             this.buttonMigrateSelectedViews = new System.Windows.Forms.Button();
             this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -171,6 +171,7 @@
             this.listViewUsersDestination.TabIndex = 2;
             this.listViewUsersDestination.UseCompatibleStateImageBehavior = false;
             this.listViewUsersDestination.View = System.Windows.Forms.View.Details;
+            this.listViewUsersDestination.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUsersDestination_ColumnClick);
             // 
             // columnHeader4
             // 
@@ -223,6 +224,7 @@
             this.listViewUserViewsList.TabIndex = 1;
             this.listViewUserViewsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserViewsList.View = System.Windows.Forms.View.Details;
+            this.listViewUserViewsList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUserViewsList_ColumnClick);
             // 
             // columnHeader1
             // 
@@ -291,6 +293,7 @@
             this.listViewUsers.TabIndex = 1;
             this.listViewUsers.UseCompatibleStateImageBehavior = false;
             this.listViewUsers.View = System.Windows.Forms.View.Details;
+            this.listViewUsers.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUsers_ColumnClick);
             this.listViewUsers.SelectedIndexChanged += new System.EventHandler(this.listViewUsers_SelectedIndexChanged);
             this.listViewUsers.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewUsers_MouseDoubleClick);
             // 
@@ -316,6 +319,16 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Actions";
+            // 
+            // buttonDeleteSelectedViews
+            // 
+            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
+            this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
+            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonDeleteSelectedViews.TabIndex = 4;
+            this.buttonDeleteSelectedViews.Text = "Delete";
+            this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
+            this.buttonDeleteSelectedViews.Click += new System.EventHandler(this.buttonDeleteSelectedViews_Click);
             // 
             // buttonMigrateSelectedViews
             // 
@@ -360,16 +373,6 @@
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
-            // 
-            // buttonDeleteSelectedViews
-            // 
-            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
-            this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
-            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
-            this.buttonDeleteSelectedViews.TabIndex = 4;
-            this.buttonDeleteSelectedViews.Text = "Delete";
-            this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
-            this.buttonDeleteSelectedViews.Click += new System.EventHandler(this.buttonDeleteSelectedViews_Click);
             // 
             // PersonalViewsMigration
             // 
