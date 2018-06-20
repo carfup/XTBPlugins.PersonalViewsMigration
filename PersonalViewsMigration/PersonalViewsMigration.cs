@@ -574,6 +574,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             else
                 this.log.LogData(EventType.Event, LogAction.SettingsSaved);
             SettingsManager.Instance.Save(typeof(PersonalViewsMigration), settings);
+
+            //reordering columns if necessary
+            sortListView(listViewUsers, 0, settings.SortOrderPref);
+            sortListView(listViewUserViewsList, 0, settings.SortOrderPref);
+            sortListView(listViewUsersDestination, 0, settings.SortOrderPref);
         }
 
         private void LoadSetting()

@@ -32,6 +32,8 @@ namespace Carfup.XTBPlugins.Forms
             checkBoxUserDisplayAll.Checked = settings.UsersDisplayAll;
             checkBoxUserDisplayEnabled.Checked = settings.UsersDisplayEnabled;
             checkBoxUserDisplayDisabled.Checked = settings.UsersDisplayDisabled;
+            radioButtonSortingOrderAsc.Checked = (settings.SortOrderPref == SortOrder.Ascending || settings.SortOrderPref == null) ? true : false;
+            radioButtoradioButtonSortingOrderDesc.Checked = !radioButtonSortingOrderAsc.Checked;
         }
 
         internal PluginSettings GetSettings()
@@ -42,6 +44,7 @@ namespace Carfup.XTBPlugins.Forms
             settings.UsersDisplayAll = checkBoxUserDisplayAll.Checked;
             settings.UsersDisplayDisabled = checkBoxUserDisplayDisabled.Checked;
             settings.UsersDisplayEnabled = checkBoxUserDisplayEnabled.Checked;
+            settings.SortOrderPref = (radioButtonSortingOrderAsc.Checked || settings.SortOrderPref == null) ? SortOrder.Ascending : SortOrder.Descending;
 
             return settings;
         }
