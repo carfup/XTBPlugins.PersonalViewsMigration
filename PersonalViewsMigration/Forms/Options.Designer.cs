@@ -31,14 +31,18 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOk = new System.Windows.Forms.Button();
             this.bgStats = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.checkboxAllowStats = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkBoxUserDisplayDisabled = new System.Windows.Forms.CheckBox();
             this.checkBoxUserDisplayEnabled = new System.Windows.Forms.CheckBox();
             this.checkBoxUserDisplayAll = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButtoradioButtonSortingOrderDesc = new System.Windows.Forms.RadioButton();
+            this.radioButtonSortingOrderAsc = new System.Windows.Forms.RadioButton();
             this.bgStats.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonCancel
@@ -73,6 +77,18 @@
             this.bgStats.TabIndex = 10;
             this.bgStats.TabStop = false;
             this.bgStats.Text = "Statistics";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Location = new System.Drawing.Point(7, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(303, 71);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "This plugin collects ONLY anonymous usage statistics. \r\nNo information related yo" +
+    "ur CRM / Organization will be retrieve. \r\n\r\nThis will help us to improve the mos" +
+    "t used features !\r\n";
             // 
             // checkboxAllowStats
             // 
@@ -137,23 +153,47 @@
             this.checkBoxUserDisplayAll.UseVisualStyleBackColor = true;
             this.checkBoxUserDisplayAll.CheckedChanged += new System.EventHandler(this.checkBoxUserDisplayAll_CheckedChanged);
             // 
-            // label1
+            // groupBox2
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Location = new System.Drawing.Point(7, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(303, 71);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "This plugin collects ONLY anonymous usage statistics. \r\nNo information related yo" +
-    "ur CRM / Organization will be retrieve. \r\n\r\nThis will help us to improve the mos" +
-    "t used features !\r\n";
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox2.Controls.Add(this.radioButtoradioButtonSortingOrderDesc);
+            this.groupBox2.Controls.Add(this.radioButtonSortingOrderAsc);
+            this.groupBox2.Location = new System.Drawing.Point(218, 18);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(221, 96);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Result sorting";
+            // 
+            // radioButtoradioButtonSortingOrderDesc
+            // 
+            this.radioButtoradioButtonSortingOrderDesc.AutoSize = true;
+            this.radioButtoradioButtonSortingOrderDesc.Location = new System.Drawing.Point(6, 46);
+            this.radioButtoradioButtonSortingOrderDesc.Name = "radioButtoradioButtonSortingOrderDesc";
+            this.radioButtoradioButtonSortingOrderDesc.Size = new System.Drawing.Size(82, 17);
+            this.radioButtoradioButtonSortingOrderDesc.TabIndex = 1;
+            this.radioButtoradioButtonSortingOrderDesc.Text = "Descending";
+            this.radioButtoradioButtonSortingOrderDesc.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonSortingOrderAsc
+            // 
+            this.radioButtonSortingOrderAsc.AutoSize = true;
+            this.radioButtonSortingOrderAsc.Checked = true;
+            this.radioButtonSortingOrderAsc.Location = new System.Drawing.Point(6, 23);
+            this.radioButtonSortingOrderAsc.Name = "radioButtonSortingOrderAsc";
+            this.radioButtonSortingOrderAsc.Size = new System.Drawing.Size(75, 17);
+            this.radioButtonSortingOrderAsc.TabIndex = 0;
+            this.radioButtonSortingOrderAsc.TabStop = true;
+            this.radioButtonSortingOrderAsc.Text = "Ascending";
+            this.radioButtonSortingOrderAsc.UseVisualStyleBackColor = true;
             // 
             // Options
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(448, 271);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
@@ -165,6 +205,8 @@
             this.bgStats.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -180,5 +222,8 @@
         private System.Windows.Forms.CheckBox checkBoxUserDisplayEnabled;
         private System.Windows.Forms.CheckBox checkBoxUserDisplayAll;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton radioButtoradioButtonSortingOrderDesc;
+        private System.Windows.Forms.RadioButton radioButtonSortingOrderAsc;
     }
 }

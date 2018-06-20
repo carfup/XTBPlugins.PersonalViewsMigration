@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Carfup.XTBPlugins.AppCode
 {
@@ -13,6 +14,7 @@ namespace Carfup.XTBPlugins.AppCode
         public bool UsersDisplayAll { get; set; } = true;
         public bool UsersDisplayEnabled { get; set; } = true;
         public bool UsersDisplayDisabled { get; set; } = true;
+        public SortOrder? SortOrderPref { get; set; } = SortOrder.Ascending;
     }
 
     // EventType to qualify which type of telemetry we send
