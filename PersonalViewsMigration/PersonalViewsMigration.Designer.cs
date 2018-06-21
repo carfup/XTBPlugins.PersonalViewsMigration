@@ -31,13 +31,17 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PersonalViewsMigration));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonCloseTool = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonLoadUsers = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.comboBoxWhatUsersToDisplayDestination = new System.Windows.Forms.ComboBox();
             this.listViewUsersDestination = new System.Windows.Forms.ListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.buttonLoadUserViews = new System.Windows.Forms.Button();
@@ -49,6 +53,8 @@
             this.buttonLoadUsers = new System.Windows.Forms.Button();
             this.listViewUsers = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
@@ -56,6 +62,7 @@
             this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -68,7 +75,9 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonCloseTool,
+            this.toolStripSeparator1,
             this.toolStripButtonLoadUsers,
+            this.toolStripSeparator2,
             this.toolStripButtonOptions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
@@ -86,6 +95,11 @@
             this.toolStripButtonCloseTool.Text = "Close";
             this.toolStripButtonCloseTool.Click += new System.EventHandler(this.toolStripButtonCloseTool_Click);
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripButtonLoadUsers
             // 
             this.toolStripButtonLoadUsers.Image = global::Carfup.XTBPlugins.Properties.Resources.load;
@@ -94,6 +108,11 @@
             this.toolStripButtonLoadUsers.Size = new System.Drawing.Size(113, 22);
             this.toolStripButtonLoadUsers.Text = "Load CRM Users";
             this.toolStripButtonLoadUsers.Click += new System.EventHandler(this.toolStripButtonLoadUsers_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonOptions
             // 
@@ -162,6 +181,8 @@
             this.listViewUsersDestination.CheckBoxes = true;
             this.listViewUsersDestination.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader4,
+            this.columnHeader8,
+            this.columnHeader9,
             this.columnHeader5});
             this.listViewUsersDestination.Location = new System.Drawing.Point(8, 48);
             this.listViewUsersDestination.Name = "listViewUsersDestination";
@@ -175,8 +196,16 @@
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "User Email";
+            this.columnHeader4.Text = "User Name";
             this.columnHeader4.Width = 280;
+            // 
+            // columnHeader8
+            // 
+            this.columnHeader8.Text = "Firstname";
+            // 
+            // columnHeader9
+            // 
+            this.columnHeader9.Text = "Lastname";
             // 
             // columnHeader5
             // 
@@ -216,7 +245,8 @@
             this.listViewUserViewsList.CheckBoxes = true;
             this.listViewUserViewsList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader2,
+            this.columnHeader10});
             this.listViewUserViewsList.FullRowSelect = true;
             this.listViewUserViewsList.Location = new System.Drawing.Point(6, 48);
             this.listViewUserViewsList.Name = "listViewUserViewsList";
@@ -283,7 +313,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader3,
+            this.columnHeader6,
+            this.columnHeader7,
             this.State});
+            this.listViewUsers.FullRowSelect = true;
             this.listViewUsers.Location = new System.Drawing.Point(6, 48);
             this.listViewUsers.MultiSelect = false;
             this.listViewUsers.Name = "listViewUsers";
@@ -299,8 +332,16 @@
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "User Email";
+            this.columnHeader3.Text = "User Name";
             this.columnHeader3.Width = 280;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Firstname";
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Lastname";
             // 
             // State
             // 
@@ -374,6 +415,10 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "CreatedOn";
+            // 
             // PersonalViewsMigration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -426,5 +471,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
         private System.Windows.Forms.Button buttonDeleteSelectedViews;
+        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private System.Windows.Forms.ColumnHeader columnHeader9;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ColumnHeader columnHeader10;
     }
 }

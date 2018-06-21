@@ -32,7 +32,7 @@ namespace Carfup.XTBPlugins.Forms
             checkBoxUserDisplayAll.Checked = settings.UsersDisplayAll;
             checkBoxUserDisplayEnabled.Checked = settings.UsersDisplayEnabled;
             checkBoxUserDisplayDisabled.Checked = settings.UsersDisplayDisabled;
-            radioButtonSortingOrderAsc.Checked = (settings.SortOrderPref == SortOrder.Ascending || settings.SortOrderPref == null) ? true : false;
+            radioButtonSortingOrderAsc.Checked = (settings.SortOrderPref == SortOrder.Ascending || settings.SortOrderPref == null);
             radioButtoradioButtonSortingOrderDesc.Checked = !radioButtonSortingOrderAsc.Checked;
         }
 
