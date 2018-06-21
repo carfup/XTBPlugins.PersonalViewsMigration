@@ -27,6 +27,7 @@ namespace Carfup.XTBPlugins.AppCode
             this.telemetry = new TelemetryClient();
             this.telemetry.Context.Component.Version = PersonalViewsMigration.PersonalViewsMigration.CurrentVersion;
             this.telemetry.Context.Device.Id = this.pvm.GetType().Name;
+            this.telemetry.Context.User.Id = Guid.NewGuid().ToString();
         }
 
         public void updateForceLog()

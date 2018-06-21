@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -17,16 +18,17 @@ namespace Carfup.XTBPlugins.AppCode
         /// <summary>
         /// Crm web service
         /// </summary>
-        public ControllerManager connection = null;
-        public static RetrieveEntityResponse metadata = null;
+        private readonly ControllerManager connection = null;
+
+        private static RetrieveEntityResponse metadata = null;
         #endregion Variables
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the class UserManager
+        /// Initializes a new instance of the class Controller manager
         /// </summary>
-        /// <param name="proxy">Details of the connected user</param>
+        /// <param name="connection">Controller manager</param>
         public ViewManager(ControllerManager connection)
         {
             this.connection = connection;
@@ -35,37 +37,38 @@ namespace Carfup.XTBPlugins.AppCode
         #endregion Constructor
 
         #region Methods
-        public void retrieveMetadataOfView()
+
+        private void RetrieveMetadataOfView()
         {
-            RetrieveEntityRequest retrieveBankAccountEntityRequest = new RetrieveEntityRequest
+            RetrieveEntityRequest retrieveEntityAttributesRequest = new RetrieveEntityRequest
             {
                 EntityFilters = EntityFilters.Attributes,
                 LogicalName = "userquery"
             };
-            metadata = (RetrieveEntityResponse)this.connection.proxy.Execute(retrieveBankAccountEntityRequest);
+            metadata = (RetrieveEntityResponse)connection.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
-        public List<Entity> listOfUserViews(Guid userGuid)
+        public List<Entity> ListOfUserViews(Guid userGuid)
         {
-            return this.connection.proxy.RetrieveMultiple(new QueryExpression("userquery")
+            return connection.proxy.RetrieveMultiple(new QueryExpression("userquery")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression
                 {
                     Conditions =
-                                    {
-                                    new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
-                                    }
+                    {
+                    new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                    }
                 }
             }).Entities.ToList();
         }
 
-        public Entity prepareViewToMigrate(Entity getViewDetails)
+        public Entity PrepareViewToMigrate(Entity getViewDetails)
         {
             List<string> attributesList = new List<string> { "fetchxml", "returnedtypecode", "layoutxml", "querytype", "name", "advancedgroupby", "columnsetxml", "description", "offlinesqlquery" };
 
             if (metadata == null)
-                retrieveMetadataOfView();
+                RetrieveMetadataOfView();
             
             Entity viewToMigrate = new Entity("userquery");
 

@@ -32,21 +32,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         LogUsageManager log = null;
         private int currentColumnOrder;
 
-        public string RepositoryName
-        {
-            get
-            {
-                return "XTBPlugins.PersonalViewsMigration";
-            }
-        }
-
-        public string UserName
-        {
-            get
-            {
-                return "carfup";
-            }
-        }
+        public string RepositoryName => "XTBPlugins.PersonalViewsMigration";
+        public string UserName => "carfup";
 
         #endregion
         public PersonalViewsMigration()
@@ -69,19 +56,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void toolStripButtonLoadUsers_Click(object sender, System.EventArgs evt)
         {
-            ExecuteMethod(loadUsersIntoListView);
+            ExecuteMethod(LoadUsersIntoListView);
         }
 
-        public void loadUsersIntoListView()
+        private void LoadUsersIntoListView()
         {
-            connectionManager = new ControllerManager(Service);
-
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading CRM Users...",
                 Work = (bw, e) =>
                 {
-                    listOfUsers = connectionManager.userManager.getListOfUsers();
+                    listOfUsers = connectionManager.userManager.GetListOfUsers();
                 },
                 PostWorkCallBack = e =>
                 {
@@ -98,18 +83,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         listViewUsersDestination.Items.Clear();
 
                         // We filter the results based on the selection defined
-                        var userToKeep = manageUsersToDisplay();
+                        var userToKeep = ManageUsersToDisplay();
                         if (userToKeep == null)
                             return;
-                        
-                        foreach (Entity user in userToKeep)
-                        {
-                            var item = new ListViewItem(user["domainname"].ToString());
-                            item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
-                            item.Tag = user.Id;
 
-                            listViewUsersDestination.Items.Add((ListViewItem)item.Clone());
-                        }
+                        ManageUsersToDisplay("destination");
 
                         comboBoxWhatUsersToDisplay.Enabled = true;
                         comboBoxWhatUsersToDisplayDestination.Enabled = true;
@@ -119,6 +97,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         buttonDeleteSelectedViews.Enabled = true;
 
                         this.log.LogData(EventType.Event, LogAction.UsersLoaded);
+
+                        listViewUsersDestination.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        listViewUsers.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -129,14 +110,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
 
-            if (usersGuid.Count() == 0)
+            if (!usersGuid.Any())
             {
-                MessageBox.Show($"Please select at least one destination user to perform the Copy action.");
+                MessageBox.Show("Please select at least one destination user to perform the Copy action.");
                 return;
             }
-            if (viewsGuid.Count() == 0)
+            if (!viewsGuid.Any())
             {
-                MessageBox.Show($"Please select at least one view to perform a Copy action.");
+                MessageBox.Show("Please select at least one view to perform a Copy action.");
                 return;
             }
 
@@ -171,7 +152,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         CreateRequest cr = new CreateRequest
                         {
-                            Target = this.connectionManager.viewManager.prepareViewToMigrate(listOfUserViews.Find(x => x.Id == (Guid)itemView.Tag))
+                            Target = this.connectionManager.viewManager.PrepareViewToMigrate(listOfUserViews.Find(x => x.Id == (Guid)itemView.Tag))
                         };
 
                         requestWithResults.Requests.Add(cr);
@@ -180,23 +161,22 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     bw.ReportProgress(0, "Migrating user views...");
                     foreach (ListViewItem itemUser in usersGuid)
                     {
-                        bool isUserModified = false;
-                        this.connectionManager.UpdateCallerId((Guid)itemUser.Tag);
-                        this.connectionManager.userDestination = (Guid)itemUser.Tag;
+                        connectionManager.UpdateCallerId((Guid)itemUser.Tag);
+                        connectionManager.userDestination = (Guid)itemUser.Tag;
                         
                         // Check if we need to switch to NonInteractive mode
                         bw.ReportProgress(0, "Checking destination user accessibility...");
-                        isUserModified = this.connectionManager.userManager.manageImpersonification();
+                        var isUserModified = connectionManager.userManager.ManageImpersonification();
                         
 
                         //proxy.CallerId = (Guid)itemUser.Tag;
                         bw.ReportProgress(0, "Copying the view(s)...");
-                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)this.connectionManager.proxy.Execute(requestWithResults);
+                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
 
                         if (isUserModified)
                         {
                             bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
-                            this.connectionManager.userManager.manageImpersonification(isUserModified);
+                            connectionManager.userManager.ManageImpersonification(isUserModified);
                         }
 
                         foreach (var responseItem in responseWithResults.Responses)
@@ -230,13 +210,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
 
             // We make sure that the user really want to delete the view
-            var areYouSure = MessageBox.Show($"Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var areYouSure = MessageBox.Show("Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (areYouSure == DialogResult.No)
                 return;
 
             if (viewsGuid.Count() == 0)
             {
-                MessageBox.Show($"Please select at least one view to perform the Delete action.");
+                MessageBox.Show("Please select at least one view to perform the Delete action.");
                 return;
             }
 
@@ -258,25 +238,24 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         bw.ReportProgress(0, "Deleting the user view(s)...");
 
-                        bool isUserModified = false;
-                        this.connectionManager.UpdateCallerId(this.connectionManager.userFrom.Value);
-                        this.connectionManager.userDestination = this.connectionManager.userFrom.Value;
+                        connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
+                        connectionManager.userDestination = connectionManager.userFrom.Value;
 
                         // Check if we need to switch to NonInteractive mode
                         bw.ReportProgress(0, "Checking user accessibility...");
-                        isUserModified = this.connectionManager.userManager.manageImpersonification();
+                        var isUserModified = connectionManager.userManager.ManageImpersonification();
 
                         DeleteRequest dr = new DeleteRequest
                         {
                             Target = new EntityReference("userquery", (Guid)itemView.Tag)
                         };
 
-                        this.connectionManager.proxy.Execute(dr);
+                        connectionManager.proxy.Execute(dr);
 
                         if (isUserModified)
                         {
                             bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
-                            this.connectionManager.userManager.manageImpersonification(isUserModified);
+                            connectionManager.userManager.ManageImpersonification(isUserModified);
                         }
                     }
                 },
@@ -284,7 +263,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
+                        log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -293,7 +272,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         foreach (ListViewItem view in viewsGuid.ToList())
                             listViewUserViewsList.Items.Remove(view);
 
-                        this.log.LogData(EventType.Event, LogAction.ViewsDeleted);
+                        log.LogData(EventType.Event, LogAction.ViewsDeleted);
                         MessageBox.Show("View(s) are now deleted !");
                     }
                 },
@@ -308,19 +287,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             if(usersGuid.Count() > 1)
             {
-                MessageBox.Show($"You can't select more than one user for the ReAssign functionality");
+                MessageBox.Show("You can't select more than one user for the ReAssign functionality");
                 return;
             }
 
-            if (usersGuid.Count() == 0)
+            if (!usersGuid.Any())
             {
-                MessageBox.Show($"Please select at least one destination user to perform the ReAssign action.");
+                MessageBox.Show("Please select at least one destination user to perform the ReAssign action.");
                 return;
             }
 
-            if (viewsGuid.Count() == 0)
+            if (!viewsGuid.Any())
             {
-                MessageBox.Show($"Please select at least one view to perform a ReAssign action.");
+                MessageBox.Show("Please select at least one view to perform a ReAssign action.");
                 return;
             }
 
@@ -348,12 +327,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         {
 
                             bool isUserModified = false;
-                            this.connectionManager.UpdateCallerId(this.connectionManager.userFrom.Value);
-                            this.connectionManager.userDestination = this.connectionManager.userFrom.Value;
+                            this.connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
+                            this.connectionManager.userDestination = connectionManager.userFrom.Value;
 
                             // Check if we need to switch to NonInteractive mode
                             bw.ReportProgress(0, "Checking destination user accessibility...");
-                            isUserModified = this.connectionManager.userManager.manageImpersonification();
+                            isUserModified = connectionManager.userManager.ManageImpersonification();
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
@@ -364,12 +343,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                                 Target = new EntityReference("userquery", (Guid)itemView.Tag)
                             };
 
-                            this.connectionManager.proxy.Execute(ar);
+                            connectionManager.proxy.Execute(ar);
 
                             if (isUserModified)
                             {
                                 bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
-                                this.connectionManager.userManager.manageImpersonification(isUserModified);
+                                connectionManager.userManager.ManageImpersonification(isUserModified);
                             }
                         } 
                     }
@@ -399,19 +378,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonLoadUserViews_Click(object sender, EventArgs evt)
         {
-            ExecuteMethod(loadUserViews);
+            ExecuteMethod(LoadUserViews);
         }
 
         private void listViewUsers_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            ExecuteMethod(loadUserViews);
+            ExecuteMethod(LoadUserViews);
         }
 
-        public void loadUserViews()
+        private void LoadUserViews()
         {
             if(listViewUsers.SelectedItems.Count == 0)
             {
-                MessageBox.Show($"Please select at least one user.");
+                MessageBox.Show("Please select at least one user.");
                 return;
             }
 
@@ -424,19 +403,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 Message = "Retrieving User view(s)...",
                 Work = (bw, e) =>
                 {
-                    bool isUserModified = false;
-
                     bw.ReportProgress(0, "Checking user accessibility...");
-                    isUserModified = this.connectionManager.userManager.manageImpersonification();
+                    var isUserModified = connectionManager.userManager.ManageImpersonification();
                     
 
                     bw.ReportProgress(0, "Retrieving user's view(s)...");
-                    listOfUserViews = this.connectionManager.viewManager.listOfUserViews(this.connectionManager.userDestination.Value);
+                    listOfUserViews = connectionManager.viewManager.ListOfUserViews(connectionManager.userDestination.Value);
 
-                    if (isUserModified)
+                    if(isUserModified)
                     {
                         bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
-                        this.connectionManager.userManager.manageImpersonification(isUserModified);
+                        connectionManager.userManager.ManageImpersonification(isUserModified);
 
                     }
                 },
@@ -444,7 +421,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
+                        log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -457,12 +434,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         {
                             var item = new ListViewItem(view["name"].ToString());
                             item.SubItems.Add(view["returnedtypecode"].ToString());
+                            item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
                             item.Tag = view.Id;
 
                             listViewUserViewsList.Items.Add(item);
                         }
 
-                        this.log.LogData(EventType.Event, LogAction.UsersLoaded);
+                        log.LogData(EventType.Event, LogAction.UsersLoaded);
+
+                        listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -480,7 +460,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 }
 
                 else { 
-                    buttonLoadUserViews.Text = $"Select an user to load its views.";
+                    buttonLoadUserViews.Text = "Select an user to load its views.";
                     buttonLoadUserViews.Enabled = false;
                 }
             }));
@@ -489,22 +469,24 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonLoadUsers_Click(object sender, EventArgs e)
         {
-            ExecuteMethod(loadUsersIntoListView);
+            ExecuteMethod(LoadUsersIntoListView);
         }
 
         private void comboBoxWhatUsersToDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
             listViewUsers.Items.Clear();
-            manageUsersToDisplay();   
+            ManageUsersToDisplay();
+            listViewUsers.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
         private void comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged(object sender, EventArgs e)
         {
             listViewUsersDestination.Items.Clear();
-            manageUsersToDisplay("destination");
+            ManageUsersToDisplay("destination");
+            listViewUsersDestination.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-        private List<Entity> manageUsersToDisplay(string type = "source")
+        private List<Entity> ManageUsersToDisplay(string type = "source")
         {
             // avoid exception on first load
             if (listOfUsers == null)
@@ -518,7 +500,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 comboxBoxValue = comboBoxWhatUsersToDisplayDestination.Text;
             }
 
-            if (comboxBoxValue == "Enabled")
+            if(comboxBoxValue == "Enabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == false).ToList();
             else if (comboxBoxValue == "Disabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
@@ -527,7 +509,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             foreach (Entity user in usersToKeep)
             {
                 var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(((bool)user["isdisabled"]) ? "Disabled" : "Enabled");
+                item.SubItems.Add(user["firstname"].ToString());
+                item.SubItems.Add(user["lastname"].ToString());
+                item.SubItems.Add((bool)user["isdisabled"] ? "Disabled" : "Enabled");
                 item.Tag = user.Id;
 
                 if(type == "source")
@@ -551,34 +535,38 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonDeleteSelectedViews.Enabled = false;
 
             log = new AppCode.LogUsageManager(this);
-            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+            log.LogData(EventType.Event, LogAction.SettingLoaded);
             LoadSetting();
             ManageDisplayUsingSettings();
 
-            isOnlineOrg();
+            // creating the controller
+            connectionManager = new ControllerManager(Service);
+
+            IsOnlineOrg();
         }
 
-        private void isOnlineOrg()
+        private void IsOnlineOrg()
         {
-            if(ConnectionDetail != null && !ConnectionDetail.UseOnline)
-            {
-                MessageBox.Show($"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
-                this.log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
-            }
+            if (ConnectionDetail == null || ConnectionDetail.UseOnline)
+                return;
+
+            connectionManager.isOnPrem = true;
+            //MessageBox.Show($@"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
+            log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
         public void SaveSettings(bool closeApp = false)
         {
             if(closeApp)
-                this.log.LogData(EventType.Event, LogAction.SettingsSavedWhenClosing);
+                log.LogData(EventType.Event, LogAction.SettingsSavedWhenClosing);
             else
-                this.log.LogData(EventType.Event, LogAction.SettingsSaved);
+                log.LogData(EventType.Event, LogAction.SettingsSaved);
             SettingsManager.Instance.Save(typeof(PersonalViewsMigration), settings);
 
             //reordering columns if necessary
-            sortListView(listViewUsers, 0, settings.SortOrderPref);
-            sortListView(listViewUserViewsList, 0, settings.SortOrderPref);
-            sortListView(listViewUsersDestination, 0, settings.SortOrderPref);
+            SortListView(listViewUsers, 0, settings.SortOrderPref);
+            SortListView(listViewUserViewsList, 0, settings.SortOrderPref);
+            SortListView(listViewUsersDestination, 0, settings.SortOrderPref);
         }
 
         private void LoadSetting()
@@ -594,15 +582,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
             catch (InvalidOperationException ex)
             {
-                this.log.LogData(EventType.Exception, LogAction.SettingLoaded, ex);
+                log.LogData(EventType.Exception, LogAction.SettingLoaded, ex);
             }
 
-            this.log.LogData(EventType.Event, LogAction.SettingLoaded);
+            log.LogData(EventType.Event, LogAction.SettingLoaded);
 
             if (!settings.AllowLogUsage.HasValue)
             {
-                this.log.PromptToLog();
-                this.SaveSettings();
+                log.PromptToLog();
+                SaveSettings();
             }
         }
 
@@ -648,7 +636,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         }
 
         #region handling reorder of listview items
-        public void sortListView(ListView listView, int columnIndex, SortOrder? sort = null)
+
+        private void SortListView(ListView listView, int columnIndex, SortOrder? sort = null)
         {
             if (sort != null)
             {
@@ -669,18 +658,25 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void listViewUsers_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            sortListView(listViewUsers, e.Column);
+            SortListView(listViewUsers, e.Column);
         }
 
         private void listViewUserViewsList_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            sortListView(listViewUserViewsList, e.Column);
+            SortListView(listViewUserViewsList, e.Column);
         }
 
         private void listViewUsersDestination_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            sortListView(listViewUsersDestination, e.Column);
+            SortListView(listViewUsersDestination, e.Column);
         }
         #endregion handling reorder of listview items
+
+        private void textBoxFilterUsersDestination_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterUsersDestination.Text;
+
+
+        }
     }
 }
