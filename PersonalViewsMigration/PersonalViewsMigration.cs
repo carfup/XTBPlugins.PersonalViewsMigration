@@ -116,7 +116,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
-            textBoxFilterUsersDestination.Enabled = enable;
+            textBoxFilterUsers.Enabled = enable;
         }
         private void buttonCopySelectedViews_Click(object sender, System.EventArgs evt)
         {
@@ -455,7 +455,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         log.LogData(EventType.Event, LogAction.UsersLoaded);
 
-                        listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        if(listOfUserViews.Any())
+                            listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -700,6 +701,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             if(filter.Length > 1)
                 ManageUsersToDisplay("source", filter.ToLower());
+        }
+
+        private void textBoxFilterUsers_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterUsers.Text == "Search in results ...")
+                textBoxFilterUsers.Text = "";
+        }
+
+        private void textBoxFilterUsersDestination_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterUsersDestination.Text == "Search in results ...")
+                textBoxFilterUsersDestination.Text = "";
         }
     }
 }

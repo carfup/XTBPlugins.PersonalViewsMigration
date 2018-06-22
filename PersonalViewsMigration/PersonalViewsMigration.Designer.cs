@@ -189,6 +189,8 @@
             this.textBoxFilterUsersDestination.Name = "textBoxFilterUsersDestination";
             this.textBoxFilterUsersDestination.Size = new System.Drawing.Size(139, 20);
             this.textBoxFilterUsersDestination.TabIndex = 9;
+            this.textBoxFilterUsersDestination.Text = "Search in results ...";
+            this.textBoxFilterUsersDestination.Click += new System.EventHandler(this.textBoxFilterUsersDestination_Click);
             this.textBoxFilterUsersDestination.TextChanged += new System.EventHandler(this.textBoxFilterUsersDestination_TextChanged);
             // 
             // comboBoxWhatUsersToDisplayDestination
@@ -345,6 +347,8 @@
             this.textBoxFilterUsers.Name = "textBoxFilterUsers";
             this.textBoxFilterUsers.Size = new System.Drawing.Size(110, 20);
             this.textBoxFilterUsers.TabIndex = 10;
+            this.textBoxFilterUsers.Text = "Search in results ...";
+            this.textBoxFilterUsers.Click += new System.EventHandler(this.textBoxFilterUsers_Click);
             this.textBoxFilterUsers.TextChanged += new System.EventHandler(this.textBoxFilterUsers_TextChanged);
             // 
             // comboBoxWhatUsersToDisplay

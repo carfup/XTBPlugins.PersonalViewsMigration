@@ -109,7 +109,7 @@ namespace Carfup.XTBPlugins.AppCode
         {
             var nonInteractiveCount = connection.service.RetrieveMultiple(new QueryExpression("systemuser")
             {
-                ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
+                ColumnSet = new ColumnSet(false),
                 Criteria = new FilterExpression
                 {
                     Conditions =
