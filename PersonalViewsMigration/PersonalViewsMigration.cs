@@ -566,6 +566,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (ConnectionDetail == null || ConnectionDetail.UseOnline)
                 return;
 
+            labelDisclaimer.Text =
+                "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
+
             connectionManager.isOnPrem = true;
             log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
@@ -693,6 +696,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             if (filter.Length > 1)
                 ManageUsersToDisplay("destination", filter.ToLower());
+            else if (filter == "")
+                ManageUsersToDisplay("destination");
         }
 
         private void textBoxFilterUsers_TextChanged(object sender, EventArgs e)
@@ -701,6 +706,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             if(filter.Length > 1)
                 ManageUsersToDisplay("source", filter.ToLower());
+            else if (filter == "")
+                ManageUsersToDisplay();
         }
 
         private void textBoxFilterUsers_Click(object sender, EventArgs e)
