@@ -19,6 +19,7 @@ using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
 using System.Diagnostics;
 using Carfup.XTBPlugins.Forms;
+using McTools.Xrm.Connection;
 
 namespace Carfup.XTBPlugins.PersonalViewsMigration
 {
@@ -39,6 +40,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public PersonalViewsMigration()
         {
             InitializeComponent();
+        }
+
+        public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
+        {
+            connectionManager = new ControllerManager(newService);
+            IsOnlineOrg();
+
+            base.UpdateConnection(newService, detail, actionName, parameter);
         }
 
         private void toolStripButtonCloseTool_Click(object sender, System.EventArgs e)
@@ -227,7 +236,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (areYouSure == DialogResult.No)
                 return;
 
-            if (viewsGuid.Count() == 0)
+            if (!viewsGuid.Any())
             {
                 MessageBox.Show("Please select at least one view to perform the Delete action.");
                 return;
