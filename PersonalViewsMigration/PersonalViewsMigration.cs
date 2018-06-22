@@ -686,7 +686,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             var filter = textBoxFilterUsersDestination.Text;
 
-            if (filter.Length > 2)
+            if (filter.Length > 1)
                 ManageUsersToDisplay("destination", filter.ToLower());
         }
 
@@ -694,7 +694,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             var filter = textBoxFilterUsers.Text;
 
-            if(filter.Length > 2)
+            if(filter.Length > 1)
                 ManageUsersToDisplay("source", filter.ToLower());
         }
     }
