@@ -61,6 +61,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void LoadUsersIntoListView()
         {
+            if (!connectionManager.isOnPrem && !connectionManager.userManager.CheckIfNonInteractiveSeatAvailable())
+            {
+                MessageBox.Show("It seems that all Non Interactive seats are used.\n\nPlease free at least one to enjoy the functionalities of this plugin !", "Warning, Non Interactive seat needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading CRM Users...",
@@ -396,7 +401,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void LoadUserViews()
         {
-            if(listViewUsers.SelectedItems.Count == 0)
+            if (listViewUsers.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Please select at least one user.");
                 return;
@@ -561,7 +566,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
 
             connectionManager.isOnPrem = true;
-            //MessageBox.Show($@"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
             log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
