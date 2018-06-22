@@ -89,12 +89,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         ManageUsersToDisplay("destination");
 
-                        comboBoxWhatUsersToDisplay.Enabled = true;
-                        comboBoxWhatUsersToDisplayDestination.Enabled = true;
-                        buttonLoadUserViews.Enabled = true;
-                        buttonCopySelectedViews.Enabled = true;
-                        buttonMigrateSelectedViews.Enabled = true;
-                        buttonDeleteSelectedViews.Enabled = true;
+                        ManageDisplayOfFormComponents(true);
 
                         this.log.LogData(EventType.Event, LogAction.UsersLoaded);
 
@@ -104,6 +99,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
+        }
+
+
+        private void ManageDisplayOfFormComponents(bool enable)
+        {
+            comboBoxWhatUsersToDisplay.Enabled = enable;
+            comboBoxWhatUsersToDisplayDestination.Enabled = enable;
+            buttonLoadUserViews.Enabled = enable;
+            buttonCopySelectedViews.Enabled = enable;
+            buttonMigrateSelectedViews.Enabled = enable;
+            buttonDeleteSelectedViews.Enabled = enable;
+            textBoxFilterUsersDestination.Enabled = enable;
+            textBoxFilterUsersDestination.Enabled = enable;
         }
         private void buttonCopySelectedViews_Click(object sender, System.EventArgs evt)
         {
@@ -474,20 +482,24 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void comboBoxWhatUsersToDisplay_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listViewUsers.Items.Clear();
             ManageUsersToDisplay();
             listViewUsers.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
         private void comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged(object sender, EventArgs e)
         {
-            listViewUsersDestination.Items.Clear();
             ManageUsersToDisplay("destination");
             listViewUsersDestination.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
-        private List<Entity> ManageUsersToDisplay(string type = "source")
+        private List<Entity> ManageUsersToDisplay(string type = "source", string filter = null)
         {
+            // cleaning the list first
+            if(type == "source")
+                listViewUsers.Items.Clear();
+            else 
+                listViewUsersDestination.Items.Clear();
+
             // avoid exception on first load
             if (listOfUsers == null)
                 return null;
@@ -505,6 +517,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             else if (comboxBoxValue == "Disabled")
                 usersToKeep = listOfUsers.Where(x => (bool)x.Attributes["isdisabled"] == true).ToList();
 
+            if(!string.IsNullOrEmpty(filter))
+                usersToKeep = usersToKeep.Where(x => x.Attributes["domainname"].ToString().ToLower().Contains(filter) || x.Attributes["lastname"].ToString().ToLower().Contains(filter) || x.Attributes["firstname"].ToString().ToLower().Contains(filter)).ToList();
 
             foreach (Entity user in usersToKeep)
             {
@@ -526,15 +540,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private void PersonalViewsMigration_Load(object sender, EventArgs e)
         {
             comboBoxWhatUsersToDisplay.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplay.Enabled = false;
             comboBoxWhatUsersToDisplayDestination.SelectedIndex = 0;
-            comboBoxWhatUsersToDisplayDestination.Enabled = false;
-            buttonLoadUserViews.Enabled = false;
-            buttonCopySelectedViews.Enabled = false;
-            buttonMigrateSelectedViews.Enabled = false;
-            buttonDeleteSelectedViews.Enabled = false;
 
-            log = new AppCode.LogUsageManager(this);
+            ManageDisplayOfFormComponents(false);
+
+            log = new LogUsageManager(this);
             log.LogData(EventType.Event, LogAction.SettingLoaded);
             LoadSetting();
             ManageDisplayUsingSettings();
@@ -676,7 +686,16 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             var filter = textBoxFilterUsersDestination.Text;
 
+            if (filter.Length > 2)
+                ManageUsersToDisplay("destination", filter.ToLower());
+        }
 
+        private void textBoxFilterUsers_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterUsers.Text;
+
+            if(filter.Length > 2)
+                ManageUsersToDisplay("source", filter.ToLower());
         }
     }
 }

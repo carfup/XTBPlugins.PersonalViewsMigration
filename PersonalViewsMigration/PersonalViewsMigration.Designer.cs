@@ -37,6 +37,8 @@
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.textBoxFilterUsersDestination = new System.Windows.Forms.TextBox();
             this.comboBoxWhatUsersToDisplayDestination = new System.Windows.Forms.ComboBox();
             this.listViewUsersDestination = new System.Windows.Forms.ListView();
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -48,7 +50,10 @@
             this.listViewUserViewsList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.textBoxFilterUsers = new System.Windows.Forms.TextBox();
             this.comboBoxWhatUsersToDisplay = new System.Windows.Forms.ComboBox();
             this.buttonLoadUsers = new System.Windows.Forms.Button();
             this.listViewUsers = new System.Windows.Forms.ListView();
@@ -62,12 +67,13 @@
             this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -149,7 +155,7 @@
             this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox4.Controls.Add(this.comboBoxWhatUsersToDisplayDestination);
+            this.groupBox4.Controls.Add(this.tableLayoutPanel2);
             this.groupBox4.Controls.Add(this.listViewUsersDestination);
             this.groupBox4.Location = new System.Drawing.Point(719, 3);
             this.groupBox4.Name = "groupBox4";
@@ -158,19 +164,47 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "User List Destination";
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.textBoxFilterUsersDestination, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.comboBoxWhatUsersToDisplayDestination, 0, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(8, 19);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(289, 29);
+            this.tableLayoutPanel2.TabIndex = 9;
+            // 
+            // textBoxFilterUsersDestination
+            // 
+            this.textBoxFilterUsersDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFilterUsersDestination.Location = new System.Drawing.Point(147, 3);
+            this.textBoxFilterUsersDestination.Name = "textBoxFilterUsersDestination";
+            this.textBoxFilterUsersDestination.Size = new System.Drawing.Size(139, 20);
+            this.textBoxFilterUsersDestination.TabIndex = 9;
+            this.textBoxFilterUsersDestination.TextChanged += new System.EventHandler(this.textBoxFilterUsersDestination_TextChanged);
+            // 
             // comboBoxWhatUsersToDisplayDestination
             // 
-            this.comboBoxWhatUsersToDisplayDestination.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.comboBoxWhatUsersToDisplayDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxWhatUsersToDisplayDestination.FormattingEnabled = true;
             this.comboBoxWhatUsersToDisplayDestination.Items.AddRange(new object[] {
             "All",
             "Enabled",
             "Disabled"});
-            this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(6, 19);
+            this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(3, 3);
             this.comboBoxWhatUsersToDisplayDestination.Name = "comboBoxWhatUsersToDisplayDestination";
-            this.comboBoxWhatUsersToDisplayDestination.Size = new System.Drawing.Size(291, 21);
-            this.comboBoxWhatUsersToDisplayDestination.TabIndex = 7;
+            this.comboBoxWhatUsersToDisplayDestination.Size = new System.Drawing.Size(138, 21);
+            this.comboBoxWhatUsersToDisplayDestination.TabIndex = 8;
             this.comboBoxWhatUsersToDisplayDestination.SelectedIndexChanged += new System.EventHandler(this.comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged);
             // 
             // listViewUsersDestination
@@ -266,13 +300,16 @@
             this.columnHeader2.Text = "Entity";
             this.columnHeader2.Width = 93;
             // 
+            // columnHeader10
+            // 
+            this.columnHeader10.Text = "CreatedOn";
+            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.comboBoxWhatUsersToDisplay);
-            this.groupBox1.Controls.Add(this.buttonLoadUsers);
+            this.groupBox1.Controls.Add(this.tableLayoutPanel3);
             this.groupBox1.Controls.Add(this.listViewUsers);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
@@ -280,6 +317,35 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "User List";
+            // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel3.Controls.Add(this.textBoxFilterUsers, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.comboBoxWhatUsersToDisplay, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.buttonLoadUsers, 0, 0);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(6, 16);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(290, 32);
+            this.tableLayoutPanel3.TabIndex = 7;
+            // 
+            // textBoxFilterUsers
+            // 
+            this.textBoxFilterUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxFilterUsers.Location = new System.Drawing.Point(177, 3);
+            this.textBoxFilterUsers.Name = "textBoxFilterUsers";
+            this.textBoxFilterUsers.Size = new System.Drawing.Size(110, 20);
+            this.textBoxFilterUsers.TabIndex = 10;
+            this.textBoxFilterUsers.TextChanged += new System.EventHandler(this.textBoxFilterUsers_TextChanged);
             // 
             // comboBoxWhatUsersToDisplay
             // 
@@ -290,18 +356,20 @@
             "All",
             "Enabled",
             "Disabled"});
-            this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(154, 19);
+            this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(90, 3);
             this.comboBoxWhatUsersToDisplay.Name = "comboBoxWhatUsersToDisplay";
-            this.comboBoxWhatUsersToDisplay.Size = new System.Drawing.Size(142, 21);
-            this.comboBoxWhatUsersToDisplay.TabIndex = 6;
+            this.comboBoxWhatUsersToDisplay.Size = new System.Drawing.Size(81, 21);
+            this.comboBoxWhatUsersToDisplay.TabIndex = 8;
             this.comboBoxWhatUsersToDisplay.SelectedIndexChanged += new System.EventHandler(this.comboBoxWhatUsersToDisplay_SelectedIndexChanged);
             // 
             // buttonLoadUsers
             // 
-            this.buttonLoadUsers.Location = new System.Drawing.Point(6, 19);
+            this.buttonLoadUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonLoadUsers.Location = new System.Drawing.Point(3, 3);
             this.buttonLoadUsers.Name = "buttonLoadUsers";
-            this.buttonLoadUsers.Size = new System.Drawing.Size(142, 23);
-            this.buttonLoadUsers.TabIndex = 5;
+            this.buttonLoadUsers.Size = new System.Drawing.Size(81, 23);
+            this.buttonLoadUsers.TabIndex = 6;
             this.buttonLoadUsers.Text = "Load users";
             this.buttonLoadUsers.UseVisualStyleBackColor = true;
             this.buttonLoadUsers.Click += new System.EventHandler(this.buttonLoadUsers_Click);
@@ -415,10 +483,6 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
-            // columnHeader10
-            // 
-            this.columnHeader10.Text = "CreatedOn";
-            // 
             // PersonalViewsMigration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -434,8 +498,12 @@
             this.toolStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -464,9 +532,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ColumnHeader State;
-        private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplay;
-        private System.Windows.Forms.Button buttonLoadUsers;
-        private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplayDestination;
         private System.Windows.Forms.Label labelDisclaimer;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
@@ -478,5 +543,12 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ColumnHeader columnHeader10;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TextBox textBoxFilterUsersDestination;
+        private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplayDestination;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TextBox textBoxFilterUsers;
+        private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplay;
+        private System.Windows.Forms.Button buttonLoadUsers;
     }
 }
