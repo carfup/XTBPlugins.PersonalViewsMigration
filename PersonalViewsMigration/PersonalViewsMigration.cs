@@ -563,10 +563,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             LoadSetting();
             ManageDisplayUsingSettings();
 
-            // creating the controller
-            connectionManager = new ControllerManager(Service);
+            //// creating the controller
+            //connectionManager = new ControllerManager(Service);
 
-            IsOnlineOrg();
+            //IsOnlineOrg();
         }
 
         private void IsOnlineOrg()
