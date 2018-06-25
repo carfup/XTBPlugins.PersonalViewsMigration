@@ -104,6 +104,22 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
+        public bool UserHasAnyRole(Guid userId)
+        {
+            var retrieveRoles = connection.service.RetrieveMultiple(new QueryExpression("systemuserroles")
+            {
+                ColumnSet = new ColumnSet(false),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("systemuserid", ConditionOperator.Equal, userId)
+                    }
+                }
+            }).Entities.ToList();
+
+            return retrieveRoles.Any();
+        }
 
         public bool CheckIfNonInteractiveSeatAvailable()
         {
