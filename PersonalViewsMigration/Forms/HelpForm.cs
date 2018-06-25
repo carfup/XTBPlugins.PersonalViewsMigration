@@ -11,10 +11,10 @@ using Carfup.XTBPlugins.AppCode;
 
 namespace Carfup.XTBPlugins.Forms
 {
-    public partial class Help : Form
+    public partial class HelpForm : Form
     {
         private PersonalViewsMigration.PersonalViewsMigration pvm;
-        public Help(PersonalViewsMigration.PersonalViewsMigration pvm)
+        public HelpForm(PersonalViewsMigration.PersonalViewsMigration pvm)
         {
             InitializeComponent();
             this.pvm = pvm;

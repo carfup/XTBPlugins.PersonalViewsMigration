@@ -35,6 +35,8 @@
             this.toolStripButtonLoadUsers = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonHelp = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -67,8 +69,6 @@
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -88,7 +88,7 @@
             this.toolStripSeparator2,
             this.toolStripButtonOptions,
             this.toolStripSeparator3,
-            this.toolStripButton1});
+            this.toolStripButtonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1042, 25);
@@ -132,6 +132,20 @@
             this.toolStripButtonOptions.Size = new System.Drawing.Size(69, 22);
             this.toolStripButtonOptions.Text = "Options";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonHelp
+            // 
+            this.toolStripButtonHelp.Image = global::Carfup.XTBPlugins.Properties.Resources.help;
+            this.toolStripButtonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonHelp.Name = "toolStripButtonHelp";
+            this.toolStripButtonHelp.Size = new System.Drawing.Size(52, 22);
+            this.toolStripButtonHelp.Text = "Help";
+            this.toolStripButtonHelp.Click += new System.EventHandler(this.toolStripButtonHelp_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -491,19 +505,6 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.Image = global::Carfup.XTBPlugins.Properties.Resources.help;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(52, 22);
-            this.toolStripButton1.Text = "Help";
-            // 
             // PersonalViewsMigration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -572,6 +573,6 @@
         private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplay;
         private System.Windows.Forms.Button buttonLoadUsers;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonHelp;
     }
 }

@@ -729,5 +729,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (textBoxFilterUsersDestination.Text == "Search in results ...")
                 textBoxFilterUsersDestination.Text = "";
         }
+
+        private void toolStripButtonHelp_Click(object sender, EventArgs e)
+        {
+            var helpDlg = new HelpForm(this);
+            helpDlg.ShowDialog(this);
+        }
     }
 }

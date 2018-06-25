@@ -1,6 +1,6 @@
 ﻿namespace Carfup.XTBPlugins.Forms
 {
-    partial class Help
+    partial class HelpForm
     {
         /// <summary>
         /// Required designer variable.
@@ -36,7 +36,7 @@
             // buttonCloseHelp
             // 
             this.buttonCloseHelp.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCloseHelp.Location = new System.Drawing.Point(835, 478);
+            this.buttonCloseHelp.Location = new System.Drawing.Point(917, 506);
             this.buttonCloseHelp.Name = "buttonCloseHelp";
             this.buttonCloseHelp.Size = new System.Drawing.Size(75, 23);
             this.buttonCloseHelp.TabIndex = 2;
@@ -52,21 +52,21 @@
             this.pictureBoxHelp.Image = global::Carfup.XTBPlugins.Properties.Resources.helpscreenshot;
             this.pictureBoxHelp.Location = new System.Drawing.Point(12, 12);
             this.pictureBoxHelp.Name = "pictureBoxHelp";
-            this.pictureBoxHelp.Size = new System.Drawing.Size(898, 460);
+            this.pictureBoxHelp.Size = new System.Drawing.Size(980, 488);
             this.pictureBoxHelp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxHelp.TabIndex = 4;
             this.pictureBoxHelp.TabStop = false;
             // 
-            // Help
+            // HelpForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(922, 503);
+            this.ClientSize = new System.Drawing.Size(1004, 541);
             this.Controls.Add(this.pictureBoxHelp);
             this.Controls.Add(this.buttonCloseHelp);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "Help";
+            this.Name = "HelpForm";
             this.ShowIcon = false;
             this.Text = "HelpForm";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHelp)).EndInit();
