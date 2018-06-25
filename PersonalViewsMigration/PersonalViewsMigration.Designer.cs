@@ -35,6 +35,8 @@
             this.toolStripButtonLoadUsers = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonHelp = new System.Windows.Forms.ToolStripButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -51,6 +53,10 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader10 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
+            this.buttonMigrateSelectedViews = new System.Windows.Forms.Button();
+            this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxFilterUsers = new System.Windows.Forms.TextBox();
@@ -61,10 +67,6 @@
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
-            this.buttonMigrateSelectedViews = new System.Windows.Forms.Button();
-            this.buttonCopySelectedViews = new System.Windows.Forms.Button();
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
@@ -72,9 +74,9 @@
             this.groupBox4.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -84,7 +86,9 @@
             this.toolStripSeparator1,
             this.toolStripButtonLoadUsers,
             this.toolStripSeparator2,
-            this.toolStripButtonOptions});
+            this.toolStripButtonOptions,
+            this.toolStripSeparator3,
+            this.toolStripButtonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1042, 25);
@@ -129,6 +133,20 @@
             this.toolStripButtonOptions.Text = "Options";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonHelp
+            // 
+            this.toolStripButtonHelp.Image = global::Carfup.XTBPlugins.Properties.Resources.help;
+            this.toolStripButtonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonHelp.Name = "toolStripButtonHelp";
+            this.toolStripButtonHelp.Size = new System.Drawing.Size(52, 22);
+            this.toolStripButtonHelp.Text = "Help";
+            this.toolStripButtonHelp.Click += new System.EventHandler(this.toolStripButtonHelp_Click);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -141,8 +159,8 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox4, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(8, 64);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
@@ -189,6 +207,8 @@
             this.textBoxFilterUsersDestination.Name = "textBoxFilterUsersDestination";
             this.textBoxFilterUsersDestination.Size = new System.Drawing.Size(139, 20);
             this.textBoxFilterUsersDestination.TabIndex = 9;
+            this.textBoxFilterUsersDestination.Text = "Search in results ...";
+            this.textBoxFilterUsersDestination.Click += new System.EventHandler(this.textBoxFilterUsersDestination_Click);
             this.textBoxFilterUsersDestination.TextChanged += new System.EventHandler(this.textBoxFilterUsersDestination_TextChanged);
             // 
             // comboBoxWhatUsersToDisplayDestination
@@ -304,6 +324,50 @@
             // 
             this.columnHeader10.Text = "CreatedOn";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
+            this.groupBox3.Controls.Add(this.buttonMigrateSelectedViews);
+            this.groupBox3.Controls.Add(this.buttonCopySelectedViews);
+            this.groupBox3.Location = new System.Drawing.Point(619, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(94, 419);
+            this.groupBox3.TabIndex = 3;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Actions";
+            // 
+            // buttonDeleteSelectedViews
+            // 
+            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
+            this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
+            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonDeleteSelectedViews.TabIndex = 4;
+            this.buttonDeleteSelectedViews.Text = "Delete";
+            this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
+            this.buttonDeleteSelectedViews.Click += new System.EventHandler(this.buttonDeleteSelectedViews_Click);
+            // 
+            // buttonMigrateSelectedViews
+            // 
+            this.buttonMigrateSelectedViews.Location = new System.Drawing.Point(13, 52);
+            this.buttonMigrateSelectedViews.Name = "buttonMigrateSelectedViews";
+            this.buttonMigrateSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonMigrateSelectedViews.TabIndex = 3;
+            this.buttonMigrateSelectedViews.Text = "Assign";
+            this.buttonMigrateSelectedViews.UseVisualStyleBackColor = true;
+            this.buttonMigrateSelectedViews.Click += new System.EventHandler(this.buttonMigrateSelectedViews_Click);
+            // 
+            // buttonCopySelectedViews
+            // 
+            this.buttonCopySelectedViews.Location = new System.Drawing.Point(13, 23);
+            this.buttonCopySelectedViews.Name = "buttonCopySelectedViews";
+            this.buttonCopySelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonCopySelectedViews.TabIndex = 2;
+            this.buttonCopySelectedViews.Text = "Copy";
+            this.buttonCopySelectedViews.UseVisualStyleBackColor = true;
+            this.buttonCopySelectedViews.Click += new System.EventHandler(this.buttonCopySelectedViews_Click);
+            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -345,6 +409,8 @@
             this.textBoxFilterUsers.Name = "textBoxFilterUsers";
             this.textBoxFilterUsers.Size = new System.Drawing.Size(110, 20);
             this.textBoxFilterUsers.TabIndex = 10;
+            this.textBoxFilterUsers.Text = "Search in results ...";
+            this.textBoxFilterUsers.Click += new System.EventHandler(this.textBoxFilterUsers_Click);
             this.textBoxFilterUsers.TextChanged += new System.EventHandler(this.textBoxFilterUsers_TextChanged);
             // 
             // comboBoxWhatUsersToDisplay
@@ -415,50 +481,6 @@
             // 
             this.State.Text = "State";
             // 
-            // groupBox3
-            // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
-            this.groupBox3.Controls.Add(this.buttonMigrateSelectedViews);
-            this.groupBox3.Controls.Add(this.buttonCopySelectedViews);
-            this.groupBox3.Location = new System.Drawing.Point(619, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(94, 419);
-            this.groupBox3.TabIndex = 3;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Actions";
-            // 
-            // buttonDeleteSelectedViews
-            // 
-            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
-            this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
-            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
-            this.buttonDeleteSelectedViews.TabIndex = 4;
-            this.buttonDeleteSelectedViews.Text = "Delete";
-            this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
-            this.buttonDeleteSelectedViews.Click += new System.EventHandler(this.buttonDeleteSelectedViews_Click);
-            // 
-            // buttonMigrateSelectedViews
-            // 
-            this.buttonMigrateSelectedViews.Location = new System.Drawing.Point(13, 52);
-            this.buttonMigrateSelectedViews.Name = "buttonMigrateSelectedViews";
-            this.buttonMigrateSelectedViews.Size = new System.Drawing.Size(71, 23);
-            this.buttonMigrateSelectedViews.TabIndex = 3;
-            this.buttonMigrateSelectedViews.Text = "ReAssign";
-            this.buttonMigrateSelectedViews.UseVisualStyleBackColor = true;
-            this.buttonMigrateSelectedViews.Click += new System.EventHandler(this.buttonMigrateSelectedViews_Click);
-            // 
-            // buttonCopySelectedViews
-            // 
-            this.buttonCopySelectedViews.Location = new System.Drawing.Point(13, 23);
-            this.buttonCopySelectedViews.Name = "buttonCopySelectedViews";
-            this.buttonCopySelectedViews.Size = new System.Drawing.Size(71, 23);
-            this.buttonCopySelectedViews.TabIndex = 2;
-            this.buttonCopySelectedViews.Text = "Copy";
-            this.buttonCopySelectedViews.UseVisualStyleBackColor = true;
-            this.buttonCopySelectedViews.Click += new System.EventHandler(this.buttonCopySelectedViews_Click);
-            // 
             // labelDisclaimer
             // 
             this.labelDisclaimer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -501,10 +523,10 @@
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -550,5 +572,7 @@
         private System.Windows.Forms.TextBox textBoxFilterUsers;
         private System.Windows.Forms.ComboBox comboBoxWhatUsersToDisplay;
         private System.Windows.Forms.Button buttonLoadUsers;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripButton toolStripButtonHelp;
     }
 }

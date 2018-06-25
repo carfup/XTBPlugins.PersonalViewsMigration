@@ -57,7 +57,8 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                    new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                        new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                        new ConditionExpression("querytype", ConditionOperator.NotIn, new int[] {16,512}), // 16 = OfflineFilters, 512 = AddressBookFilters
                     }
                 }
             }).Entities.ToList();

@@ -104,6 +104,23 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
+
+        public bool CheckIfNonInteractiveSeatAvailable()
+        {
+            var nonInteractiveCount = connection.service.RetrieveMultiple(new QueryExpression("systemuser")
+            {
+                ColumnSet = new ColumnSet(false),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("accessmode", ConditionOperator.Equal, 4)                        
+                    }
+                }
+            }).Entities.Count;
+
+            return nonInteractiveCount < 5;
+        }
         #endregion Methods
     }
 }

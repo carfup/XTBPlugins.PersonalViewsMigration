@@ -19,6 +19,7 @@ using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
 using System.Diagnostics;
 using Carfup.XTBPlugins.Forms;
+using McTools.Xrm.Connection;
 
 namespace Carfup.XTBPlugins.PersonalViewsMigration
 {
@@ -29,7 +30,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private List<Entity> listOfUserViews = null;
         public ControllerManager connectionManager = null;
         internal PluginSettings settings = new PluginSettings();
-        LogUsageManager log = null;
+        public LogUsageManager log = null;
         private int currentColumnOrder;
 
         public string RepositoryName => "XTBPlugins.PersonalViewsMigration";
@@ -39,6 +40,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public PersonalViewsMigration()
         {
             InitializeComponent();
+        }
+
+        public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
+        {
+            connectionManager = new ControllerManager(newService);
+            IsOnlineOrg();
+
+            base.UpdateConnection(newService, detail, actionName, parameter);
         }
 
         private void toolStripButtonCloseTool_Click(object sender, System.EventArgs e)
@@ -61,6 +70,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void LoadUsersIntoListView()
         {
+            if (!connectionManager.isOnPrem && !connectionManager.userManager.CheckIfNonInteractiveSeatAvailable())
+            {
+                MessageBox.Show("It seems that all Non Interactive seats are used.\n\nPlease free at least one to enjoy the functionalities of this plugin !", "Warning, Non Interactive seat needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Loading CRM Users...",
@@ -101,7 +115,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             });
         }
 
-
         private void ManageDisplayOfFormComponents(bool enable)
         {
             comboBoxWhatUsersToDisplay.Enabled = enable;
@@ -111,7 +124,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
-            textBoxFilterUsersDestination.Enabled = enable;
+            textBoxFilterUsers.Enabled = enable;
         }
         private void buttonCopySelectedViews_Click(object sender, System.EventArgs evt)
         {
@@ -222,7 +235,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (areYouSure == DialogResult.No)
                 return;
 
-            if (viewsGuid.Count() == 0)
+            if (!viewsGuid.Any())
             {
                 MessageBox.Show("Please select at least one view to perform the Delete action.");
                 return;
@@ -396,7 +409,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void LoadUserViews()
         {
-            if(listViewUsers.SelectedItems.Count == 0)
+            if (listViewUsers.SelectedItems.Count == 0)
             {
                 MessageBox.Show("Please select at least one user.");
                 return;
@@ -450,7 +463,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         log.LogData(EventType.Event, LogAction.UsersLoaded);
 
-                        listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        if(listOfUserViews.Any())
+                            listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -549,10 +563,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             LoadSetting();
             ManageDisplayUsingSettings();
 
-            // creating the controller
-            connectionManager = new ControllerManager(Service);
+            //// creating the controller
+            //connectionManager = new ControllerManager(Service);
 
-            IsOnlineOrg();
+            //IsOnlineOrg();
         }
 
         private void IsOnlineOrg()
@@ -560,8 +574,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (ConnectionDetail == null || ConnectionDetail.UseOnline)
                 return;
 
+            labelDisclaimer.Text =
+                "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
+
             connectionManager.isOnPrem = true;
-            //MessageBox.Show($@"It seems that you are connected to an OnPremise environment. {Environment.NewLine} Unfortunately, the plugin is working only on Online environment for now.");
             log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
@@ -686,16 +702,38 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             var filter = textBoxFilterUsersDestination.Text;
 
-            if (filter.Length > 2)
+            if (filter.Length > 1)
                 ManageUsersToDisplay("destination", filter.ToLower());
+            else if (filter == "")
+                ManageUsersToDisplay("destination");
         }
 
         private void textBoxFilterUsers_TextChanged(object sender, EventArgs e)
         {
             var filter = textBoxFilterUsers.Text;
 
-            if(filter.Length > 2)
+            if(filter.Length > 1)
                 ManageUsersToDisplay("source", filter.ToLower());
+            else if (filter == "")
+                ManageUsersToDisplay();
+        }
+
+        private void textBoxFilterUsers_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterUsers.Text == "Search in results ...")
+                textBoxFilterUsers.Text = "";
+        }
+
+        private void textBoxFilterUsersDestination_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterUsersDestination.Text == "Search in results ...")
+                textBoxFilterUsersDestination.Text = "";
+        }
+
+        private void toolStripButtonHelp_Click(object sender, EventArgs e)
+        {
+            var helpDlg = new HelpForm(this);
+            helpDlg.ShowDialog(this);
         }
     }
 }
