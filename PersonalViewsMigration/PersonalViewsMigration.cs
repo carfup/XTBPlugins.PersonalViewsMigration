@@ -30,7 +30,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private List<Entity> listOfUserViews = null;
         public ControllerManager connectionManager = null;
         internal PluginSettings settings = new PluginSettings();
-        LogUsageManager log = null;
+        public LogUsageManager log = null;
         private int currentColumnOrder;
 
         public string RepositoryName => "XTBPlugins.PersonalViewsMigration";
@@ -114,7 +114,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
         }
-
 
         private void ManageDisplayOfFormComponents(bool enable)
         {
