@@ -233,12 +233,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     }
                     else
                     {
-                        if (success)
-                        {
-                            log.LogData(EventType.Event, LogAction.ViewsCopied);
-                            MessageBox.Show("View(s) are Copied !");
-                        }
-                        
+                        if (!success) return;
+
+                        log.LogData(EventType.Event, LogAction.ViewsCopied);
+                        MessageBox.Show("View(s) are Copied !");
+
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -365,14 +364,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         foreach (ListViewItem itemUser in usersGuid)
                         {
-
-                            bool isUserModified = false;
-                            this.connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
-                            this.connectionManager.userDestination = connectionManager.userFrom.Value;
+                            connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
+                            connectionManager.userDestination = connectionManager.userFrom.Value;
 
                             // Check if we need to switch to NonInteractive mode
                             bw.ReportProgress(0, "Checking destination user accessibility...");
-                            isUserModified = connectionManager.userManager.ManageImpersonification();
+                            bool isUserModified = connectionManager.userManager.ManageImpersonification();
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
@@ -397,7 +394,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
+                        log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -408,7 +405,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.Items.Remove(view);
                         }
 
-                        this.log.LogData(EventType.Event, LogAction.ViewsReAssigned);
+                        log.LogData(EventType.Event, LogAction.ViewsReAssigned);
                         MessageBox.Show("View(s) are reassigned !");
                     }
                 },
@@ -666,12 +663,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (settings.AllowLogUsage == true)
                     {
-                        this.log.updateForceLog();
+                        this.log.UpdateForceLog();
                         this.log.LogData(EventType.Event, LogAction.StatsAccepted);
                     }
                     else if (!settings.AllowLogUsage == true)
                     {
-                        this.log.updateForceLog();
+                        this.log.UpdateForceLog();
                         this.log.LogData(EventType.Event, LogAction.StatsDenied);
                     }
                 }
