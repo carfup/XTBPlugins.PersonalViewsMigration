@@ -142,6 +142,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
             }
 
+            bool success = true;
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = "Copying the user view(s) ...",
@@ -182,8 +184,21 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     bw.ReportProgress(0, "Migrating user views...");
                     foreach (ListViewItem itemUser in usersGuid)
                     {
-                        connectionManager.UpdateCallerId((Guid)itemUser.Tag);
-                        connectionManager.userDestination = (Guid)itemUser.Tag;
+                        var userId = (Guid) itemUser.Tag;
+
+                        if (!connectionManager.userManager.UserHasAnyRole(userId))
+                        {
+                            if (usersGuid.Length == 1)
+                            {
+                                MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                success = false;
+                            }
+
+                            continue;
+                        }
+
+                        connectionManager.UpdateCallerId(userId);
+                        connectionManager.userDestination = userId;
                         
                         // Check if we need to switch to NonInteractive mode
                         bw.ReportProgress(0, "Checking destination user accessibility...");
@@ -218,8 +233,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     }
                     else
                     {
-                        this.log.LogData(EventType.Event, LogAction.ViewsCopied);
+                        if (!success) return;
+
+                        log.LogData(EventType.Event, LogAction.ViewsCopied);
                         MessageBox.Show("View(s) are Copied !");
+
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -346,14 +364,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         foreach (ListViewItem itemUser in usersGuid)
                         {
-
-                            bool isUserModified = false;
-                            this.connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
-                            this.connectionManager.userDestination = connectionManager.userFrom.Value;
+                            connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
+                            connectionManager.userDestination = connectionManager.userFrom.Value;
 
                             // Check if we need to switch to NonInteractive mode
                             bw.ReportProgress(0, "Checking destination user accessibility...");
-                            isUserModified = connectionManager.userManager.ManageImpersonification();
+                            bool isUserModified = connectionManager.userManager.ManageImpersonification();
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
@@ -378,7 +394,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
+                        log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -389,7 +405,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.Items.Remove(view);
                         }
 
-                        this.log.LogData(EventType.Event, LogAction.ViewsReAssigned);
+                        log.LogData(EventType.Event, LogAction.ViewsReAssigned);
                         MessageBox.Show("View(s) are reassigned !");
                     }
                 },
@@ -426,7 +442,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     bw.ReportProgress(0, "Checking user accessibility...");
                     var isUserModified = connectionManager.userManager.ManageImpersonification();
-                    
+
+                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    {
+                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                       
 
                     bw.ReportProgress(0, "Retrieving user's view(s)...");
                     listOfUserViews = connectionManager.viewManager.ListOfUserViews(connectionManager.userDestination.Value);
@@ -641,12 +663,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (settings.AllowLogUsage == true)
                     {
-                        this.log.updateForceLog();
+                        this.log.UpdateForceLog();
                         this.log.LogData(EventType.Event, LogAction.StatsAccepted);
                     }
                     else if (!settings.AllowLogUsage == true)
                     {
-                        this.log.updateForceLog();
+                        this.log.UpdateForceLog();
                         this.log.LogData(EventType.Event, LogAction.StatsDenied);
                     }
                 }

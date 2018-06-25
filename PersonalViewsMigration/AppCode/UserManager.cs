@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace Carfup.XTBPlugins.AppCode
@@ -63,7 +60,7 @@ namespace Carfup.XTBPlugins.AppCode
             bool ismodified = false;
 
             // We put back the admin user to be sure that he has permission to perform the following actions
-            this.connection.UpdateCallerId(this.connection.XTBUser.Value);
+            connection.UpdateCallerId(connection.XTBUser.Value);
 
             // By default i set it to the user
             Entity user = this.connection.service.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
@@ -79,7 +76,7 @@ namespace Carfup.XTBPlugins.AppCode
             {
                 user["accessmode"] = new OptionSetValue(accessmode);
 
-                this.connection.service.Update(user);
+                connection.service.Update(user);
                 Trace.TraceInformation($"updated User : {user["fullname"]} to accessmode : {accessmode}");
                 ismodified = true;
             }
@@ -104,6 +101,22 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
+        public bool UserHasAnyRole(Guid userId)
+        {
+            var retrieveRoles = connection.service.RetrieveMultiple(new QueryExpression("systemuserroles")
+            {
+                ColumnSet = new ColumnSet(false),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("systemuserid", ConditionOperator.Equal, userId)
+                    }
+                }
+            }).Entities.ToList();
+
+            return retrieveRoles.Any();
+        }
 
         public bool CheckIfNonInteractiveSeatAvailable()
         {
