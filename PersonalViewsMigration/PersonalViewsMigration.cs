@@ -45,7 +45,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
         {
             connectionManager = new ControllerManager(newService);
-            IsOnlineOrg();
+            IsOnlineOrg(detail);
 
             base.UpdateConnection(newService, detail, actionName, parameter);
         }
@@ -125,6 +125,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
+
+            // if onprem , we force the list to enabled only
+            if (connectionManager.isOnPrem)
+            {
+
+                comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
+                comboBoxWhatUsersToDisplayDestination.Enabled = false;
+            }
         }
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
@@ -186,6 +194,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         var userId = (Guid) itemUser.Tag;
 
+                        connectionManager.UpdateCallerId(userId);
+                        connectionManager.userDestination = userId;
+
+                        // Check if we need to switch to NonInteractive mode
+                        bw.ReportProgress(0, "Checking destination user accessibility...");
+                        var isUserModified = connectionManager.userManager.ManageImpersonification();
+
+                        // check if user has any roles assigned
                         if (!connectionManager.userManager.UserHasAnyRole(userId))
                         {
                             if (usersGuid.Length == 1)
@@ -197,15 +213,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             continue;
                         }
 
-                        connectionManager.UpdateCallerId(userId);
-                        connectionManager.userDestination = userId;
-                        
-                        // Check if we need to switch to NonInteractive mode
-                        bw.ReportProgress(0, "Checking destination user accessibility...");
-                        var isUserModified = connectionManager.userManager.ManageImpersonification();
-                        
-
-                        //proxy.CallerId = (Guid)itemUser.Tag;
                         bw.ReportProgress(0, "Copying the view(s)...");
                         ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
 
@@ -444,10 +451,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     var isUserModified = connectionManager.userManager.ManageImpersonification();
 
                     if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
-                    {
-                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
-                    }
                        
 
                     bw.ReportProgress(0, "Retrieving user's view(s)...");
@@ -487,7 +491,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
 
-                    if(listOfUserViews != null && !listOfUserViews.Any())
+                    // if user has no role, message and skip next check
+                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    {
+                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (listOfUserViews != null && !listOfUserViews.Any())
                         MessageBox.Show("This user has no personal views associated to his account.", "No views available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     log.LogData(EventType.Event, LogAction.UserViewsLoaded);
@@ -588,22 +599,32 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             LoadSetting();
             ManageDisplayUsingSettings();
 
-            //// creating the controller
-            //connectionManager = new ControllerManager(Service);
+            if (Service != null)
+            {
+                // creating the controller
+                connectionManager = new ControllerManager(Service);
 
-            //IsOnlineOrg();
+                IsOnlineOrg(ConnectionDetail);
+            }
+
+            if(connectionManager.isOnPrem)
+                log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
-        private void IsOnlineOrg()
+        private void IsOnlineOrg(ConnectionDetail cd)
         {
-            if (ConnectionDetail == null || ConnectionDetail.UseOnline)
+            if (cd == null || cd.UseOnline)
                 return;
 
+            // changing the disclaimer message if OnPrem instance
             labelDisclaimer.Text =
                 "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
 
             connectionManager.isOnPrem = true;
-            log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
+
+            // if onprem , we force the list to enabled only
+            comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
+            comboBoxWhatUsersToDisplayDestination.Enabled = false;
         }
 
         public void SaveSettings(bool closeApp = false)
