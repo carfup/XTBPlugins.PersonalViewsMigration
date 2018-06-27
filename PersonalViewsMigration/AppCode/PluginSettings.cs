@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Carfup.XTBPlugins.AppCode
 {
@@ -13,6 +14,7 @@ namespace Carfup.XTBPlugins.AppCode
         public bool UsersDisplayAll { get; set; } = true;
         public bool UsersDisplayEnabled { get; set; } = true;
         public bool UsersDisplayDisabled { get; set; } = true;
+        public SortOrder? SortOrderPref { get; set; } = SortOrder.Ascending;
     }
 
     // EventType to qualify which type of telemetry we send
@@ -38,15 +40,12 @@ namespace Carfup.XTBPlugins.AppCode
         public const string SettingsSaved = "SettingsSaved";
         public const string SettingsSavedWhenClosing = "SettingsSavedWhenClosing";
         public const string SettingLoaded = "SettingLoaded";
-        public const string SolutionsCompared = "SolutionsCompared";
-        public const string CRMAssembliesLoaded = "CRMAssembliesLoaded";
-        public const string AssemblyLoaded = "AssemblyLoaded";
-        public const string PluginsLoaded = "PluginsLoaded";
-        public const string PluginsCompared = "PluginsCompared";
         public const string EnvironmentOnPremise = "EnvironmentOnPremise";
         public const string UsersLoaded = "UsersLoaded";
+        public const string UserViewsLoaded = "UserViewsLoaded";
         public const string ViewsCopied = "ViewsCopied";
         public const string ViewsDeleted = "ViewsDeleted";
         public const string ViewsReAssigned = "ViewsReAssigned";
+        public const string ShowHelpScreen = "ShowHelpScreen";
     }
 }

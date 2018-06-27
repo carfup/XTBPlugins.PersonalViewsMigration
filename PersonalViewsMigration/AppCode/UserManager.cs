@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace Carfup.XTBPlugins.AppCode
@@ -27,9 +24,9 @@ namespace Carfup.XTBPlugins.AppCode
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the class UserManager
+        /// Initializes a new instance of the class Controller manager
         /// </summary>
-        /// <param name="proxy">Details of the connected user</param>
+        /// <param name="connection">Controller manager</param>
         public UserManager(ControllerManager connection)
         {
             this.connection = connection;
@@ -40,70 +37,106 @@ namespace Carfup.XTBPlugins.AppCode
         #region Methods
 
         
-        public Boolean manageImpersonification(bool action = false)
+        public Boolean ManageImpersonification(bool action = false)
         {
             bool isUserModified = action;
 
             if (isUserModified)
             {
-                this.CheckIfUserEnabled(this.connection.userDestination.Value, 0);
-                //this.connection.userDestination = this.connection.userFrom;
+                CheckIfUserEnabled(connection.userDestination.Value, 0);
             }
             else
             {
-                isUserModified = this.CheckIfUserEnabled(this.connection.userDestination.Value);
+                isUserModified = CheckIfUserEnabled(connection.userDestination.Value);
             }
 
-            this.connection.UpdateCallerId(this.connection.userDestination.Value);
+            connection.UpdateCallerId(connection.userDestination.Value);
 
             return isUserModified;
         }
 
-        public Boolean CheckIfUserEnabled(Guid userGuid, int accessmode = 4)
+        private Boolean CheckIfUserEnabled(Guid userGuid, int accessmode = 4)
         {
             bool ismodified = false;
 
             // We put back the admin user to be sure that he has permission to perform the following actions
-            this.connection.UpdateCallerId(this.connection.XTBUser.Value);
+            connection.UpdateCallerId(connection.XTBUser.Value);
 
             // By default i set it to the user
-            Entity user = this.connection.service.Retrieve("systemuser", userGuid, new Microsoft.Xrm.Sdk.Query.ColumnSet("isdisabled", "accessmode", "fullname"));
+            Entity user = this.connection.service.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
 
-            // we check if the user exist in the crm                       
-            if (user != null)
+            //if user is null or is onprem, no need to manage the non interactive mode                    
+            if (user == null || connection.isOnPrem)
+                return ismodified;
+
+            // we check if the user exist in the crm  
+            Trace.TraceInformation($"checking User : {user["fullname"]}, isdisabled : {user["isdisabled"]}, accessmode : {((OptionSetValue) user["accessmode"]).Value}");
+            // If the user is disabled or is in Non Interactive mode, we update it.
+            if (Boolean.Parse(user["isdisabled"].ToString()) || ((OptionSetValue)user["accessmode"]).Value == 4)
             {
-                Trace.TraceInformation(String.Format("checking User : {0}, isdisabled : {1}, accessmode : {2}", user["fullname"], user["isdisabled"], ((OptionSetValue)user["accessmode"]).Value));
-                // If the user is disabled or is in Non Interactive mode, we update it.
-                if (Boolean.Parse(user["isdisabled"].ToString()) || ((OptionSetValue)user["accessmode"]).Value == 4)
-                {
-                    user["accessmode"] = new OptionSetValue(accessmode);
+                user["accessmode"] = new OptionSetValue(accessmode);
 
-                    this.connection.service.Update(user);
-                    Trace.TraceInformation(String.Format("updated User : {0} to accessmode : {1}", user["fullname"], accessmode));
-                    ismodified = true;
-                }
+                connection.service.Update(user);
+                Trace.TraceInformation($"updated User : {user["fullname"]} to accessmode : {accessmode}");
+                ismodified = true;
             }
 
             return ismodified;
         }
         
-        public List<Entity> getListOfUsers()
+        public List<Entity> GetListOfUsers()
         {
-            return this.connection.service.RetrieveMultiple(new QueryExpression("systemuser")
+            return connection.service.RetrieveMultiple(new QueryExpression("systemuser")
             {
-                ColumnSet = new ColumnSet("domainname", "systemuserid", "isdisabled"),
+                ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
+                
                 Criteria = new FilterExpression
                 {
                     Conditions =
-                            {
-                                new ConditionExpression("accessmode", ConditionOperator.NotEqual, 3),
-                                new ConditionExpression("domainname", ConditionOperator.NotNull),
-                                new ConditionExpression("domainname", ConditionOperator.NotEqual, ""),
-                            }
+                    {
+                        new ConditionExpression("accessmode", ConditionOperator.NotEqual, 3),
+                        new ConditionExpression("domainname", ConditionOperator.NotNull),
+                        new ConditionExpression("domainname", ConditionOperator.NotEqual, ""),
+                        new ConditionExpression("domainname", ConditionOperator.NotIn, new string[] {"bap_sa@microsoft.com", "crmoln2@microsoft.com"}),
+                    }, 
+                    FilterOperator = LogicalOperator.And
                 }
             }).Entities.ToList();
         }
 
+        public bool UserHasAnyRole(Guid userId)
+        {
+            var retrieveRoles = connection.service.RetrieveMultiple(new QueryExpression("systemuserroles")
+            {
+                ColumnSet = new ColumnSet(false),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("systemuserid", ConditionOperator.Equal, userId)
+                    }
+                }
+            }).Entities.ToList();
+
+            return retrieveRoles.Any();
+        }
+
+        public bool CheckIfNonInteractiveSeatAvailable()
+        {
+            var nonInteractiveCount = connection.service.RetrieveMultiple(new QueryExpression("systemuser")
+            {
+                ColumnSet = new ColumnSet(false),
+                Criteria = new FilterExpression
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("accessmode", ConditionOperator.Equal, 4)                        
+                    }
+                }
+            }).Entities.Count;
+
+            return nonInteractiveCount < 5;
+        }
         #endregion Methods
     }
 }

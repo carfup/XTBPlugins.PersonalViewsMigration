@@ -27,49 +27,52 @@ namespace Carfup.XTBPlugins.AppCode
             this.telemetry = new TelemetryClient();
             this.telemetry.Context.Component.Version = PersonalViewsMigration.PersonalViewsMigration.CurrentVersion;
             this.telemetry.Context.Device.Id = this.pvm.GetType().Name;
+            this.telemetry.Context.User.Id = Guid.NewGuid().ToString();
         }
 
-        public void updateForceLog()
+        public void UpdateForceLog()
         {
-            this.forceLog = true;
+            forceLog = true;
         }
 
         public void LogData(string type, string action, Exception exception = null)
         {
-            if (this.pvm.settings.AllowLogUsage == true || this.forceLog)
+            if (pvm.settings.AllowLogUsage == true || forceLog)
             {
                 switch (type)
                 {
                     case EventType.Event:
-                        this.telemetry.TrackEvent(action, completeLog(action));
+                        telemetry.TrackEvent(action, CompleteLog(action));
                         break;
                     case EventType.Dependency:
                         //this.telemetry.TrackDependency(todo);
                         break;
                     case EventType.Exception:
-                        this.telemetry.TrackException(exception, completeLog(action));
+                        telemetry.TrackException(exception, CompleteLog(action));
                         break;
                     case EventType.Trace:
-                        this.telemetry.TrackTrace(action, completeLog(action));
+                        telemetry.TrackTrace(action, CompleteLog(action));
                         break;
                 }
             }
 
-            if (this.forceLog)
-                this.forceLog = false;
+            if (forceLog)
+                forceLog = false;
         }
 
         public void Flush()
         {
-            this.telemetry.Flush();
+            telemetry.Flush();
         }
 
 
-        public Dictionary<string, string> completeLog(string action = null)
+        public Dictionary<string, string> CompleteLog(string action = null)
         {
             Dictionary<string, string> dictionary = new Dictionary<string, string>
             {
-                { "plugin", telemetry.Context.Device.Id }
+                { "plugin", telemetry.Context.Device.Id },
+                { "xtbversion", Assembly.GetEntryAssembly().GetName().Version.ToString() },
+                { "pluginversion", PersonalViewsMigration.PersonalViewsMigration.CurrentVersion }
             };
 
             if (action != null)
@@ -84,7 +87,7 @@ namespace Carfup.XTBPlugins.AppCode
                       "You can change this setting in plugin's options anytime.\n\n" +
                       "Thanks!";
 
-            this.pvm.settings.AllowLogUsage = true;
+            pvm.settings.AllowLogUsage = true;
             MessageBox.Show(msg);
         }
     }

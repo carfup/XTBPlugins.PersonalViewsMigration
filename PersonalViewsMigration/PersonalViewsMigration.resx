@@ -122,6 +122,7 @@
   </metadata>
   <data name="labelDisclaimer.Text" xml:space="preserve">
     <value>To handle disabled user this plugin perform a change regarding the Access Mode of the systemuser and switch it to Non Interactive during the actions and then change it back to Read/Write.
-Make sure you have one Non Interactive access mode free to perform any actions (limited to 5 by default)</value>
+Make sure you have one Non Interactive access mode free to perform any actions (limited to 5 by default) and having the "prvActOnBehalfOfAnotherUser" privilege.
+</value>
   </data>
 </root>
