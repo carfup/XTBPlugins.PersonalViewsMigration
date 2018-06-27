@@ -126,7 +126,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
         }
-        private void buttonCopySelectedViews_Click(object sender, System.EventArgs evt)
+        private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
             ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
@@ -464,7 +464,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.UsersLoaded, e.Error);
+                        log.LogData(EventType.Exception, LogAction.UserViewsLoaded, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -483,11 +483,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.Items.Add(item);
                         }
 
-                        log.LogData(EventType.Event, LogAction.UsersLoaded);
-
                         if(listOfUserViews.Any())
                             listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
+
+                    if(listOfUserViews != null && !listOfUserViews.Any())
+                        MessageBox.Show("This user has no personal views associated to his account.", "No views available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    log.LogData(EventType.Event, LogAction.UserViewsLoaded);
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });

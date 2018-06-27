@@ -89,14 +89,17 @@ namespace Carfup.XTBPlugins.AppCode
             return connection.service.RetrieveMultiple(new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
+                
                 Criteria = new FilterExpression
                 {
                     Conditions =
-                            {
-                                new ConditionExpression("accessmode", ConditionOperator.NotEqual, 3),
-                                new ConditionExpression("domainname", ConditionOperator.NotNull),
-                                new ConditionExpression("domainname", ConditionOperator.NotEqual, ""),
-                            }
+                    {
+                        new ConditionExpression("accessmode", ConditionOperator.NotEqual, 3),
+                        new ConditionExpression("domainname", ConditionOperator.NotNull),
+                        new ConditionExpression("domainname", ConditionOperator.NotEqual, ""),
+                        new ConditionExpression("domainname", ConditionOperator.NotIn, new string[] {"bap_sa@microsoft.com", "crmoln2@microsoft.com"}),
+                    }, 
+                    FilterOperator = LogicalOperator.And
                 }
             }).Entities.ToList();
         }

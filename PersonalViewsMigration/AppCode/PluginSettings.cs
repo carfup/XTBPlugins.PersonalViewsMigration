@@ -42,6 +42,7 @@ namespace Carfup.XTBPlugins.AppCode
         public const string SettingLoaded = "SettingLoaded";
         public const string EnvironmentOnPremise = "EnvironmentOnPremise";
         public const string UsersLoaded = "UsersLoaded";
+        public const string UserViewsLoaded = "UserViewsLoaded";
         public const string ViewsCopied = "ViewsCopied";
         public const string ViewsDeleted = "ViewsDeleted";
         public const string ViewsReAssigned = "ViewsReAssigned";
