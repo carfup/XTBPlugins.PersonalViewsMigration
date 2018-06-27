@@ -444,10 +444,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     var isUserModified = connectionManager.userManager.ManageImpersonification();
 
                     if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
-                    {
-                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
-                    }
                        
 
                     bw.ReportProgress(0, "Retrieving user's view(s)...");
@@ -487,7 +484,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
                     }
 
-                    if(listOfUserViews != null && !listOfUserViews.Any())
+                    // if user has no role, message and skip next check
+                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    {
+                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (listOfUserViews != null && !listOfUserViews.Any())
                         MessageBox.Show("This user has no personal views associated to his account.", "No views available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     log.LogData(EventType.Event, LogAction.UserViewsLoaded);
@@ -595,6 +599,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                 IsOnlineOrg(ConnectionDetail);
             }
+
+            if(connectionManager.isOnPrem)
+                log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
         private void IsOnlineOrg(ConnectionDetail cd)
@@ -602,11 +609,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (cd == null || cd.UseOnline)
                 return;
 
+            // changing the disclaimer message if OnPrem instance
             labelDisclaimer.Text =
                 "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
 
             connectionManager.isOnPrem = true;
-            log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
         public void SaveSettings(bool closeApp = false)
