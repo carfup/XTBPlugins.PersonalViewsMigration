@@ -12,7 +12,10 @@
     <summary>Really sweet plugin that does awesome things</summary>
     <releaseNotes>
 1.2018.6.4
-
+Supporting OnPremise environments.
+Added the ability to filter (by status and name) and reorder the results.
+Various bug fixes, checks and improved code in the background.
+Introducing a help page.
 
 1.2018.2.3
 Allow the plugin to log anonymous data or not, in order to improve the most used features and develop the others.
@@ -25,7 +28,7 @@ Retrieve users from your organization, get user views and copy or reassign them 
     <copyright>Copyright 2017</copyright>
     <tags>XrmToolBox Plugin PersonalViewsMigration</tags>
     <dependencies>
-		<dependency id="XrmToolBox" version="1.2018.1.20" />
+		  <dependency id="XrmToolBox" version="1.2018.1.20" />
     </dependencies>
   </metadata>
   <files>
