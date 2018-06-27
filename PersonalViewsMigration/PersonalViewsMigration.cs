@@ -45,7 +45,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
         {
             connectionManager = new ControllerManager(newService);
-            IsOnlineOrg();
+            IsOnlineOrg(detail);
 
             base.UpdateConnection(newService, detail, actionName, parameter);
         }
@@ -588,15 +588,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             LoadSetting();
             ManageDisplayUsingSettings();
 
-            //// creating the controller
-            //connectionManager = new ControllerManager(Service);
+            if (Service != null)
+            {
+                // creating the controller
+                connectionManager = new ControllerManager(Service);
 
-            //IsOnlineOrg();
+                IsOnlineOrg(ConnectionDetail);
+            }
         }
 
-        private void IsOnlineOrg()
+        private void IsOnlineOrg(ConnectionDetail cd)
         {
-            if (ConnectionDetail == null || ConnectionDetail.UseOnline)
+            if (cd == null || cd.UseOnline)
                 return;
 
             labelDisclaimer.Text =
