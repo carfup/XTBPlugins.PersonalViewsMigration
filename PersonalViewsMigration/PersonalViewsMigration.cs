@@ -125,6 +125,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
+
+            // if onprem , we force the list to enabled only
+            if (connectionManager.isOnPrem)
+            {
+
+                comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
+                comboBoxWhatUsersToDisplayDestination.Enabled = false;
+            }
         }
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
@@ -186,6 +194,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         var userId = (Guid) itemUser.Tag;
 
+                        connectionManager.UpdateCallerId(userId);
+                        connectionManager.userDestination = userId;
+
+                        // Check if we need to switch to NonInteractive mode
+                        bw.ReportProgress(0, "Checking destination user accessibility...");
+                        var isUserModified = connectionManager.userManager.ManageImpersonification();
+
+                        // check if user has any roles assigned
                         if (!connectionManager.userManager.UserHasAnyRole(userId))
                         {
                             if (usersGuid.Length == 1)
@@ -197,15 +213,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             continue;
                         }
 
-                        connectionManager.UpdateCallerId(userId);
-                        connectionManager.userDestination = userId;
-                        
-                        // Check if we need to switch to NonInteractive mode
-                        bw.ReportProgress(0, "Checking destination user accessibility...");
-                        var isUserModified = connectionManager.userManager.ManageImpersonification();
-                        
-
-                        //proxy.CallerId = (Guid)itemUser.Tag;
                         bw.ReportProgress(0, "Copying the view(s)...");
                         ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
 
@@ -614,6 +621,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
 
             connectionManager.isOnPrem = true;
+
+            // if onprem , we force the list to enabled only
+            comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
+            comboBoxWhatUsersToDisplayDestination.Enabled = false;
         }
 
         public void SaveSettings(bool closeApp = false)
