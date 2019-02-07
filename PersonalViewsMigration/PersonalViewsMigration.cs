@@ -475,20 +475,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                     if (listOfUserViews != null)
                     {
-                        listViewUserViewsList.Items.Clear();
-
-                        foreach (Entity view in listOfUserViews)
-                        {
-                            var item = new ListViewItem(view["name"].ToString());
-                            item.SubItems.Add(view["returnedtypecode"].ToString());
-                            item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
-                            item.Tag = view.Id;
-
-                            listViewUserViewsList.Items.Add(item);
-                        }
-
-                        if(listOfUserViews.Any())
-                            listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        ManageViewsToDisplay();
                     }
 
                     // if user has no role, message and skip next check
@@ -513,10 +500,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             {
                 if (listViewUsers.SelectedItems.Count > 0)
                 {
-                    buttonLoadUserViews.Text = $"Load {listViewUsers.SelectedItems[listViewUsers.SelectedItems.Count - 1].Text}'s views";
+                  //  buttonLoadUserViews.Text = $"Load {listViewUsers.SelectedItems[listViewUsers.SelectedItems.Count - 1].Text}'s views";
                     buttonLoadUserViews.Enabled = true;
                 }
-
                 else { 
                     buttonLoadUserViews.Text = "Select an user to load its views.";
                     buttonLoadUserViews.Enabled = false;
@@ -585,6 +571,29 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
 
             return usersToKeep;
+        }
+
+        private void ManageViewsToDisplay(string filter = null)
+        {
+            listViewUserViewsList.Items.Clear();
+            var listToKeep = listOfUserViews;
+
+            if (!string.IsNullOrEmpty(filter))
+                listToKeep = listOfUserViews.Where(x => x.Attributes["name"].ToString().ToLower().Contains(filter)).ToList();
+
+
+            foreach (Entity view in listToKeep)
+            {
+                var item = new ListViewItem(view["name"].ToString());
+                item.SubItems.Add(view["returnedtypecode"].ToString());
+                item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
+                item.Tag = view.Id;
+
+                listViewUserViewsList.Items.Add(item);
+            }
+
+            if (listOfUserViews.Any())
+                listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void PersonalViewsMigration_Load(object sender, EventArgs e)
@@ -764,6 +773,16 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 ManageUsersToDisplay();
         }
 
+        private void textBoxFilterViews_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterViews.Text;
+
+            if (filter.Length > 1)
+                ManageViewsToDisplay(filter.ToLower());
+            else if (filter == "")
+                ManageViewsToDisplay();
+        }
+
         private void textBoxFilterUsers_Click(object sender, EventArgs e)
         {
             if (textBoxFilterUsers.Text == "Search in results ...")
@@ -776,10 +795,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 textBoxFilterUsersDestination.Text = "";
         }
 
+        private void textBoxFilterViews_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterViews.Text == "Search in results ...")
+                textBoxFilterViews.Text = "";
+        }
+
         private void toolStripButtonHelp_Click(object sender, EventArgs e)
         {
             var helpDlg = new HelpForm(this);
             helpDlg.ShowDialog(this);
         }
+
+        
     }
 }
