@@ -31,6 +31,13 @@ namespace Carfup.XTBPlugins.AppCode
         public static string INSIGHTS_INTRUMENTATIONKEY = "INSIGHTS_INTRUMENTATIONKEY_TOREPLACE";
     }
 
+    static class UserDataType
+    {
+        public const string Views = "views";
+        public const string Dashboards = "dashboards";
+        public const string Charts = "charts";
+    }
+
     // EventType to qualify which action was performed by the plugin
     static class LogAction
     {
@@ -43,6 +50,8 @@ namespace Carfup.XTBPlugins.AppCode
         public const string EnvironmentOnPremise = "EnvironmentOnPremise";
         public const string UsersLoaded = "UsersLoaded";
         public const string UserViewsLoaded = "UserViewsLoaded";
+        public const string UserChartsLoaded = "UserChartsLoaded";
+        public const string UserDashboardsLoaded = "UserDashboardsLoaded";
         public const string ViewsCopied = "ViewsCopied";
         public const string ViewsDeleted = "ViewsDeleted";
         public const string ViewsReAssigned = "ViewsReAssigned";

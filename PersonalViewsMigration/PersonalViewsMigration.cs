@@ -28,6 +28,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         #region varibables
         private List<Entity> listOfUsers = null;
         private List<Entity> listOfUserViews = null;
+        private List<Entity> listOfUserCharts = null;
+        private List<Entity> listOfUserDashboards = null;
         public ControllerManager connectionManager = null;
         internal PluginSettings settings = new PluginSettings();
         public LogUsageManager log = null;
@@ -120,6 +122,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             comboBoxWhatUsersToDisplay.Enabled = enable;
             comboBoxWhatUsersToDisplayDestination.Enabled = enable;
             buttonLoadUserViews.Enabled = enable;
+            buttonLoadUserDashboards.Enabled = enable;
+            buttonLoadUserCharts.Enabled = enable;
             buttonCopySelectedViews.Enabled = enable;
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
@@ -129,11 +133,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             // if onprem , we force the list to enabled only
             if (connectionManager.isOnPrem)
             {
-
                 comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
                 comboBoxWhatUsersToDisplayDestination.Enabled = false;
             }
         }
+
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
             ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
@@ -420,17 +424,32 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             });
         }
 
+        private void buttonLoadUserDashboards_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(LoadUserData, UserDataType.Dashboards);
+        }
+
+        private void buttonLoadUserCharts_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(LoadUserData, UserDataType.Charts);
+        }
+
         private void buttonLoadUserViews_Click(object sender, EventArgs evt)
         {
-            ExecuteMethod(LoadUserViews);
+            ExecuteMethod(LoadUserData, UserDataType.Views);
         }
 
         private void listViewUsers_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            ExecuteMethod(LoadUserViews);
+            // Loading views by default on doubleclick
+            ExecuteMethod(LoadUserData, UserDataType.Views);
+
+            // Clearing the charts and dashboards
+            listViewUserChartsList.Items.Clear();
+            listViewUserDashboardsList.Items.Clear();
         }
 
-        private void LoadUserViews()
+        private void LoadUserData(string type)
         {
             if (listViewUsers.SelectedItems.Count == 0)
             {
@@ -440,24 +459,51 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             this.connectionManager.userFrom = (Guid)listViewUsers.SelectedItems[0].Tag;
             this.connectionManager.userDestination = (Guid)listViewUsers.SelectedItems[0].Tag;
-            this.connectionManager.UpdateCallerId(this.connectionManager.userDestination.Value);
+            Guid userDestination = this.connectionManager.userDestination.Value;
+            this.connectionManager.UpdateCallerId(userDestination);
+
+            List<Entity> listOfUserData = null;
+            string actionToDo = null;
+            ListView listViewOfData = null;
+            string fieldToEntity = null;
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Retrieving User view(s)...",
+                Message = $"Retrieving User {type}...",
                 Work = (bw, e) =>
                 {
                     bw.ReportProgress(0, "Checking user accessibility...");
                     var isUserModified = connectionManager.userManager.ManageImpersonification();
 
-                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
                         return;
-                       
 
-                    bw.ReportProgress(0, "Retrieving user's view(s)...");
-                    listOfUserViews = connectionManager.viewManager.ListOfUserViews(connectionManager.userDestination.Value);
 
-                    if(isUserModified)
+                    bw.ReportProgress(0, $"Retrieving user's {type}...");
+
+                    switch (type)
+                    {
+                        case UserDataType.Charts:
+                            listOfUserData = connectionManager.chartManager.ListOfUserCharts(userDestination);
+                            listOfUserCharts = listOfUserData;
+                            actionToDo = LogAction.UserChartsLoaded;
+                            listViewOfData = listViewUserChartsList;
+                            break;
+                        case UserDataType.Dashboards:
+                            listOfUserData = connectionManager.dashboardManager.ListOfUserDashboards(userDestination);
+                            listOfUserDashboards = listOfUserData;
+                            actionToDo = LogAction.UserDashboardsLoaded;
+                            listViewOfData = listViewUserDashboardsList;
+                            break;
+                        default:
+                            listOfUserData = connectionManager.viewManager.ListOfUserViews(userDestination);
+                            listOfUserViews = listOfUserData;
+                            actionToDo = LogAction.UserViewsLoaded;
+                            listViewOfData = listViewUserViewsList;
+                            break;
+                    }
+
+                    if (isUserModified)
                     {
                         bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
                         connectionManager.userManager.ManageImpersonification(isUserModified);
@@ -468,27 +514,27 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.UserViewsLoaded, e.Error);
+                        log.LogData(EventType.Exception, actionToDo, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    if (listOfUserViews != null)
+                    if(listOfUserData != null)
                     {
-                        ManageViewsToDisplay();
+                        ManageUserDataToDisplay(listViewOfData, listOfUserData, type);
                     }
 
                     // if user has no role, message and skip next check
-                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
                     {
                         MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    if (listOfUserViews != null && !listOfUserViews.Any())
-                        MessageBox.Show("This user has no personal views associated to his account.", "No views available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (listOfUserData != null && !listOfUserData.Any())
+                        MessageBox.Show($"This user has no personal {type} associated to his account.", $"No {type} available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    log.LogData(EventType.Event, LogAction.UserViewsLoaded);
+                    log.LogData(EventType.Event, actionToDo);
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
@@ -500,11 +546,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             {
                 if (listViewUsers.SelectedItems.Count > 0)
                 {
-                  //  buttonLoadUserViews.Text = $"Load {listViewUsers.SelectedItems[listViewUsers.SelectedItems.Count - 1].Text}'s views";
+                    buttonLoadUserViews.Text = $"Load user's views";
+                    buttonLoadUserCharts.Text = $"Load user's charts";
+                    buttonLoadUserDashboards.Text = $"Load user's dashboards";
                     buttonLoadUserViews.Enabled = true;
                 }
                 else { 
                     buttonLoadUserViews.Text = "Select an user to load its views.";
+                    buttonLoadUserCharts.Text = "Select an user to load its charts.";
+                    buttonLoadUserDashboards.Text = "Select an user to load its dashboards.";
                     buttonLoadUserViews.Enabled = false;
                 }
             }));
@@ -573,27 +623,45 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             return usersToKeep;
         }
 
-        private void ManageViewsToDisplay(string filter = null)
+        private void ManageUserDataToDisplay(ListView listViewOfUserData, List<Entity> listOfUserData, string type, string filter = null)
         {
-            listViewUserViewsList.Items.Clear();
-            var listToKeep = listOfUserViews;
+            listViewOfUserData.Items.Clear();
+
+            if (listOfUserData == null)
+                return;
+
+            string entityNameField = null;
+            var listToKeep = listOfUserData;
 
             if (!string.IsNullOrEmpty(filter))
-                listToKeep = listOfUserViews.Where(x => x.Attributes["name"].ToString().ToLower().Contains(filter)).ToList();
+                listToKeep = listOfUserData.Where(x => x.Attributes["name"].ToString().ToLower().Contains(filter)).ToList();
+
+            switch (type)
+            {
+                case UserDataType.Charts:
+                    entityNameField = "primaryentitytypecode";
+                    break;
+                case UserDataType.Dashboards: break;
+                default:
+                    entityNameField = "returnedtypecode";
+                    break;
+            }
 
 
             foreach (Entity view in listToKeep)
             {
                 var item = new ListViewItem(view["name"].ToString());
-                item.SubItems.Add(view["returnedtypecode"].ToString());
+
+                if(entityNameField != null)
+                    item.SubItems.Add(view[entityNameField].ToString());
                 item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
                 item.Tag = view.Id;
 
-                listViewUserViewsList.Items.Add(item);
+                listViewOfUserData.Items.Add(item);
             }
 
-            if (listOfUserViews.Any())
-                listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (listToKeep.Any())
+                listViewOfUserData.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void PersonalViewsMigration_Load(object sender, EventArgs e)
@@ -751,8 +819,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             SortListView(listViewUsersDestination, e.Column);
         }
+
+        private void listViewUserDashboardsList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            SortListView(listViewUserDashboardsList, e.Column);
+        }
+
+        private void listViewUserChartsList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            SortListView(listViewUserChartsList, e.Column);
+        }
         #endregion handling reorder of listview items
 
+        #region handling filters on ListViews
         private void textBoxFilterUsersDestination_TextChanged(object sender, EventArgs e)
         {
             var filter = textBoxFilterUsersDestination.Text;
@@ -778,9 +857,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             var filter = textBoxFilterViews.Text;
 
             if (filter.Length > 1)
-                ManageViewsToDisplay(filter.ToLower());
+                ManageUserDataToDisplay(listViewUserViewsList, listOfUserViews, UserDataType.Views, filter.ToLower());
             else if (filter == "")
-                ManageViewsToDisplay();
+                ManageUserDataToDisplay(listViewUserViewsList, listOfUserViews, UserDataType.Views);
         }
 
         private void textBoxFilterUsers_Click(object sender, EventArgs e)
@@ -800,6 +879,39 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (textBoxFilterViews.Text == "Search in results ...")
                 textBoxFilterViews.Text = "";
         }
+
+        private void textBoxFilterDashboards_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterDashboards.Text;
+
+            if (filter.Length > 1)
+                ManageUserDataToDisplay(listViewUserDashboardsList, listOfUserDashboards, UserDataType.Dashboards, filter.ToLower());
+            else if (filter == "")
+                ManageUserDataToDisplay(listViewUserDashboardsList, listOfUserDashboards, UserDataType.Dashboards);
+        }
+
+        private void textBoxFilterCharts_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterCharts.Text;
+
+            if (filter.Length > 1)
+                ManageUserDataToDisplay(listViewUserChartsList, listOfUserCharts, UserDataType.Charts, filter.ToLower());
+            else if (filter == "")
+                ManageUserDataToDisplay(listViewUserChartsList, listOfUserCharts, UserDataType.Charts);
+        }
+
+        private void textBoxFilterDashboards_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterDashboards.Text == "Search in results ...")
+                textBoxFilterDashboards.Text = "";
+        }
+
+        private void textBoxFilterCharts_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterCharts.Text == "Search in results ...")
+                textBoxFilterCharts.Text = "";
+        }
+        #endregion  handling filters on ListViews
 
         private void toolStripButtonHelp_Click(object sender, EventArgs e)
         {
