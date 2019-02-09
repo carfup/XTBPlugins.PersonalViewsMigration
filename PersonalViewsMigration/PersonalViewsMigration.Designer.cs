@@ -49,7 +49,7 @@
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.tabControlUserData = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tabPageViews = new System.Windows.Forms.TabPage();
             this.listViewUserViewsList = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -57,14 +57,14 @@
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonLoadUserViews = new System.Windows.Forms.Button();
             this.textBoxFilterViews = new System.Windows.Forms.TextBox();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tabPageDashboards = new System.Windows.Forms.TabPage();
             this.listViewUserDashboardsList = new System.Windows.Forms.ListView();
             this.columnHeader11 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader13 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonLoadUserDashboards = new System.Windows.Forms.Button();
             this.textBoxFilterDashboards = new System.Windows.Forms.TextBox();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPageCharts = new System.Windows.Forms.TabPage();
             this.listViewUserChartsList = new System.Windows.Forms.ListView();
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -94,11 +94,11 @@
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControlUserData.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tabPageViews.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tabPageDashboards.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tabPageCharts.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -320,9 +320,9 @@
             this.tabControlUserData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlUserData.Controls.Add(this.tabPage1);
-            this.tabControlUserData.Controls.Add(this.tabPage2);
-            this.tabControlUserData.Controls.Add(this.tabPage3);
+            this.tabControlUserData.Controls.Add(this.tabPageViews);
+            this.tabControlUserData.Controls.Add(this.tabPageDashboards);
+            this.tabControlUserData.Controls.Add(this.tabPageCharts);
             this.tabControlUserData.Location = new System.Drawing.Point(11, 30);
             this.tabControlUserData.Margin = new System.Windows.Forms.Padding(6);
             this.tabControlUserData.Name = "tabControlUserData";
@@ -330,18 +330,18 @@
             this.tabControlUserData.Size = new System.Drawing.Size(541, 706);
             this.tabControlUserData.TabIndex = 13;
             // 
-            // tabPage1
+            // tabPageViews
             // 
-            this.tabPage1.Controls.Add(this.listViewUserViewsList);
-            this.tabPage1.Controls.Add(this.tableLayoutPanel5);
-            this.tabPage1.Location = new System.Drawing.Point(4, 33);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(6);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPage1.Size = new System.Drawing.Size(533, 669);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Views";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPageViews.Controls.Add(this.listViewUserViewsList);
+            this.tabPageViews.Controls.Add(this.tableLayoutPanel5);
+            this.tabPageViews.Location = new System.Drawing.Point(4, 33);
+            this.tabPageViews.Margin = new System.Windows.Forms.Padding(6);
+            this.tabPageViews.Name = "tabPageViews";
+            this.tabPageViews.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageViews.Size = new System.Drawing.Size(533, 669);
+            this.tabPageViews.TabIndex = 0;
+            this.tabPageViews.Text = "Views";
+            this.tabPageViews.UseVisualStyleBackColor = true;
             // 
             // listViewUserViewsList
             // 
@@ -421,18 +421,18 @@
             this.textBoxFilterViews.Click += new System.EventHandler(this.textBoxFilterViews_Click);
             this.textBoxFilterViews.TextChanged += new System.EventHandler(this.textBoxFilterViews_TextChanged);
             // 
-            // tabPage2
+            // tabPageDashboards
             // 
-            this.tabPage2.Controls.Add(this.listViewUserDashboardsList);
-            this.tabPage2.Controls.Add(this.tableLayoutPanel4);
-            this.tabPage2.Location = new System.Drawing.Point(4, 33);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(6);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPage2.Size = new System.Drawing.Size(533, 669);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Dashboards";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tabPageDashboards.Controls.Add(this.listViewUserDashboardsList);
+            this.tabPageDashboards.Controls.Add(this.tableLayoutPanel4);
+            this.tabPageDashboards.Location = new System.Drawing.Point(4, 33);
+            this.tabPageDashboards.Margin = new System.Windows.Forms.Padding(6);
+            this.tabPageDashboards.Name = "tabPageDashboards";
+            this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageDashboards.Size = new System.Drawing.Size(533, 669);
+            this.tabPageDashboards.TabIndex = 1;
+            this.tabPageDashboards.Text = "Dashboards";
+            this.tabPageDashboards.UseVisualStyleBackColor = true;
             // 
             // listViewUserDashboardsList
             // 
@@ -506,18 +506,18 @@
             this.textBoxFilterDashboards.Click += new System.EventHandler(this.textBoxFilterDashboards_Click);
             this.textBoxFilterDashboards.TextChanged += new System.EventHandler(this.textBoxFilterDashboards_TextChanged);
             // 
-            // tabPage3
+            // tabPageCharts
             // 
-            this.tabPage3.Controls.Add(this.listViewUserChartsList);
-            this.tabPage3.Controls.Add(this.tableLayoutPanel6);
-            this.tabPage3.Location = new System.Drawing.Point(4, 33);
-            this.tabPage3.Margin = new System.Windows.Forms.Padding(6);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPage3.Size = new System.Drawing.Size(533, 669);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Charts";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabPageCharts.Controls.Add(this.listViewUserChartsList);
+            this.tabPageCharts.Controls.Add(this.tableLayoutPanel6);
+            this.tabPageCharts.Location = new System.Drawing.Point(4, 33);
+            this.tabPageCharts.Margin = new System.Windows.Forms.Padding(6);
+            this.tabPageCharts.Name = "tabPageCharts";
+            this.tabPageCharts.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageCharts.Size = new System.Drawing.Size(533, 669);
+            this.tabPageCharts.TabIndex = 2;
+            this.tabPageCharts.Text = "Charts";
+            this.tabPageCharts.UseVisualStyleBackColor = true;
             // 
             // listViewUserChartsList
             // 
@@ -812,13 +812,13 @@
             this.tableLayoutPanel2.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.tabControlUserData.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
+            this.tabPageViews.ResumeLayout(false);
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel5.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
+            this.tabPageDashboards.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
+            this.tabPageCharts.ResumeLayout(false);
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel6.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -868,9 +868,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton toolStripButtonHelp;
         private System.Windows.Forms.TabControl tabControlUserData;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPageViews;
+        private System.Windows.Forms.TabPage tabPageDashboards;
+        private System.Windows.Forms.TabPage tabPageCharts;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.Button buttonLoadUserViews;
         private System.Windows.Forms.TextBox textBoxFilterViews;

@@ -138,9 +138,66 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
         }
 
+        private void setVariablesBasedOnUserDataType(string switchData, string type, ListView listViewUserData, string action, List<Entity> listOfUserData)
+        {
+            
+
+            switch (switchData)
+            {
+                case "tabPageCharts":
+                case UserDataType.Charts:
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsCopied;
+                    listOfUserData = listOfUserCharts;
+                    break;
+                case "tabPageDashboards":
+                case UserDataType.Dashboards:
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsCopied;
+                    listOfUserData = listOfUserDashboards;
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsCopied;
+                    listOfUserData = listOfUserViews;
+                    break;
+            }
+        }
+
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            List<Entity> listOfUserData = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsCopied;
+                    listOfUserData = listOfUserCharts;
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsCopied;
+                    listOfUserData = listOfUserDashboards;
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsCopied;
+                    listOfUserData = listOfUserViews;
+                    break;
+            }
+
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
 
             if (!usersGuid.Any())
@@ -148,9 +205,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 MessageBox.Show("Please select at least one destination user to perform the Copy action.");
                 return;
             }
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform a Copy action.");
+                MessageBox.Show($"Please select at least one {type} to perform a Copy action.");
                 return;
             }
 
@@ -158,17 +215,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Copying the user view(s) ...",
+                Message = $"Copying the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
                     
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid,0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid,0);
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-                    if (viewsGuid == null && usersGuid == null)
+                    if (dataGuid == null && usersGuid == null)
                         return;
 
                     var requestWithResults = new ExecuteMultipleRequest()
@@ -183,17 +240,29 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         Requests = new OrganizationRequestCollection()
                     };
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        CreateRequest cr = new CreateRequest
+                        Entity itemEntity = listOfUserData.Find(x => x.Id == (Guid) itemView.Tag);
+
+                        CreateRequest cr = new CreateRequest();
+
+                        switch (type)
                         {
-                            Target = this.connectionManager.viewManager.PrepareViewToMigrate(listOfUserViews.Find(x => x.Id == (Guid)itemView.Tag))
-                        };
+                            case UserDataType.Charts:
+                                cr.Target = this.connectionManager.chartManager.PrepareChartToMigrate(itemEntity);
+                                break;
+                            case UserDataType.Dashboards:
+                                cr.Target = this.connectionManager.dashboardManager.PrepareDashboardToMigrate(itemEntity);
+                                break;
+                            default:
+                                cr.Target = this.connectionManager.viewManager.PrepareViewToMigrate(itemEntity);
+                                break;
+                        }
 
                         requestWithResults.Requests.Add(cr);
                     }
 
-                    bw.ReportProgress(0, "Migrating user views...");
+                    bw.ReportProgress(0, $"Migrating user {type}s...");
                     foreach (ListViewItem itemUser in usersGuid)
                     {
                         var userId = (Guid) itemUser.Tag;
@@ -217,7 +286,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             continue;
                         }
 
-                        bw.ReportProgress(0, "Copying the view(s)...");
+                        bw.ReportProgress(0, $"Copying the {type}(s)...");
                         ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
 
                         if (isUserModified)
@@ -238,7 +307,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.ViewsCopied, e.Error);
+                        this.log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -246,8 +315,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         if (!success) return;
 
-                        log.LogData(EventType.Event, LogAction.ViewsCopied);
-                        MessageBox.Show("View(s) are Copied !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are Copied !");
 
                     }
                 },
@@ -257,36 +326,63 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonDeleteSelectedViews_Click(object sender, EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            string entityDataToDelete = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsCopied;
+                    entityDataToDelete = "userqueryvisualization";
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsCopied;
+                    entityDataToDelete = "userform";
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsCopied;
+                    entityDataToDelete = "userquery";
+                    break;
+            }
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
 
             // We make sure that the user really want to delete the view
-            var areYouSure = MessageBox.Show("Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var areYouSure = MessageBox.Show($"Do you really want to delete the {type}(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (areYouSure == DialogResult.No)
                 return;
 
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform the Delete action.");
+                MessageBox.Show($"Please select at least one {type} to perform the Delete action.");
                 return;
             }
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Deleting the user view(s) ...",
+                Message = $"Deleting the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
 
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid, 0);
                     }));
 
-                    if (viewsGuid == null)
+                    if (dataGuid == null)
                         return;
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        bw.ReportProgress(0, "Deleting the user view(s)...");
+                        bw.ReportProgress(0, $"Deleting the user {type}(s)...");
 
                         connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
                         connectionManager.userDestination = connectionManager.userFrom.Value;
@@ -295,9 +391,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         bw.ReportProgress(0, "Checking user accessibility...");
                         var isUserModified = connectionManager.userManager.ManageImpersonification();
 
-                        DeleteRequest dr = new DeleteRequest
+                        DeleteRequest dr = new DeleteRequest()
                         {
-                            Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                            Target = new EntityReference(entityDataToDelete, (Guid)itemView.Tag)
                         };
 
                         connectionManager.proxy.Execute(dr);
@@ -313,17 +409,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
+                        log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
-                        foreach (ListViewItem view in viewsGuid.ToList())
+                        foreach (ListViewItem view in dataGuid.ToList())
                             listViewUserViewsList.Items.Remove(view);
 
-                        log.LogData(EventType.Event, LogAction.ViewsDeleted);
-                        MessageBox.Show("View(s) are now deleted !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are now deleted !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -332,7 +428,34 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonMigrateSelectedViews_Click(object sender, System.EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            string entityDataToMigrate = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsCopied;
+                    entityDataToMigrate = "userqueryvisualization";
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsCopied;
+                    entityDataToMigrate = "userform";
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsCopied;
+                    entityDataToMigrate = "userquery";
+                    break;
+            }
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
 
             if(usersGuid.Count() > 1)
@@ -347,31 +470,31 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
             }
 
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform a ReAssign action.");
+                MessageBox.Show($"Please select at least one {type} to perform a ReAssign action.");
                 return;
             }
 
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "ReAssigning the user view(s) ...",
+                Message = $"ReAssigning the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
 
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid, 0);
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-                    if (viewsGuid == null && usersGuid == null)
+                    if (dataGuid == null && usersGuid == null)
                         return;
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        bw.ReportProgress(0, "Changing ownership of the views...");
+                        bw.ReportProgress(0, $"Changing ownership of the {type}s...");
 
                         foreach (ListViewItem itemUser in usersGuid)
                         {
@@ -384,11 +507,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
-                            bw.ReportProgress(0, "Changing ownership of the view(s)...");
+                            bw.ReportProgress(0, $"Changing ownership of the {type}(s)...");
                             AssignRequest ar = new AssignRequest
                             {
                                 Assignee = new EntityReference("systemuser", (Guid)itemUser.Tag),
-                                Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                                Target = new EntityReference(entityDataToMigrate, (Guid)itemView.Tag)
                             };
 
                             connectionManager.proxy.Execute(ar);
@@ -405,19 +528,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
+                        log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
-                        foreach(ListViewItem view in viewsGuid.ToList())
+                        foreach(ListViewItem view in dataGuid.ToList())
                         {
-                            listViewUserViewsList.Items.Remove(view);
+                            listViewUserData.Items.Remove(view);
                         }
 
-                        log.LogData(EventType.Event, LogAction.ViewsReAssigned);
-                        MessageBox.Show("View(s) are reassigned !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are reassigned !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -469,7 +592,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = $"Retrieving User {type}...",
+                Message = $"Retrieving User {type}(s)...",
                 Work = (bw, e) =>
                 {
                     bw.ReportProgress(0, "Checking user accessibility...");
@@ -479,7 +602,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         return;
 
 
-                    bw.ReportProgress(0, $"Retrieving user's {type}...");
+                    bw.ReportProgress(0, $"Retrieving user's {type}(s)...");
 
                     switch (type)
                     {
@@ -532,7 +655,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     }
 
                     if (listOfUserData != null && !listOfUserData.Any())
-                        MessageBox.Show($"This user has no personal {type} associated to his account.", $"No {type} available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"This user has no personal {type}(s) associated to his account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     log.LogData(EventType.Event, actionToDo);
                 },

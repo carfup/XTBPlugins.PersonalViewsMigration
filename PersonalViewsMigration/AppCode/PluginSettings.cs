@@ -33,9 +33,9 @@ namespace Carfup.XTBPlugins.AppCode
 
     static class UserDataType
     {
-        public const string Views = "views";
-        public const string Dashboards = "dashboards";
-        public const string Charts = "charts";
+        public const string Views = "view";
+        public const string Dashboards = "dashboard";
+        public const string Charts = "chart";
     }
 
     // EventType to qualify which action was performed by the plugin
@@ -55,6 +55,12 @@ namespace Carfup.XTBPlugins.AppCode
         public const string ViewsCopied = "ViewsCopied";
         public const string ViewsDeleted = "ViewsDeleted";
         public const string ViewsReAssigned = "ViewsReAssigned";
+        public const string ChartsCopied = "ChartsCopied";
+        public const string ChartsDeleted = "ChartsDeleted";
+        public const string ChartsReAssigned = "ChartsReAssigned";
+        public const string DashboardsCopied = "DashboardsCopied";
+        public const string DashboardsDeleted = "DashboardsDeleted";
+        public const string DashboardsReAssigned = "DashboardsReAssigned";
         public const string ShowHelpScreen = "ShowHelpScreen";
     }
 }
