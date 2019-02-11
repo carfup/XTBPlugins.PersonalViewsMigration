@@ -129,6 +129,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
+            textBoxFilterCharts.Enabled = enable;
+            textBoxFilterDashboards.Enabled = enable;
+            textBoxFilterViews.Enabled = enable;
 
             // if onprem , we force the list to enabled only
             if (connectionManager.isOnPrem)
@@ -137,36 +140,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 comboBoxWhatUsersToDisplayDestination.Enabled = false;
             }
         }
-
-        private void setVariablesBasedOnUserDataType(string switchData, string type, ListView listViewUserData, string action, List<Entity> listOfUserData)
-        {
-            
-
-            switch (switchData)
-            {
-                case "tabPageCharts":
-                case UserDataType.Charts:
-                    type = UserDataType.Charts;
-                    listViewUserData = listViewUserChartsList;
-                    action = LogAction.ChartsCopied;
-                    listOfUserData = listOfUserCharts;
-                    break;
-                case "tabPageDashboards":
-                case UserDataType.Dashboards:
-                    type = UserDataType.Dashboards;
-                    listViewUserData = listViewUserDashboardsList;
-                    action = LogAction.DashboardsCopied;
-                    listOfUserData = listOfUserDashboards;
-                    break;
-                default:
-                    type = UserDataType.Views;
-                    listViewUserData = listViewUserViewsList;
-                    action = LogAction.ViewsCopied;
-                    listOfUserData = listOfUserViews;
-                    break;
-            }
-        }
-
+        
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
             string type = null;

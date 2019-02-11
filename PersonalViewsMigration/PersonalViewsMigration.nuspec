@@ -8,7 +8,7 @@
     <projectUrl>https://github.com/carfup/XTBPlugins.DeltaAssemblyvsCrm</projectUrl>
 	<iconUrl>http://www.gravatar.com/avatar/8b87aef303e872503c47ef3fdf83c801?s=64</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This tool will allow you to reassign or copy personal views from one user to another. This is really useful when someone left a company and forgot to migrate his own views to somebody else.</description>
+    <description>This tool will allow you to reassign or copy personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>
     <summary>Really sweet plugin that does awesome things</summary>
     <releaseNotes>
 1.2019.2.6
