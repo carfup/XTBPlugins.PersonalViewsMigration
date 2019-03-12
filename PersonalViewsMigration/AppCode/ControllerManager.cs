@@ -17,6 +17,8 @@ namespace Carfup.XTBPlugins.AppCode
         public OrganizationServiceProxy proxy { get; private set; } = null;
         public ViewManager viewManager { get; private set; } = null;
         public UserManager userManager { get; private set; } = null;
+        public ChartManager chartManager { get; private set; } = null;
+        public DashboardManager dashboardManager { get; private set; } = null;
         public Guid? XTBUser { get; private set; } = null;
         public Guid? userFrom { get; set; } = null;
         public Guid? userDestination { get; set; } = null;
@@ -27,6 +29,8 @@ namespace Carfup.XTBPlugins.AppCode
             this.proxy = (OrganizationServiceProxy)service;
             this.userManager = new UserManager(this);
             this.viewManager = new ViewManager(this);
+            this.chartManager = new ChartManager(this);
+            this.dashboardManager = new DashboardManager(this);
             this.XTBUser = ((WhoAmIResponse)this.proxy.Execute(new WhoAmIRequest())).UserId;
         }
 
