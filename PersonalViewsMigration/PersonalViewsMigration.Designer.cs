@@ -323,11 +323,11 @@
             this.tabControlUserData.Controls.Add(this.tabPageViews);
             this.tabControlUserData.Controls.Add(this.tabPageDashboards);
             this.tabControlUserData.Controls.Add(this.tabPageCharts);
-            this.tabControlUserData.Location = new System.Drawing.Point(11, 30);
+            this.tabControlUserData.Location = new System.Drawing.Point(13, 30);
             this.tabControlUserData.Margin = new System.Windows.Forms.Padding(6);
             this.tabControlUserData.Name = "tabControlUserData";
             this.tabControlUserData.SelectedIndex = 0;
-            this.tabControlUserData.Size = new System.Drawing.Size(541, 706);
+            this.tabControlUserData.Size = new System.Drawing.Size(541, 704);
             this.tabControlUserData.TabIndex = 13;
             // 
             // tabPageViews
@@ -338,7 +338,7 @@
             this.tabPageViews.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageViews.Name = "tabPageViews";
             this.tabPageViews.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPageViews.Size = new System.Drawing.Size(533, 669);
+            this.tabPageViews.Size = new System.Drawing.Size(533, 667);
             this.tabPageViews.TabIndex = 0;
             this.tabPageViews.Text = "Views";
             this.tabPageViews.UseVisualStyleBackColor = true;
@@ -354,10 +354,10 @@
             this.columnHeader2,
             this.columnHeader10});
             this.listViewUserViewsList.FullRowSelect = true;
-            this.listViewUserViewsList.Location = new System.Drawing.Point(-4, 79);
+            this.listViewUserViewsList.Location = new System.Drawing.Point(-4, 63);
             this.listViewUserViewsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserViewsList.Name = "listViewUserViewsList";
-            this.listViewUserViewsList.Size = new System.Drawing.Size(528, 575);
+            this.listViewUserViewsList.Size = new System.Drawing.Size(531, 592);
             this.listViewUserViewsList.TabIndex = 14;
             this.listViewUserViewsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserViewsList.View = System.Windows.Forms.View.Details;
@@ -386,12 +386,12 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.buttonLoadUserViews, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.textBoxFilterViews, 1, 0);
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 6);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 2);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(523, 61);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(527, 61);
             this.tableLayoutPanel5.TabIndex = 13;
             // 
             // buttonLoadUserViews
@@ -401,7 +401,7 @@
             this.buttonLoadUserViews.Location = new System.Drawing.Point(6, 6);
             this.buttonLoadUserViews.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserViews.Name = "buttonLoadUserViews";
-            this.buttonLoadUserViews.Size = new System.Drawing.Size(249, 42);
+            this.buttonLoadUserViews.Size = new System.Drawing.Size(251, 42);
             this.buttonLoadUserViews.TabIndex = 4;
             this.buttonLoadUserViews.Text = "Load user\'s views";
             this.buttonLoadUserViews.UseVisualStyleBackColor = true;
@@ -412,10 +412,10 @@
             this.textBoxFilterViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterViews.Location = new System.Drawing.Point(267, 6);
+            this.textBoxFilterViews.Location = new System.Drawing.Point(269, 6);
             this.textBoxFilterViews.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterViews.Name = "textBoxFilterViews";
-            this.textBoxFilterViews.Size = new System.Drawing.Size(250, 29);
+            this.textBoxFilterViews.Size = new System.Drawing.Size(252, 29);
             this.textBoxFilterViews.TabIndex = 11;
             this.textBoxFilterViews.Text = "Search in results ...";
             this.textBoxFilterViews.Click += new System.EventHandler(this.textBoxFilterViews_Click);
@@ -429,7 +429,7 @@
             this.tabPageDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageDashboards.Name = "tabPageDashboards";
             this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPageDashboards.Size = new System.Drawing.Size(533, 669);
+            this.tabPageDashboards.Size = new System.Drawing.Size(533, 667);
             this.tabPageDashboards.TabIndex = 1;
             this.tabPageDashboards.Text = "Dashboards";
             this.tabPageDashboards.UseVisualStyleBackColor = true;
@@ -444,10 +444,10 @@
             this.columnHeader11,
             this.columnHeader13});
             this.listViewUserDashboardsList.FullRowSelect = true;
-            this.listViewUserDashboardsList.Location = new System.Drawing.Point(-4, 76);
+            this.listViewUserDashboardsList.Location = new System.Drawing.Point(-4, 63);
             this.listViewUserDashboardsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserDashboardsList.Name = "listViewUserDashboardsList";
-            this.listViewUserDashboardsList.Size = new System.Drawing.Size(528, 575);
+            this.listViewUserDashboardsList.Size = new System.Drawing.Size(531, 589);
             this.listViewUserDashboardsList.TabIndex = 16;
             this.listViewUserDashboardsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserDashboardsList.View = System.Windows.Forms.View.Details;
@@ -476,7 +476,7 @@
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(523, 61);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(527, 61);
             this.tableLayoutPanel4.TabIndex = 15;
             // 
             // buttonLoadUserDashboards
@@ -486,7 +486,7 @@
             this.buttonLoadUserDashboards.Location = new System.Drawing.Point(6, 6);
             this.buttonLoadUserDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserDashboards.Name = "buttonLoadUserDashboards";
-            this.buttonLoadUserDashboards.Size = new System.Drawing.Size(249, 42);
+            this.buttonLoadUserDashboards.Size = new System.Drawing.Size(251, 42);
             this.buttonLoadUserDashboards.TabIndex = 4;
             this.buttonLoadUserDashboards.Text = "Load user\'s dashboards";
             this.buttonLoadUserDashboards.UseVisualStyleBackColor = true;
@@ -497,10 +497,10 @@
             this.textBoxFilterDashboards.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterDashboards.Location = new System.Drawing.Point(267, 6);
+            this.textBoxFilterDashboards.Location = new System.Drawing.Point(269, 6);
             this.textBoxFilterDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterDashboards.Name = "textBoxFilterDashboards";
-            this.textBoxFilterDashboards.Size = new System.Drawing.Size(250, 29);
+            this.textBoxFilterDashboards.Size = new System.Drawing.Size(252, 29);
             this.textBoxFilterDashboards.TabIndex = 11;
             this.textBoxFilterDashboards.Text = "Search in results ...";
             this.textBoxFilterDashboards.Click += new System.EventHandler(this.textBoxFilterDashboards_Click);
@@ -514,7 +514,7 @@
             this.tabPageCharts.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageCharts.Name = "tabPageCharts";
             this.tabPageCharts.Padding = new System.Windows.Forms.Padding(6);
-            this.tabPageCharts.Size = new System.Drawing.Size(533, 669);
+            this.tabPageCharts.Size = new System.Drawing.Size(533, 667);
             this.tabPageCharts.TabIndex = 2;
             this.tabPageCharts.Text = "Charts";
             this.tabPageCharts.UseVisualStyleBackColor = true;
@@ -530,10 +530,10 @@
             this.columnHeader15,
             this.columnHeader16});
             this.listViewUserChartsList.FullRowSelect = true;
-            this.listViewUserChartsList.Location = new System.Drawing.Point(-4, 76);
+            this.listViewUserChartsList.Location = new System.Drawing.Point(-4, 63);
             this.listViewUserChartsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserChartsList.Name = "listViewUserChartsList";
-            this.listViewUserChartsList.Size = new System.Drawing.Size(528, 575);
+            this.listViewUserChartsList.Size = new System.Drawing.Size(531, 589);
             this.listViewUserChartsList.TabIndex = 16;
             this.listViewUserChartsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserChartsList.View = System.Windows.Forms.View.Details;
@@ -567,7 +567,7 @@
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(523, 61);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(527, 61);
             this.tableLayoutPanel6.TabIndex = 15;
             // 
             // buttonLoadUserCharts
@@ -577,7 +577,7 @@
             this.buttonLoadUserCharts.Location = new System.Drawing.Point(6, 6);
             this.buttonLoadUserCharts.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserCharts.Name = "buttonLoadUserCharts";
-            this.buttonLoadUserCharts.Size = new System.Drawing.Size(249, 42);
+            this.buttonLoadUserCharts.Size = new System.Drawing.Size(251, 42);
             this.buttonLoadUserCharts.TabIndex = 4;
             this.buttonLoadUserCharts.Text = "Load user\'s charts";
             this.buttonLoadUserCharts.UseVisualStyleBackColor = true;
@@ -588,10 +588,10 @@
             this.textBoxFilterCharts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterCharts.Location = new System.Drawing.Point(267, 6);
+            this.textBoxFilterCharts.Location = new System.Drawing.Point(269, 6);
             this.textBoxFilterCharts.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterCharts.Name = "textBoxFilterCharts";
-            this.textBoxFilterCharts.Size = new System.Drawing.Size(250, 29);
+            this.textBoxFilterCharts.Size = new System.Drawing.Size(252, 29);
             this.textBoxFilterCharts.TabIndex = 11;
             this.textBoxFilterCharts.Text = "Search in results ...";
             this.textBoxFilterCharts.Click += new System.EventHandler(this.textBoxFilterCharts_Click);
