@@ -310,19 +310,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 case "tabPageCharts":
                     type = UserDataType.Charts;
                     listViewUserData = listViewUserChartsList;
-                    action = LogAction.ChartsCopied;
+                    action = LogAction.ChartsDeleted;
                     entityDataToDelete = "userqueryvisualization";
                     break;
                 case "tabPageDashboards":
                     type = UserDataType.Dashboards;
                     listViewUserData = listViewUserDashboardsList;
-                    action = LogAction.DashboardsCopied;
+                    action = LogAction.DashboardsDeleted;
                     entityDataToDelete = "userform";
                     break;
                 default:
                     type = UserDataType.Views;
                     listViewUserData = listViewUserViewsList;
-                    action = LogAction.ViewsCopied;
+                    action = LogAction.ViewsDeleted;
                     entityDataToDelete = "userquery";
                     break;
             }
@@ -412,19 +412,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 case "tabPageCharts":
                     type = UserDataType.Charts;
                     listViewUserData = listViewUserChartsList;
-                    action = LogAction.ChartsCopied;
+                    action = LogAction.ChartsReAssigned;
                     entityDataToMigrate = "userqueryvisualization";
                     break;
                 case "tabPageDashboards":
                     type = UserDataType.Dashboards;
                     listViewUserData = listViewUserDashboardsList;
-                    action = LogAction.DashboardsCopied;
+                    action = LogAction.DashboardsReAssigned;
                     entityDataToMigrate = "userform";
                     break;
                 default:
                     type = UserDataType.Views;
                     listViewUserData = listViewUserViewsList;
-                    action = LogAction.ViewsCopied;
+                    action = LogAction.ViewsReAssigned;
                     entityDataToMigrate = "userquery";
                     break;
             }
