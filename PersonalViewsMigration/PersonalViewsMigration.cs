@@ -28,6 +28,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         #region varibables
         private List<Entity> listOfUsers = null;
         private List<Entity> listOfUserViews = null;
+        private List<Entity> listOfUserCharts = null;
+        private List<Entity> listOfUserDashboards = null;
         public ControllerManager connectionManager = null;
         internal PluginSettings settings = new PluginSettings();
         public LogUsageManager log = null;
@@ -120,23 +122,56 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             comboBoxWhatUsersToDisplay.Enabled = enable;
             comboBoxWhatUsersToDisplayDestination.Enabled = enable;
             buttonLoadUserViews.Enabled = enable;
+            buttonLoadUserDashboards.Enabled = enable;
+            buttonLoadUserCharts.Enabled = enable;
             buttonCopySelectedViews.Enabled = enable;
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
+            textBoxFilterCharts.Enabled = enable;
+            textBoxFilterDashboards.Enabled = enable;
+            textBoxFilterViews.Enabled = enable;
 
             // if onprem , we force the list to enabled only
             if (connectionManager.isOnPrem)
             {
-
                 comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
                 comboBoxWhatUsersToDisplayDestination.Enabled = false;
             }
         }
+        
         private void buttonCopySelectedViews_Click(object sender, EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            List<Entity> listOfUserData = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsCopied;
+                    listOfUserData = listOfUserCharts;
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsCopied;
+                    listOfUserData = listOfUserDashboards;
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsCopied;
+                    listOfUserData = listOfUserViews;
+                    break;
+            }
+
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
 
             if (!usersGuid.Any())
@@ -144,9 +179,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 MessageBox.Show("Please select at least one destination user to perform the Copy action.");
                 return;
             }
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform a Copy action.");
+                MessageBox.Show($"Please select at least one {type} to perform a Copy action.");
                 return;
             }
 
@@ -154,17 +189,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Copying the user view(s) ...",
+                Message = $"Copying the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
                     
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid,0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid,0);
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-                    if (viewsGuid == null && usersGuid == null)
+                    if (dataGuid == null && usersGuid == null)
                         return;
 
                     var requestWithResults = new ExecuteMultipleRequest()
@@ -179,17 +214,29 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         Requests = new OrganizationRequestCollection()
                     };
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        CreateRequest cr = new CreateRequest
+                        Entity itemEntity = listOfUserData.Find(x => x.Id == (Guid) itemView.Tag);
+
+                        CreateRequest cr = new CreateRequest();
+
+                        switch (type)
                         {
-                            Target = this.connectionManager.viewManager.PrepareViewToMigrate(listOfUserViews.Find(x => x.Id == (Guid)itemView.Tag))
-                        };
+                            case UserDataType.Charts:
+                                cr.Target = this.connectionManager.chartManager.PrepareChartToMigrate(itemEntity);
+                                break;
+                            case UserDataType.Dashboards:
+                                cr.Target = this.connectionManager.dashboardManager.PrepareDashboardToMigrate(itemEntity);
+                                break;
+                            default:
+                                cr.Target = this.connectionManager.viewManager.PrepareViewToMigrate(itemEntity);
+                                break;
+                        }
 
                         requestWithResults.Requests.Add(cr);
                     }
 
-                    bw.ReportProgress(0, "Migrating user views...");
+                    bw.ReportProgress(0, $"Migrating user {type}s...");
                     foreach (ListViewItem itemUser in usersGuid)
                     {
                         var userId = (Guid) itemUser.Tag;
@@ -213,7 +260,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             continue;
                         }
 
-                        bw.ReportProgress(0, "Copying the view(s)...");
+                        bw.ReportProgress(0, $"Copying the {type}(s)...");
                         ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
 
                         if (isUserModified)
@@ -234,7 +281,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        this.log.LogData(EventType.Exception, LogAction.ViewsCopied, e.Error);
+                        this.log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
@@ -242,8 +289,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         if (!success) return;
 
-                        log.LogData(EventType.Event, LogAction.ViewsCopied);
-                        MessageBox.Show("View(s) are Copied !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are Copied !");
 
                     }
                 },
@@ -253,36 +300,63 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonDeleteSelectedViews_Click(object sender, EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            string entityDataToDelete = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsDeleted;
+                    entityDataToDelete = "userqueryvisualization";
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsDeleted;
+                    entityDataToDelete = "userform";
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsDeleted;
+                    entityDataToDelete = "userquery";
+                    break;
+            }
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
 
             // We make sure that the user really want to delete the view
-            var areYouSure = MessageBox.Show("Do you really want to delete the view(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var areYouSure = MessageBox.Show($"Do you really want to delete the {type}(s) ? \rYou won't be able to get it back after.", "Warning !", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (areYouSure == DialogResult.No)
                 return;
 
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform the Delete action.");
+                MessageBox.Show($"Please select at least one {type} to perform the Delete action.");
                 return;
             }
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Deleting the user view(s) ...",
+                Message = $"Deleting the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
 
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid, 0);
                     }));
 
-                    if (viewsGuid == null)
+                    if (dataGuid == null)
                         return;
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        bw.ReportProgress(0, "Deleting the user view(s)...");
+                        bw.ReportProgress(0, $"Deleting the user {type}(s)...");
 
                         connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
                         connectionManager.userDestination = connectionManager.userFrom.Value;
@@ -291,9 +365,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         bw.ReportProgress(0, "Checking user accessibility...");
                         var isUserModified = connectionManager.userManager.ManageImpersonification();
 
-                        DeleteRequest dr = new DeleteRequest
+                        DeleteRequest dr = new DeleteRequest()
                         {
-                            Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                            Target = new EntityReference(entityDataToDelete, (Guid)itemView.Tag)
                         };
 
                         connectionManager.proxy.Execute(dr);
@@ -309,17 +383,17 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.ViewsDeleted, e.Error);
+                        log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
-                        foreach (ListViewItem view in viewsGuid.ToList())
+                        foreach (ListViewItem view in dataGuid.ToList())
                             listViewUserViewsList.Items.Remove(view);
 
-                        log.LogData(EventType.Event, LogAction.ViewsDeleted);
-                        MessageBox.Show("View(s) are now deleted !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are now deleted !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -328,7 +402,34 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void buttonMigrateSelectedViews_Click(object sender, System.EventArgs evt)
         {
-            ListViewItem[] viewsGuid = new ListViewItem[listViewUserViewsList.CheckedItems.Count];
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            string entityDataToMigrate = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.ChartsReAssigned;
+                    entityDataToMigrate = "userqueryvisualization";
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.DashboardsReAssigned;
+                    entityDataToMigrate = "userform";
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.ViewsReAssigned;
+                    entityDataToMigrate = "userquery";
+                    break;
+            }
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
             ListViewItem[] usersGuid = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
 
             if(usersGuid.Count() > 1)
@@ -343,31 +444,31 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
             }
 
-            if (!viewsGuid.Any())
+            if (!dataGuid.Any())
             {
-                MessageBox.Show("Please select at least one view to perform a ReAssign action.");
+                MessageBox.Show($"Please select at least one {type} to perform a ReAssign action.");
                 return;
             }
 
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "ReAssigning the user view(s) ...",
+                Message = $"ReAssigning the user {type}(s) ...",
                 Work = (bw, e) =>
                 {
 
                     Invoke(new Action(() =>
                     {
-                        listViewUserViewsList.CheckedItems.CopyTo(viewsGuid, 0);
+                        listViewUserData.CheckedItems.CopyTo(dataGuid, 0);
                         listViewUsersDestination.CheckedItems.CopyTo(usersGuid, 0);
                     }));
 
-                    if (viewsGuid == null && usersGuid == null)
+                    if (dataGuid == null && usersGuid == null)
                         return;
 
-                    foreach (ListViewItem itemView in viewsGuid)
+                    foreach (ListViewItem itemView in dataGuid)
                     {
-                        bw.ReportProgress(0, "Changing ownership of the views...");
+                        bw.ReportProgress(0, $"Changing ownership of the {type}s...");
 
                         foreach (ListViewItem itemUser in usersGuid)
                         {
@@ -380,11 +481,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
-                            bw.ReportProgress(0, "Changing ownership of the view(s)...");
+                            bw.ReportProgress(0, $"Changing ownership of the {type}(s)...");
                             AssignRequest ar = new AssignRequest
                             {
                                 Assignee = new EntityReference("systemuser", (Guid)itemUser.Tag),
-                                Target = new EntityReference("userquery", (Guid)itemView.Tag)
+                                Target = new EntityReference(entityDataToMigrate, (Guid)itemView.Tag)
                             };
 
                             connectionManager.proxy.Execute(ar);
@@ -401,36 +502,51 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.ViewsReAssigned, e.Error);
+                        log.LogData(EventType.Exception, action, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                     else
                     {
-                        foreach(ListViewItem view in viewsGuid.ToList())
+                        foreach(ListViewItem view in dataGuid.ToList())
                         {
-                            listViewUserViewsList.Items.Remove(view);
+                            listViewUserData.Items.Remove(view);
                         }
 
-                        log.LogData(EventType.Event, LogAction.ViewsReAssigned);
-                        MessageBox.Show("View(s) are reassigned !");
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($"{type}(s) are reassigned !");
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
         }
 
+        private void buttonLoadUserDashboards_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(LoadUserData, UserDataType.Dashboards);
+        }
+
+        private void buttonLoadUserCharts_Click(object sender, EventArgs e)
+        {
+            ExecuteMethod(LoadUserData, UserDataType.Charts);
+        }
+
         private void buttonLoadUserViews_Click(object sender, EventArgs evt)
         {
-            ExecuteMethod(LoadUserViews);
+            ExecuteMethod(LoadUserData, UserDataType.Views);
         }
 
         private void listViewUsers_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            ExecuteMethod(LoadUserViews);
+            // Loading views by default on doubleclick
+            ExecuteMethod(LoadUserData, UserDataType.Views);
+
+            // Clearing the charts and dashboards
+            listViewUserChartsList.Items.Clear();
+            listViewUserDashboardsList.Items.Clear();
         }
 
-        private void LoadUserViews()
+        private void LoadUserData(string type)
         {
             if (listViewUsers.SelectedItems.Count == 0)
             {
@@ -440,24 +556,51 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             this.connectionManager.userFrom = (Guid)listViewUsers.SelectedItems[0].Tag;
             this.connectionManager.userDestination = (Guid)listViewUsers.SelectedItems[0].Tag;
-            this.connectionManager.UpdateCallerId(this.connectionManager.userDestination.Value);
+            Guid userDestination = this.connectionManager.userDestination.Value;
+            this.connectionManager.UpdateCallerId(userDestination);
+
+            List<Entity> listOfUserData = null;
+            string actionToDo = null;
+            ListView listViewOfData = null;
+            string fieldToEntity = null;
 
             WorkAsync(new WorkAsyncInfo
             {
-                Message = "Retrieving User view(s)...",
+                Message = $"Retrieving User {type}(s)...",
                 Work = (bw, e) =>
                 {
                     bw.ReportProgress(0, "Checking user accessibility...");
                     var isUserModified = connectionManager.userManager.ManageImpersonification();
 
-                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
                         return;
-                       
 
-                    bw.ReportProgress(0, "Retrieving user's view(s)...");
-                    listOfUserViews = connectionManager.viewManager.ListOfUserViews(connectionManager.userDestination.Value);
 
-                    if(isUserModified)
+                    bw.ReportProgress(0, $"Retrieving user's {type}(s)...");
+
+                    switch (type)
+                    {
+                        case UserDataType.Charts:
+                            listOfUserData = connectionManager.chartManager.ListOfUserCharts(userDestination);
+                            listOfUserCharts = listOfUserData;
+                            actionToDo = LogAction.UserChartsLoaded;
+                            listViewOfData = listViewUserChartsList;
+                            break;
+                        case UserDataType.Dashboards:
+                            listOfUserData = connectionManager.dashboardManager.ListOfUserDashboards(userDestination);
+                            listOfUserDashboards = listOfUserData;
+                            actionToDo = LogAction.UserDashboardsLoaded;
+                            listViewOfData = listViewUserDashboardsList;
+                            break;
+                        default:
+                            listOfUserData = connectionManager.viewManager.ListOfUserViews(userDestination);
+                            listOfUserViews = listOfUserData;
+                            actionToDo = LogAction.UserViewsLoaded;
+                            listViewOfData = listViewUserViewsList;
+                            break;
+                    }
+
+                    if (isUserModified)
                     {
                         bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
                         connectionManager.userManager.ManageImpersonification(isUserModified);
@@ -468,40 +611,27 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 {
                     if (e.Error != null)
                     {
-                        log.LogData(EventType.Exception, LogAction.UserViewsLoaded, e.Error);
+                        log.LogData(EventType.Exception, actionToDo, e.Error);
                         MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    if (listOfUserViews != null)
+                    if(listOfUserData != null)
                     {
-                        listViewUserViewsList.Items.Clear();
-
-                        foreach (Entity view in listOfUserViews)
-                        {
-                            var item = new ListViewItem(view["name"].ToString());
-                            item.SubItems.Add(view["returnedtypecode"].ToString());
-                            item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
-                            item.Tag = view.Id;
-
-                            listViewUserViewsList.Items.Add(item);
-                        }
-
-                        if(listOfUserViews.Any())
-                            listViewUserViewsList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                        ManageUserDataToDisplay(listViewOfData, listOfUserData, type);
                     }
 
                     // if user has no role, message and skip next check
-                    if (!connectionManager.userManager.UserHasAnyRole(connectionManager.userDestination.Value))
+                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
                     {
                         MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
 
-                    if (listOfUserViews != null && !listOfUserViews.Any())
-                        MessageBox.Show("This user has no personal views associated to his account.", "No views available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (listOfUserData != null && !listOfUserData.Any())
+                        MessageBox.Show($"This user has no personal {type}(s) associated to his account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                    log.LogData(EventType.Event, LogAction.UserViewsLoaded);
+                    log.LogData(EventType.Event, actionToDo);
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
@@ -513,12 +643,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             {
                 if (listViewUsers.SelectedItems.Count > 0)
                 {
-                    buttonLoadUserViews.Text = $"Load {listViewUsers.SelectedItems[listViewUsers.SelectedItems.Count - 1].Text}'s views";
+                    buttonLoadUserViews.Text = $"Load user's views";
+                    buttonLoadUserCharts.Text = $"Load user's charts";
+                    buttonLoadUserDashboards.Text = $"Load user's dashboards";
                     buttonLoadUserViews.Enabled = true;
                 }
-
                 else { 
                     buttonLoadUserViews.Text = "Select an user to load its views.";
+                    buttonLoadUserCharts.Text = "Select an user to load its charts.";
+                    buttonLoadUserDashboards.Text = "Select an user to load its dashboards.";
                     buttonLoadUserViews.Enabled = false;
                 }
             }));
@@ -585,6 +718,47 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
 
             return usersToKeep;
+        }
+
+        private void ManageUserDataToDisplay(ListView listViewOfUserData, List<Entity> listOfUserData, string type, string filter = null)
+        {
+            listViewOfUserData.Items.Clear();
+
+            if (listOfUserData == null)
+                return;
+
+            string entityNameField = null;
+            var listToKeep = listOfUserData;
+
+            if (!string.IsNullOrEmpty(filter))
+                listToKeep = listOfUserData.Where(x => x.Attributes["name"].ToString().ToLower().Contains(filter)).ToList();
+
+            switch (type)
+            {
+                case UserDataType.Charts:
+                    entityNameField = "primaryentitytypecode";
+                    break;
+                case UserDataType.Dashboards: break;
+                default:
+                    entityNameField = "returnedtypecode";
+                    break;
+            }
+
+
+            foreach (Entity view in listToKeep)
+            {
+                var item = new ListViewItem(view["name"].ToString());
+
+                if(entityNameField != null)
+                    item.SubItems.Add(view[entityNameField].ToString());
+                item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
+                item.Tag = view.Id;
+
+                listViewOfUserData.Items.Add(item);
+            }
+
+            if (listToKeep.Any())
+                listViewOfUserData.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void PersonalViewsMigration_Load(object sender, EventArgs e)
@@ -742,8 +916,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         {
             SortListView(listViewUsersDestination, e.Column);
         }
+
+        private void listViewUserDashboardsList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            SortListView(listViewUserDashboardsList, e.Column);
+        }
+
+        private void listViewUserChartsList_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            SortListView(listViewUserChartsList, e.Column);
+        }
         #endregion handling reorder of listview items
 
+        #region handling filters on ListViews
         private void textBoxFilterUsersDestination_TextChanged(object sender, EventArgs e)
         {
             var filter = textBoxFilterUsersDestination.Text;
@@ -764,6 +949,16 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 ManageUsersToDisplay();
         }
 
+        private void textBoxFilterViews_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterViews.Text;
+
+            if (filter.Length > 1)
+                ManageUserDataToDisplay(listViewUserViewsList, listOfUserViews, UserDataType.Views, filter.ToLower());
+            else if (filter == "")
+                ManageUserDataToDisplay(listViewUserViewsList, listOfUserViews, UserDataType.Views);
+        }
+
         private void textBoxFilterUsers_Click(object sender, EventArgs e)
         {
             if (textBoxFilterUsers.Text == "Search in results ...")
@@ -776,10 +971,51 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 textBoxFilterUsersDestination.Text = "";
         }
 
+        private void textBoxFilterViews_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterViews.Text == "Search in results ...")
+                textBoxFilterViews.Text = "";
+        }
+
+        private void textBoxFilterDashboards_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterDashboards.Text;
+
+            if (filter.Length > 1)
+                ManageUserDataToDisplay(listViewUserDashboardsList, listOfUserDashboards, UserDataType.Dashboards, filter.ToLower());
+            else if (filter == "")
+                ManageUserDataToDisplay(listViewUserDashboardsList, listOfUserDashboards, UserDataType.Dashboards);
+        }
+
+        private void textBoxFilterCharts_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterCharts.Text;
+
+            if (filter.Length > 1)
+                ManageUserDataToDisplay(listViewUserChartsList, listOfUserCharts, UserDataType.Charts, filter.ToLower());
+            else if (filter == "")
+                ManageUserDataToDisplay(listViewUserChartsList, listOfUserCharts, UserDataType.Charts);
+        }
+
+        private void textBoxFilterDashboards_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterDashboards.Text == "Search in results ...")
+                textBoxFilterDashboards.Text = "";
+        }
+
+        private void textBoxFilterCharts_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterCharts.Text == "Search in results ...")
+                textBoxFilterCharts.Text = "";
+        }
+        #endregion  handling filters on ListViews
+
         private void toolStripButtonHelp_Click(object sender, EventArgs e)
         {
             var helpDlg = new HelpForm(this);
             helpDlg.ShowDialog(this);
         }
+
+        
     }
 }
