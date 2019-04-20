@@ -143,6 +143,12 @@
     <Compile Include="Forms\Options.Designer.cs">
       <DependentUpon>Options.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Sharings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Sharings.Designer.cs">
+      <DependentUpon>Sharings.cs</DependentUpon>
+    </Compile>
     <Compile Include="PersonalViewsMigration.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -173,6 +179,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Options.resx">
       <DependentUpon>Options.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Sharings.resx">
+      <DependentUpon>Sharings.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PersonalViewsMigration.resx">
       <DependentUpon>PersonalViewsMigration.cs</DependentUpon>

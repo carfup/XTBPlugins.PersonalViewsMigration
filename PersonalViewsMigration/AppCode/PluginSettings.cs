@@ -62,5 +62,8 @@ namespace Carfup.XTBPlugins.AppCode
         public const string DashboardsDeleted = "DashboardsDeleted";
         public const string DashboardsReAssigned = "DashboardsReAssigned";
         public const string ShowHelpScreen = "ShowHelpScreen";
+        public const string SharingsLoaded = "SharingsLoaded";
+        public const string SharingsRevoked = "SharingsRevoked";
+        public const string SharingsToListViewLoaded = "SharingsToListViewLoaded";
     }
 }

@@ -73,6 +73,7 @@
             this.buttonLoadUserCharts = new System.Windows.Forms.Button();
             this.textBoxFilterCharts = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnViewSharings = new System.Windows.Forms.Button();
             this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
             this.buttonMigrateSelectedViews = new System.Windows.Forms.Button();
             this.buttonCopySelectedViews = new System.Windows.Forms.Button();
@@ -118,7 +119,8 @@
             this.toolStripButtonHelp});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1042, 35);
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            this.toolStrip1.Size = new System.Drawing.Size(1910, 37);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -128,49 +130,49 @@
             this.toolStripButtonCloseTool.Image = global::Carfup.XTBPlugins.Properties.Resources.close;
             this.toolStripButtonCloseTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonCloseTool.Name = "toolStripButtonCloseTool";
-            this.toolStripButtonCloseTool.Size = new System.Drawing.Size(32, 32);
+            this.toolStripButtonCloseTool.Size = new System.Drawing.Size(32, 34);
             this.toolStripButtonCloseTool.Text = "Close";
             this.toolStripButtonCloseTool.Click += new System.EventHandler(this.toolStripButtonCloseTool_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 37);
             // 
             // toolStripButtonLoadUsers
             // 
             this.toolStripButtonLoadUsers.Image = global::Carfup.XTBPlugins.Properties.Resources.load;
             this.toolStripButtonLoadUsers.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonLoadUsers.Name = "toolStripButtonLoadUsers";
-            this.toolStripButtonLoadUsers.Size = new System.Drawing.Size(125, 32);
+            this.toolStripButtonLoadUsers.Size = new System.Drawing.Size(197, 34);
             this.toolStripButtonLoadUsers.Text = "Load CRM Users";
             this.toolStripButtonLoadUsers.Click += new System.EventHandler(this.toolStripButtonLoadUsers_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 37);
             // 
             // toolStripButtonOptions
             // 
             this.toolStripButtonOptions.Image = global::Carfup.XTBPlugins.Properties.Resources.gear;
             this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
-            this.toolStripButtonOptions.Size = new System.Drawing.Size(81, 32);
+            this.toolStripButtonOptions.Size = new System.Drawing.Size(118, 34);
             this.toolStripButtonOptions.Text = "Options";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 37);
             // 
             // toolStripButtonHelp
             // 
             this.toolStripButtonHelp.Image = global::Carfup.XTBPlugins.Properties.Resources.help;
             this.toolStripButtonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonHelp.Name = "toolStripButtonHelp";
-            this.toolStripButtonHelp.Size = new System.Drawing.Size(64, 32);
+            this.toolStripButtonHelp.Size = new System.Drawing.Size(88, 34);
             this.toolStripButtonHelp.Text = "Help";
             this.toolStripButtonHelp.Click += new System.EventHandler(this.toolStripButtonHelp_Click);
             // 
@@ -182,17 +184,18 @@
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox4, 3, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(8, 64);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(15, 118);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1026, 425);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1881, 785);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // groupBox4
@@ -202,9 +205,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.tableLayoutPanel2);
             this.groupBox4.Controls.Add(this.listViewUsersDestination);
-            this.groupBox4.Location = new System.Drawing.Point(719, 3);
+            this.groupBox4.Location = new System.Drawing.Point(1320, 6);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(304, 419);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox4.Size = new System.Drawing.Size(555, 773);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "User List Destination";
@@ -218,11 +223,12 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.textBoxFilterUsersDestination, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.comboBoxWhatUsersToDisplayDestination, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(8, 19);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(15, 35);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(289, 29);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(528, 54);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
             // textBoxFilterUsersDestination
@@ -230,9 +236,10 @@
             this.textBoxFilterUsersDestination.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterUsersDestination.Location = new System.Drawing.Point(147, 3);
+            this.textBoxFilterUsersDestination.Location = new System.Drawing.Point(270, 6);
+            this.textBoxFilterUsersDestination.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterUsersDestination.Name = "textBoxFilterUsersDestination";
-            this.textBoxFilterUsersDestination.Size = new System.Drawing.Size(139, 20);
+            this.textBoxFilterUsersDestination.Size = new System.Drawing.Size(252, 29);
             this.textBoxFilterUsersDestination.TabIndex = 9;
             this.textBoxFilterUsersDestination.Text = "Search in results ...";
             this.textBoxFilterUsersDestination.Click += new System.EventHandler(this.textBoxFilterUsersDestination_Click);
@@ -248,9 +255,10 @@
             "All",
             "Enabled",
             "Disabled"});
-            this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(3, 3);
+            this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(6, 6);
+            this.comboBoxWhatUsersToDisplayDestination.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplayDestination.Name = "comboBoxWhatUsersToDisplayDestination";
-            this.comboBoxWhatUsersToDisplayDestination.Size = new System.Drawing.Size(138, 21);
+            this.comboBoxWhatUsersToDisplayDestination.Size = new System.Drawing.Size(252, 32);
             this.comboBoxWhatUsersToDisplayDestination.TabIndex = 8;
             this.comboBoxWhatUsersToDisplayDestination.SelectedIndexChanged += new System.EventHandler(this.comboBoxWhatUsersToDisplayDestination_SelectedIndexChanged);
             // 
@@ -265,10 +273,11 @@
             this.columnHeader8,
             this.columnHeader9,
             this.columnHeader5});
-            this.listViewUsersDestination.Location = new System.Drawing.Point(8, 48);
+            this.listViewUsersDestination.Location = new System.Drawing.Point(15, 89);
+            this.listViewUsersDestination.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUsersDestination.Name = "listViewUsersDestination";
             this.listViewUsersDestination.ShowGroups = false;
-            this.listViewUsersDestination.Size = new System.Drawing.Size(289, 351);
+            this.listViewUsersDestination.Size = new System.Drawing.Size(525, 644);
             this.listViewUsersDestination.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewUsersDestination.TabIndex = 2;
             this.listViewUsersDestination.UseCompatibleStateImageBehavior = false;
@@ -298,9 +307,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.tabControlUserData);
-            this.groupBox2.Location = new System.Drawing.Point(311, 3);
+            this.groupBox2.Location = new System.Drawing.Point(571, 6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(302, 419);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox2.Size = new System.Drawing.Size(554, 773);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "User Components list";
@@ -313,20 +324,22 @@
             this.tabControlUserData.Controls.Add(this.tabPageViews);
             this.tabControlUserData.Controls.Add(this.tabPageDashboards);
             this.tabControlUserData.Controls.Add(this.tabPageCharts);
-            this.tabControlUserData.Location = new System.Drawing.Point(7, 16);
+            this.tabControlUserData.Location = new System.Drawing.Point(13, 30);
+            this.tabControlUserData.Margin = new System.Windows.Forms.Padding(6);
             this.tabControlUserData.Name = "tabControlUserData";
             this.tabControlUserData.SelectedIndex = 0;
-            this.tabControlUserData.Size = new System.Drawing.Size(295, 381);
+            this.tabControlUserData.Size = new System.Drawing.Size(541, 702);
             this.tabControlUserData.TabIndex = 13;
             // 
             // tabPageViews
             // 
             this.tabPageViews.Controls.Add(this.listViewUserViewsList);
             this.tabPageViews.Controls.Add(this.tableLayoutPanel5);
-            this.tabPageViews.Location = new System.Drawing.Point(4, 22);
+            this.tabPageViews.Location = new System.Drawing.Point(4, 33);
+            this.tabPageViews.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageViews.Name = "tabPageViews";
-            this.tabPageViews.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabPageViews.Size = new System.Drawing.Size(287, 355);
+            this.tabPageViews.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageViews.Size = new System.Drawing.Size(533, 665);
             this.tabPageViews.TabIndex = 0;
             this.tabPageViews.Text = "Views";
             this.tabPageViews.UseVisualStyleBackColor = true;
@@ -342,9 +355,10 @@
             this.columnHeader2,
             this.columnHeader10});
             this.listViewUserViewsList.FullRowSelect = true;
-            this.listViewUserViewsList.Location = new System.Drawing.Point(-2, 34);
+            this.listViewUserViewsList.Location = new System.Drawing.Point(-4, 63);
+            this.listViewUserViewsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserViewsList.Name = "listViewUserViewsList";
-            this.listViewUserViewsList.Size = new System.Drawing.Size(291, 323);
+            this.listViewUserViewsList.Size = new System.Drawing.Size(530, 592);
             this.listViewUserViewsList.TabIndex = 14;
             this.listViewUserViewsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserViewsList.View = System.Windows.Forms.View.Details;
@@ -373,11 +387,12 @@
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel5.Controls.Add(this.buttonLoadUserViews, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.textBoxFilterViews, 1, 0);
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 1);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(0, 2);
+            this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 1;
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(287, 33);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(526, 61);
             this.tableLayoutPanel5.TabIndex = 13;
             // 
             // buttonLoadUserViews
@@ -385,9 +400,10 @@
             this.buttonLoadUserViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadUserViews.Location = new System.Drawing.Point(3, 3);
+            this.buttonLoadUserViews.Location = new System.Drawing.Point(6, 6);
+            this.buttonLoadUserViews.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserViews.Name = "buttonLoadUserViews";
-            this.buttonLoadUserViews.Size = new System.Drawing.Size(137, 27);
+            this.buttonLoadUserViews.Size = new System.Drawing.Size(251, 49);
             this.buttonLoadUserViews.TabIndex = 4;
             this.buttonLoadUserViews.Text = "Load user\'s views";
             this.buttonLoadUserViews.UseVisualStyleBackColor = true;
@@ -396,9 +412,10 @@
             // textBoxFilterViews
             // 
             this.textBoxFilterViews.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterViews.Location = new System.Drawing.Point(146, 6);
+            this.textBoxFilterViews.Location = new System.Drawing.Point(269, 16);
+            this.textBoxFilterViews.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterViews.Name = "textBoxFilterViews";
-            this.textBoxFilterViews.Size = new System.Drawing.Size(138, 20);
+            this.textBoxFilterViews.Size = new System.Drawing.Size(251, 29);
             this.textBoxFilterViews.TabIndex = 11;
             this.textBoxFilterViews.Text = "Search in results ...";
             this.textBoxFilterViews.Click += new System.EventHandler(this.textBoxFilterViews_Click);
@@ -408,10 +425,11 @@
             // 
             this.tabPageDashboards.Controls.Add(this.listViewUserDashboardsList);
             this.tabPageDashboards.Controls.Add(this.tableLayoutPanel4);
-            this.tabPageDashboards.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDashboards.Location = new System.Drawing.Point(4, 33);
+            this.tabPageDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageDashboards.Name = "tabPageDashboards";
-            this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabPageDashboards.Size = new System.Drawing.Size(287, 355);
+            this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageDashboards.Size = new System.Drawing.Size(533, 665);
             this.tabPageDashboards.TabIndex = 1;
             this.tabPageDashboards.Text = "Dashboards";
             this.tabPageDashboards.UseVisualStyleBackColor = true;
@@ -426,9 +444,10 @@
             this.columnHeader11,
             this.columnHeader13});
             this.listViewUserDashboardsList.FullRowSelect = true;
-            this.listViewUserDashboardsList.Location = new System.Drawing.Point(-2, 34);
+            this.listViewUserDashboardsList.Location = new System.Drawing.Point(-4, 63);
+            this.listViewUserDashboardsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserDashboardsList.Name = "listViewUserDashboardsList";
-            this.listViewUserDashboardsList.Size = new System.Drawing.Size(291, 321);
+            this.listViewUserDashboardsList.Size = new System.Drawing.Size(530, 589);
             this.listViewUserDashboardsList.TabIndex = 16;
             this.listViewUserDashboardsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserDashboardsList.View = System.Windows.Forms.View.Details;
@@ -452,11 +471,12 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.Controls.Add(this.buttonLoadUserDashboards, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.textBoxFilterDashboards, 1, 0);
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 1);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 2);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(287, 33);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(526, 61);
             this.tableLayoutPanel4.TabIndex = 15;
             // 
             // buttonLoadUserDashboards
@@ -464,9 +484,10 @@
             this.buttonLoadUserDashboards.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadUserDashboards.Location = new System.Drawing.Point(3, 3);
+            this.buttonLoadUserDashboards.Location = new System.Drawing.Point(6, 6);
+            this.buttonLoadUserDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserDashboards.Name = "buttonLoadUserDashboards";
-            this.buttonLoadUserDashboards.Size = new System.Drawing.Size(137, 27);
+            this.buttonLoadUserDashboards.Size = new System.Drawing.Size(251, 49);
             this.buttonLoadUserDashboards.TabIndex = 4;
             this.buttonLoadUserDashboards.Text = "Load user\'s dashboards";
             this.buttonLoadUserDashboards.UseVisualStyleBackColor = true;
@@ -475,9 +496,10 @@
             // textBoxFilterDashboards
             // 
             this.textBoxFilterDashboards.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterDashboards.Location = new System.Drawing.Point(146, 6);
+            this.textBoxFilterDashboards.Location = new System.Drawing.Point(269, 16);
+            this.textBoxFilterDashboards.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterDashboards.Name = "textBoxFilterDashboards";
-            this.textBoxFilterDashboards.Size = new System.Drawing.Size(138, 20);
+            this.textBoxFilterDashboards.Size = new System.Drawing.Size(251, 29);
             this.textBoxFilterDashboards.TabIndex = 11;
             this.textBoxFilterDashboards.Text = "Search in results ...";
             this.textBoxFilterDashboards.Click += new System.EventHandler(this.textBoxFilterDashboards_Click);
@@ -487,10 +509,11 @@
             // 
             this.tabPageCharts.Controls.Add(this.listViewUserChartsList);
             this.tabPageCharts.Controls.Add(this.tableLayoutPanel6);
-            this.tabPageCharts.Location = new System.Drawing.Point(4, 22);
+            this.tabPageCharts.Location = new System.Drawing.Point(4, 33);
+            this.tabPageCharts.Margin = new System.Windows.Forms.Padding(6);
             this.tabPageCharts.Name = "tabPageCharts";
-            this.tabPageCharts.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this.tabPageCharts.Size = new System.Drawing.Size(287, 355);
+            this.tabPageCharts.Padding = new System.Windows.Forms.Padding(6);
+            this.tabPageCharts.Size = new System.Drawing.Size(533, 665);
             this.tabPageCharts.TabIndex = 2;
             this.tabPageCharts.Text = "Charts";
             this.tabPageCharts.UseVisualStyleBackColor = true;
@@ -506,9 +529,10 @@
             this.columnHeader15,
             this.columnHeader16});
             this.listViewUserChartsList.FullRowSelect = true;
-            this.listViewUserChartsList.Location = new System.Drawing.Point(-2, 34);
+            this.listViewUserChartsList.Location = new System.Drawing.Point(-4, 63);
+            this.listViewUserChartsList.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUserChartsList.Name = "listViewUserChartsList";
-            this.listViewUserChartsList.Size = new System.Drawing.Size(291, 321);
+            this.listViewUserChartsList.Size = new System.Drawing.Size(530, 589);
             this.listViewUserChartsList.TabIndex = 16;
             this.listViewUserChartsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserChartsList.View = System.Windows.Forms.View.Details;
@@ -537,11 +561,12 @@
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel6.Controls.Add(this.buttonLoadUserCharts, 0, 0);
             this.tableLayoutPanel6.Controls.Add(this.textBoxFilterCharts, 1, 0);
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 1);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(0, 2);
+            this.tableLayoutPanel6.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(287, 33);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(526, 61);
             this.tableLayoutPanel6.TabIndex = 15;
             // 
             // buttonLoadUserCharts
@@ -549,9 +574,10 @@
             this.buttonLoadUserCharts.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadUserCharts.Location = new System.Drawing.Point(3, 3);
+            this.buttonLoadUserCharts.Location = new System.Drawing.Point(6, 6);
+            this.buttonLoadUserCharts.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUserCharts.Name = "buttonLoadUserCharts";
-            this.buttonLoadUserCharts.Size = new System.Drawing.Size(137, 27);
+            this.buttonLoadUserCharts.Size = new System.Drawing.Size(251, 49);
             this.buttonLoadUserCharts.TabIndex = 4;
             this.buttonLoadUserCharts.Text = "Load user\'s charts";
             this.buttonLoadUserCharts.UseVisualStyleBackColor = true;
@@ -560,9 +586,10 @@
             // textBoxFilterCharts
             // 
             this.textBoxFilterCharts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterCharts.Location = new System.Drawing.Point(146, 6);
+            this.textBoxFilterCharts.Location = new System.Drawing.Point(269, 16);
+            this.textBoxFilterCharts.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterCharts.Name = "textBoxFilterCharts";
-            this.textBoxFilterCharts.Size = new System.Drawing.Size(138, 20);
+            this.textBoxFilterCharts.Size = new System.Drawing.Size(251, 29);
             this.textBoxFilterCharts.TabIndex = 11;
             this.textBoxFilterCharts.Text = "Search in results ...";
             this.textBoxFilterCharts.Click += new System.EventHandler(this.textBoxFilterCharts_Click);
@@ -572,21 +599,36 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox3.Controls.Add(this.btnViewSharings);
             this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
             this.groupBox3.Controls.Add(this.buttonMigrateSelectedViews);
             this.groupBox3.Controls.Add(this.buttonCopySelectedViews);
-            this.groupBox3.Location = new System.Drawing.Point(619, 3);
+            this.groupBox3.Location = new System.Drawing.Point(1137, 6);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(93, 419);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox3.Size = new System.Drawing.Size(171, 773);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Actions";
             // 
+            // btnViewSharings
+            // 
+            this.btnViewSharings.Location = new System.Drawing.Point(24, 204);
+            this.btnViewSharings.Margin = new System.Windows.Forms.Padding(6);
+            this.btnViewSharings.Name = "btnViewSharings";
+            this.btnViewSharings.Size = new System.Drawing.Size(130, 71);
+            this.btnViewSharings.TabIndex = 5;
+            this.btnViewSharings.Text = "View Sharings";
+            this.btnViewSharings.UseVisualStyleBackColor = true;
+            this.btnViewSharings.Click += new System.EventHandler(this.btnViewSharings_Click);
+            // 
             // buttonDeleteSelectedViews
             // 
-            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(13, 81);
+            this.buttonDeleteSelectedViews.Location = new System.Drawing.Point(24, 150);
+            this.buttonDeleteSelectedViews.Margin = new System.Windows.Forms.Padding(6);
             this.buttonDeleteSelectedViews.Name = "buttonDeleteSelectedViews";
-            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonDeleteSelectedViews.Size = new System.Drawing.Size(130, 42);
             this.buttonDeleteSelectedViews.TabIndex = 4;
             this.buttonDeleteSelectedViews.Text = "Delete";
             this.buttonDeleteSelectedViews.UseVisualStyleBackColor = true;
@@ -594,9 +636,10 @@
             // 
             // buttonMigrateSelectedViews
             // 
-            this.buttonMigrateSelectedViews.Location = new System.Drawing.Point(13, 52);
+            this.buttonMigrateSelectedViews.Location = new System.Drawing.Point(24, 96);
+            this.buttonMigrateSelectedViews.Margin = new System.Windows.Forms.Padding(6);
             this.buttonMigrateSelectedViews.Name = "buttonMigrateSelectedViews";
-            this.buttonMigrateSelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonMigrateSelectedViews.Size = new System.Drawing.Size(130, 42);
             this.buttonMigrateSelectedViews.TabIndex = 3;
             this.buttonMigrateSelectedViews.Text = "Assign";
             this.buttonMigrateSelectedViews.UseVisualStyleBackColor = true;
@@ -604,9 +647,10 @@
             // 
             // buttonCopySelectedViews
             // 
-            this.buttonCopySelectedViews.Location = new System.Drawing.Point(13, 23);
+            this.buttonCopySelectedViews.Location = new System.Drawing.Point(24, 42);
+            this.buttonCopySelectedViews.Margin = new System.Windows.Forms.Padding(6);
             this.buttonCopySelectedViews.Name = "buttonCopySelectedViews";
-            this.buttonCopySelectedViews.Size = new System.Drawing.Size(71, 23);
+            this.buttonCopySelectedViews.Size = new System.Drawing.Size(130, 42);
             this.buttonCopySelectedViews.TabIndex = 2;
             this.buttonCopySelectedViews.Text = "Copy";
             this.buttonCopySelectedViews.UseVisualStyleBackColor = true;
@@ -619,9 +663,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.tableLayoutPanel3);
             this.groupBox1.Controls.Add(this.listViewUsers);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Location = new System.Drawing.Point(6, 6);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(302, 419);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Size = new System.Drawing.Size(553, 773);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "User List";
@@ -637,11 +683,12 @@
             this.tableLayoutPanel3.Controls.Add(this.textBoxFilterUsers, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.comboBoxWhatUsersToDisplay, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.buttonLoadUsers, 0, 0);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(6, 16);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(11, 30);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(290, 32);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(531, 59);
             this.tableLayoutPanel3.TabIndex = 7;
             // 
             // textBoxFilterUsers
@@ -649,9 +696,10 @@
             this.textBoxFilterUsers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxFilterUsers.Location = new System.Drawing.Point(177, 3);
+            this.textBoxFilterUsers.Location = new System.Drawing.Point(324, 6);
+            this.textBoxFilterUsers.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterUsers.Name = "textBoxFilterUsers";
-            this.textBoxFilterUsers.Size = new System.Drawing.Size(110, 20);
+            this.textBoxFilterUsers.Size = new System.Drawing.Size(201, 29);
             this.textBoxFilterUsers.TabIndex = 10;
             this.textBoxFilterUsers.Text = "Search in results ...";
             this.textBoxFilterUsers.Click += new System.EventHandler(this.textBoxFilterUsers_Click);
@@ -666,9 +714,10 @@
             "All",
             "Enabled",
             "Disabled"});
-            this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(90, 3);
+            this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(165, 6);
+            this.comboBoxWhatUsersToDisplay.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplay.Name = "comboBoxWhatUsersToDisplay";
-            this.comboBoxWhatUsersToDisplay.Size = new System.Drawing.Size(81, 21);
+            this.comboBoxWhatUsersToDisplay.Size = new System.Drawing.Size(147, 32);
             this.comboBoxWhatUsersToDisplay.TabIndex = 8;
             this.comboBoxWhatUsersToDisplay.SelectedIndexChanged += new System.EventHandler(this.comboBoxWhatUsersToDisplay_SelectedIndexChanged);
             // 
@@ -676,9 +725,10 @@
             // 
             this.buttonLoadUsers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoadUsers.Location = new System.Drawing.Point(3, 3);
+            this.buttonLoadUsers.Location = new System.Drawing.Point(6, 6);
+            this.buttonLoadUsers.Margin = new System.Windows.Forms.Padding(6);
             this.buttonLoadUsers.Name = "buttonLoadUsers";
-            this.buttonLoadUsers.Size = new System.Drawing.Size(81, 23);
+            this.buttonLoadUsers.Size = new System.Drawing.Size(147, 42);
             this.buttonLoadUsers.TabIndex = 6;
             this.buttonLoadUsers.Text = "Load users";
             this.buttonLoadUsers.UseVisualStyleBackColor = true;
@@ -695,11 +745,12 @@
             this.columnHeader7,
             this.State});
             this.listViewUsers.FullRowSelect = true;
-            this.listViewUsers.Location = new System.Drawing.Point(6, 48);
+            this.listViewUsers.Location = new System.Drawing.Point(11, 89);
+            this.listViewUsers.Margin = new System.Windows.Forms.Padding(6);
             this.listViewUsers.MultiSelect = false;
             this.listViewUsers.Name = "listViewUsers";
             this.listViewUsers.ShowGroups = false;
-            this.listViewUsers.Size = new System.Drawing.Size(289, 351);
+            this.listViewUsers.Size = new System.Drawing.Size(526, 644);
             this.listViewUsers.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listViewUsers.TabIndex = 1;
             this.listViewUsers.UseCompatibleStateImageBehavior = false;
@@ -731,9 +782,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.labelDisclaimer.AutoSize = true;
             this.labelDisclaimer.ForeColor = System.Drawing.Color.Black;
-            this.labelDisclaimer.Location = new System.Drawing.Point(83, 33);
+            this.labelDisclaimer.Location = new System.Drawing.Point(152, 61);
+            this.labelDisclaimer.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.labelDisclaimer.Name = "labelDisclaimer";
-            this.labelDisclaimer.Size = new System.Drawing.Size(904, 26);
+            this.labelDisclaimer.Size = new System.Drawing.Size(1638, 50);
             this.labelDisclaimer.TabIndex = 4;
             this.labelDisclaimer.Text = resources.GetString("labelDisclaimer.Text");
             // 
@@ -743,22 +795,24 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Red;
-            this.label1.Location = new System.Drawing.Point(13, 33);
+            this.label1.Location = new System.Drawing.Point(24, 61);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
+            this.label1.Size = new System.Drawing.Size(118, 25);
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
             // PersonalViewsMigration
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelDisclaimer);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.toolStrip1);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "PersonalViewsMigration";
-            this.Size = new System.Drawing.Size(1042, 492);
+            this.Size = new System.Drawing.Size(1910, 908);
             this.Load += new System.EventHandler(this.PersonalViewsMigration_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
@@ -847,5 +901,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel6;
         private System.Windows.Forms.Button buttonLoadUserCharts;
         private System.Windows.Forms.TextBox textBoxFilterCharts;
+        private System.Windows.Forms.Button btnViewSharings;
     }
 }
