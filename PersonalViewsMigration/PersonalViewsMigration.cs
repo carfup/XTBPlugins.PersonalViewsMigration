@@ -431,7 +431,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
 
             if (listViewUserData.CheckedItems.Count > 1)
+            {
+                MessageBox.Show("Please select one record at a time.", "One record at a time.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
                 return;
+            }
 
             var itemToVerify = listViewUserData.CheckedItems[0];
 
@@ -454,8 +458,16 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         var result = e.Result as List<Entity>;
 
+                        if (result.Count == 0)
+                        {
+                            MessageBox.Show("There are no sharings for this record.", "No Sharings",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
                         var diagSharings = new Sharings(this);
                         diagSharings.loadSharings(result);
+                        diagSharings.title = $"Sharings for {itemToVerify.Text}";
                         controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
                         diagSharings.Show();
 

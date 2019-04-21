@@ -54,7 +54,7 @@ namespace Carfup.XTBPlugins.AppCode
                         LinkToAttributeName = "systemuserid",
                         EntityAlias = "systemuser",
                         JoinOperator = JoinOperator.LeftOuter,
-                        Columns = new ColumnSet("fullname"),
+                        Columns = new ColumnSet("domainname"),
                     },
                     new LinkEntity() {
                         LinkFromEntityName = "principalobjectaccess",

@@ -18,10 +18,12 @@ namespace Carfup.XTBPlugins.Forms
     {
         private PersonalViewsMigration.PersonalViewsMigration pvm;
         public List<Entity> sharingList = null;
+        public string title = "Sharings";
 
         public Sharings(PersonalViewsMigration.PersonalViewsMigration pvm)
         {
             InitializeComponent();
+            Application.EnableVisualStyles();
             this.pvm = pvm;
             this.pvm.log.LogData(EventType.Event, LogAction.ShowHelpScreen);
         }
@@ -41,18 +43,29 @@ namespace Carfup.XTBPlugins.Forms
 
             try
             {
-                foreach (var sharing in sharings)
+                foreach (var sharing in sharings.OrderBy(x => x.GetAttributeValue<string>("principaltypecode")))
                 {
                     var userteam = "";
+                    var lvGroup = listViewSharings.Groups[0];
                     if (sharing.GetAttributeValue<string>("principaltypecode") == "systemuser")
-                        userteam = sharing.GetAttributeValue<AliasedValue>("systemuser.fullname").Value.ToString();
+                        userteam = sharing.GetAttributeValue<AliasedValue>("systemuser.domainname").Value.ToString();
                     if (sharing.GetAttributeValue<string>("principaltypecode") == "team")
+                    {
                         userteam = sharing.GetAttributeValue<AliasedValue>("team.name").Value.ToString();
+                        lvGroup = listViewSharings.Groups[1];
+                    }
 
-                    var item = new ListViewItem(userteam);
-                    item.SubItems.Add(sharing.GetAttributeValue<int>("accessrightsmask").ToString());
-                    item.SubItems.Add(sharing.GetAttributeValue<DateTime>("changedon").ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
-                    item.Tag = (Guid)sharing.GetAttributeValue<Guid>("principalid");
+                    var item = new ListViewItem()
+                    {
+                        Group = lvGroup,
+                        Text = userteam,
+                        SubItems =
+                        {
+                            sharing.GetAttributeValue<int>("accessrightsmask").ToString(),
+                            sharing.GetAttributeValue<DateTime>("changedon").ToLocalTime().ToString("dd-MMM-yyyy HH:mm")
+                        },
+                        Tag = (Guid)sharing.GetAttributeValue<Guid>("principalid")
+                    };
 
                     listViewSharings.Items.Add(item);
 
@@ -88,6 +101,8 @@ namespace Carfup.XTBPlugins.Forms
 
                     this.pvm.controllerManager.service.Execute(revokeAccessRequest);
                     listViewSharings.Items.Remove(sharing);
+
+                    revoked++;
                 }
 
             }
@@ -114,6 +129,17 @@ namespace Carfup.XTBPlugins.Forms
         {
             foreach (ListViewItem item in listViewSharings.Items)
                 item.Checked = true;
+        }
+
+        private void listViewSharings_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void Sharings_Load(object sender, EventArgs e)
+        {
+            this.Text = title;
         }
     }
 }
