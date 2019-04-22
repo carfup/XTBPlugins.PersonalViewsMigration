@@ -1096,6 +1096,28 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             helpDlg.ShowDialog(this);
         }
 
-       
+        private void listViewUsersDestination_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserViewsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserDashboardsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserChartsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
     }
 }

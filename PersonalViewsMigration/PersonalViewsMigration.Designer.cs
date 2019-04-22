@@ -283,6 +283,7 @@
             this.listViewUsersDestination.UseCompatibleStateImageBehavior = false;
             this.listViewUsersDestination.View = System.Windows.Forms.View.Details;
             this.listViewUsersDestination.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUsersDestination_ColumnClick);
+            this.listViewUsersDestination.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewUsersDestination_ItemSelectionChanged);
             // 
             // columnHeader4
             // 
@@ -363,6 +364,7 @@
             this.listViewUserViewsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserViewsList.View = System.Windows.Forms.View.Details;
             this.listViewUserViewsList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUserViewsList_ColumnClick);
+            this.listViewUserViewsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewUserViewsList_ItemSelectionChanged);
             // 
             // columnHeader1
             // 
@@ -452,6 +454,7 @@
             this.listViewUserDashboardsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserDashboardsList.View = System.Windows.Forms.View.Details;
             this.listViewUserDashboardsList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUserDashboardsList_ColumnClick);
+            this.listViewUserDashboardsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewUserDashboardsList_ItemSelectionChanged);
             // 
             // columnHeader11
             // 
@@ -537,6 +540,7 @@
             this.listViewUserChartsList.UseCompatibleStateImageBehavior = false;
             this.listViewUserChartsList.View = System.Windows.Forms.View.Details;
             this.listViewUserChartsList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUserChartsList_ColumnClick);
+            this.listViewUserChartsList.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewUserChartsList_ItemSelectionChanged);
             // 
             // columnHeader14
             // 
