@@ -69,6 +69,25 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
+        public Guid[] retrieveSharingsOfUser(Guid userGuid, string entityType)
+        {
+            return this.connection.service.RetrieveMultiple(new QueryExpression()
+            {
+                EntityName = "principalobjectaccess",
+                ColumnSet = new ColumnSet("objectid"),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("principalid", ConditionOperator.Equal, userGuid),
+                        new ConditionExpression("principaltypecode", ConditionOperator.Equal, "systemuser"),
+                        new ConditionExpression("objecttypecode", ConditionOperator.Equal, entityType),
+
+                    }
+                }
+            }).Entities.Select(x => x.GetAttributeValue<Guid>("objectid")).ToArray();
+        }
+
         #endregion Constructor
     }
 }

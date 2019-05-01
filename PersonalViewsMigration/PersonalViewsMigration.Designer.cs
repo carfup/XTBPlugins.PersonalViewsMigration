@@ -621,9 +621,9 @@
             this.btnViewSharings.Location = new System.Drawing.Point(24, 204);
             this.btnViewSharings.Margin = new System.Windows.Forms.Padding(6);
             this.btnViewSharings.Name = "btnViewSharings";
-            this.btnViewSharings.Size = new System.Drawing.Size(130, 71);
+            this.btnViewSharings.Size = new System.Drawing.Size(130, 90);
             this.btnViewSharings.TabIndex = 5;
-            this.btnViewSharings.Text = "View Sharings";
+            this.btnViewSharings.Text = "Manage item Sharings";
             this.btnViewSharings.UseVisualStyleBackColor = true;
             this.btnViewSharings.Click += new System.EventHandler(this.btnViewSharings_Click);
             // 

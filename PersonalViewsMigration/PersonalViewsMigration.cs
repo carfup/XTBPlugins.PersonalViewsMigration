@@ -403,34 +403,33 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void btnViewSharings_Click(object sender, EventArgs evt)
         {
-            string type = null;
             ListView listViewUserData = null;
-            string action = null;
             string entityDataToMigrate = null;
 
             switch (tabControlUserData.SelectedTab.Name)
             {
                 case "tabPageCharts":
-                    type = UserDataType.Charts;
                     listViewUserData = listViewUserChartsList;
-                    action = LogAction.ChartsReAssigned;
                     entityDataToMigrate = "userqueryvisualization";
                     break;
                 case "tabPageDashboards":
-                    type = UserDataType.Dashboards;
                     listViewUserData = listViewUserDashboardsList;
-                    action = LogAction.DashboardsReAssigned;
                     entityDataToMigrate = "userform";
                     break;
                 default:
-                    type = UserDataType.Views;
                     listViewUserData = listViewUserViewsList;
-                    action = LogAction.ViewsReAssigned;
                     entityDataToMigrate = "userquery";
                     break;
             }
 
-            if (listViewUserData.CheckedItems.Count > 1)
+            if (listViewUserData.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a record in order to view the related sharings.", "Select a record first.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+                if (listViewUserData.CheckedItems.Count > 1)
             {
                 MessageBox.Show("Please select one record at a time.", "One record at a time.", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -466,9 +465,24 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         }
 
                         var diagSharings = new Sharings(this);
+
+                        if (diagSharings.sharingList != null)
+                            diagSharings.sharingList.Clear();
+
                         diagSharings.loadSharings(result);
-                        diagSharings.title = $"Sharings for {itemToVerify.Text}";
-                        controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
+                        diagSharings.title = $"Sharings for \"{itemToVerify.Text}\"";
+
+                        // Managing owner if it"s shared item
+                        if (itemToVerify.Group.Header == "Shared records")
+                        {
+                            controllerManager.UpdateCallerId((Guid)itemToVerify.SubItems[2].Tag);
+                        }
+                        else
+                            controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
+
+                        var isUserModified = controllerManager.userManager.ManageImpersonification();
+                        diagSharings.isUserModified = isUserModified;
+
                         diagSharings.Show();
 
                         log.LogData(EventType.Event, LogAction.SharingsLoaded);
@@ -640,7 +654,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             List<Entity> listOfUserData = null;
             string actionToDo = null;
             ListView listViewOfData = null;
-            string fieldToEntity = null;
 
             WorkAsync(new WorkAsyncInfo
             {
@@ -824,14 +837,37 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     break;
             }
 
+            var ownItems = new ListViewGroup()
+            {
+                Header = "Owned records",
+                Name = "ownRecordsHeader"
+            };
+            var sharedItems = new ListViewGroup()
+            {
+                Header = "Shared records",
+                Name = "sharedRecordsHeader"
+            };
+            listViewOfUserData.Groups.Add(ownItems);
+            listViewOfUserData.Groups.Add(sharedItems);
 
             foreach (Entity view in listToKeep)
             {
-                var item = new ListViewItem(view["name"].ToString());
-
-                if(entityNameField != null)
+                var item = new ListViewItem()
+                {
+                    Text = view.GetAttributeValue<string>("name"),
+                    Group = view.GetAttributeValue<EntityReference>("ownerid").Id ==
+                            this.controllerManager.userFrom.Value
+                        ? ownItems
+                        : sharedItems
+                };
+ 
+                if (entityNameField != null)
                     item.SubItems.Add(view[entityNameField].ToString());
-                item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
+                item.SubItems.Add(new ListViewItem.ListViewSubItem()
+                {
+                    Text = view.GetAttributeValue<DateTime>("createdon").ToLocalTime().ToString("dd-MMM-yyyy HH:mm"),
+                    Tag = view.GetAttributeValue<EntityReference>("ownerid").Id
+                });
                 item.Tag = view.Id;
 
                 listViewOfUserData.Items.Add(item);

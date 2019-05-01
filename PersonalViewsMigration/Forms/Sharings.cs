@@ -19,6 +19,7 @@ namespace Carfup.XTBPlugins.Forms
         private PersonalViewsMigration.PersonalViewsMigration pvm;
         public List<Entity> sharingList = null;
         public string title = "Sharings";
+        public bool isUserModified = false;
 
         public Sharings(PersonalViewsMigration.PersonalViewsMigration pvm)
         {
@@ -28,22 +29,25 @@ namespace Carfup.XTBPlugins.Forms
             this.pvm.log.LogData(EventType.Event, LogAction.ShowHelpScreen);
         }
 
-        public void loadSharings(List<Entity> sharings)
+        public void loadSharings(List<Entity> sharings, string filter = null)
         {
-            labelNoSharings.Visible = sharings.Count == 0;
-
             if (sharings.Count == 0)
                 return;
 
-            if(sharingList != null)
-                sharingList.Clear();
+            
             sharingList = sharings;
+            var listToKeep = sharings;
+            listViewSharings.Items.Clear();
+
+            if (!string.IsNullOrEmpty(filter))
+                listToKeep = sharingList.Where(x => (x.Contains("systemuser.domainname") && x.GetAttributeValue<AliasedValue>("systemuser.domainname").Value.ToString().ToLower().Contains(filter))
+                                                    || (x.Contains("team.name") && x.GetAttributeValue<AliasedValue>("team.name").Value.ToString().ToLower().Contains(filter))).ToList();
 
             int revoked = 0;
 
             try
             {
-                foreach (var sharing in sharings.OrderBy(x => x.GetAttributeValue<string>("principaltypecode")))
+                foreach (var sharing in listToKeep.OrderBy(x => x.GetAttributeValue<string>("principaltypecode")))
                 {
                     var userteam = "";
                     var lvGroup = listViewSharings.Groups[0];
@@ -140,6 +144,28 @@ namespace Carfup.XTBPlugins.Forms
         private void Sharings_Load(object sender, EventArgs e)
         {
             this.Text = title;
+        }
+
+        private void btnDeleteSharings_Leave(object sender, EventArgs e)
+        {
+            if(isUserModified)
+                this.pvm.controllerManager.userManager.ManageImpersonification(isUserModified);
+        }
+
+        private void textBoxFilterSharings_TextChanged(object sender, EventArgs e)
+        {
+            var filter = textBoxFilterSharings.Text;
+
+            if (filter.Length > 1)
+                loadSharings(sharingList, filter.ToLower());
+            else if (filter == "")
+                loadSharings(sharingList);
+        }
+
+        private void textBoxFilterSharings_Click(object sender, EventArgs e)
+        {
+            if (textBoxFilterSharings.Text == "Search in results ...")
+                textBoxFilterSharings.Text = "";
         }
     }
 }

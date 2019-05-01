@@ -15,7 +15,7 @@ namespace Carfup.XTBPlugins.AppCode
         /// <summary>
         /// Crm web service
         /// </summary>
-        private readonly ControllerManager connection = null;
+        private readonly ControllerManager controller = null;
 
         private static RetrieveEntityResponse metadata = null;
         #endregion Variables
@@ -28,7 +28,7 @@ namespace Carfup.XTBPlugins.AppCode
         /// <param name="connection">Controller manager</param>
         public ViewManager(ControllerManager connection)
         {
-            this.connection = connection;
+            this.controller = connection;
         }
 
         #endregion Constructor
@@ -42,22 +42,43 @@ namespace Carfup.XTBPlugins.AppCode
                 EntityFilters = EntityFilters.Attributes,
                 LogicalName = "userquery"
             };
-            metadata = (RetrieveEntityResponse)connection.proxy.Execute(retrieveEntityAttributesRequest);
+            metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
         public List<Entity> ListOfUserViews(Guid userGuid)
         {
-            return connection.proxy.RetrieveMultiple(new QueryExpression("userquery")
+            var sharings = controller.dataManager.retrieveSharingsOfUser(userGuid, "userquery");
+
+            var filter = new FilterExpression(LogicalOperator.Or)
+            {
+                Conditions =
+                {
+                    new ConditionExpression("userqueryid", ConditionOperator.In, sharings)
+                }
+            };
+            if (sharings.Length == 0)
+                filter = null;
+
+            return controller.proxy.RetrieveMultiple(new QueryExpression("userquery")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression
                 {
-                    Conditions =
+                    FilterOperator = LogicalOperator.Or,
+                    Filters =
                     {
-                        new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
-                        new ConditionExpression("querytype", ConditionOperator.NotIn, new[] {16,512}), // 16 = OfflineFilters, 512 = AddressBookFilters
+                        new FilterExpression(LogicalOperator.And)
+                        {
+                            Conditions =
+                            {
+                                new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                                new ConditionExpression("querytype", ConditionOperator.NotIn, new[] {16,512}), // 16 = OfflineFilters, 512 = AddressBookFilters
+                            }
+                        },
+                        filter
                     }
-                }
+                },
+
             }).Entities.ToList();
         }
 

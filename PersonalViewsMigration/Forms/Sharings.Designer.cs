@@ -40,7 +40,7 @@
             this.linkLabelSelectAll = new System.Windows.Forms.LinkLabel();
             this.linkLabelUnSelect = new System.Windows.Forms.LinkLabel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.labelNoSharings = new System.Windows.Forms.Label();
+            this.textBoxFilterSharings = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -90,7 +90,7 @@
             // columnHeader7
             // 
             this.columnHeader7.Text = "Shared On";
-            this.columnHeader7.Width = 240;
+            this.columnHeader7.Width = 150;
             // 
             // btnDeleteSharings
             // 
@@ -104,6 +104,7 @@
             this.btnDeleteSharings.Text = "Delete selected sharings";
             this.btnDeleteSharings.UseVisualStyleBackColor = true;
             this.btnDeleteSharings.Click += new System.EventHandler(this.btnDeleteSharings_Click);
+            this.btnDeleteSharings.Leave += new System.EventHandler(this.btnDeleteSharings_Leave);
             // 
             // tableLayoutPanel1
             // 
@@ -165,26 +166,25 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.labelNoSharings);
+            this.panel2.Controls.Add(this.textBoxFilterSharings);
             this.panel2.Location = new System.Drawing.Point(440, 3);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(481, 46);
             this.panel2.TabIndex = 19;
             // 
-            // labelNoSharings
+            // textBoxFilterSharings
             // 
-            this.labelNoSharings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.textBoxFilterSharings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelNoSharings.AutoSize = true;
-            this.labelNoSharings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.142858F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelNoSharings.ForeColor = System.Drawing.Color.Red;
-            this.labelNoSharings.Location = new System.Drawing.Point(3, 11);
-            this.labelNoSharings.Name = "labelNoSharings";
-            this.labelNoSharings.Size = new System.Drawing.Size(368, 25);
-            this.labelNoSharings.TabIndex = 18;
-            this.labelNoSharings.Text = "There are no sharings for this record.";
-            this.labelNoSharings.Visible = false;
+            this.textBoxFilterSharings.Location = new System.Drawing.Point(6, 4);
+            this.textBoxFilterSharings.Margin = new System.Windows.Forms.Padding(6);
+            this.textBoxFilterSharings.Name = "textBoxFilterSharings";
+            this.textBoxFilterSharings.Size = new System.Drawing.Size(469, 29);
+            this.textBoxFilterSharings.TabIndex = 12;
+            this.textBoxFilterSharings.Text = "Search in results ...";
+            this.textBoxFilterSharings.Click += new System.EventHandler(this.textBoxFilterSharings_Click);
+            this.textBoxFilterSharings.TextChanged += new System.EventHandler(this.textBoxFilterSharings_TextChanged);
             // 
             // Sharings
             // 
@@ -219,6 +219,6 @@
         private System.Windows.Forms.LinkLabel linkLabelSelectAll;
         private System.Windows.Forms.LinkLabel linkLabelUnSelect;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label labelNoSharings;
+        private System.Windows.Forms.TextBox textBoxFilterSharings;
     }
 }
