@@ -15,7 +15,7 @@ namespace Carfup.XTBPlugins.AppCode
         /// <summary>
         /// Crm web service
         /// </summary>
-        private readonly ControllerManager connection = null;
+        private readonly ControllerManager controller = null;
 
         private static RetrieveEntityResponse metadata = null;
         #endregion Variables
@@ -26,9 +26,9 @@ namespace Carfup.XTBPlugins.AppCode
         /// Initializes a new instance of the class Controller manager
         /// </summary>
         /// <param name="connection">Controller manager</param>
-        public DashboardManager(ControllerManager connection)
+        public DashboardManager(ControllerManager controller)
         {
-            this.connection = connection;
+            this.controller = controller;
         }
 
         #endregion Constructor
@@ -42,19 +42,39 @@ namespace Carfup.XTBPlugins.AppCode
                 EntityFilters = EntityFilters.Attributes,
                 LogicalName = "userform"
             };
-            metadata = (RetrieveEntityResponse)connection.proxy.Execute(retrieveEntityAttributesRequest);
+            metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
         public List<Entity> ListOfUserDashboards(Guid userGuid)
         {
-            return connection.proxy.RetrieveMultiple(new QueryExpression("userform")
+            var sharings = controller.dataManager.retrieveSharingsOfUser(userGuid, "userform");
+
+            var filter = new FilterExpression(LogicalOperator.Or)
+            {
+                Conditions =
+                {
+                    new ConditionExpression("userformid", ConditionOperator.In, sharings)
+                }
+            };
+            if (sharings.Length == 0)
+                filter = null;
+
+            return controller.proxy.RetrieveMultiple(new QueryExpression("userform")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression
                 {
-                    Conditions =
+                    FilterOperator = LogicalOperator.Or,
+                    Filters =
                     {
-                        new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                        new FilterExpression(LogicalOperator.And)
+                        {
+                            Conditions =
+                            {
+                                new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                            }
+                        },
+                        filter
                     }
                 }
             }).Entities.ToList();

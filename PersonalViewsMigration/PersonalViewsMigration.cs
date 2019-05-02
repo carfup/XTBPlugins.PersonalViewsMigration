@@ -30,7 +30,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
         private List<Entity> listOfUserViews = null;
         private List<Entity> listOfUserCharts = null;
         private List<Entity> listOfUserDashboards = null;
-        public ControllerManager connectionManager = null;
+        public ControllerManager controllerManager = null;
         internal PluginSettings settings = new PluginSettings();
         public LogUsageManager log = null;
         private int currentColumnOrder;
@@ -46,7 +46,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         public override void UpdateConnection(IOrganizationService newService, ConnectionDetail detail, string actionName, object parameter)
         {
-            connectionManager = new ControllerManager(newService);
+            controllerManager = new ControllerManager(newService);
             IsOnlineOrg(detail);
 
             base.UpdateConnection(newService, detail, actionName, parameter);
@@ -72,7 +72,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void LoadUsersIntoListView()
         {
-            if (!connectionManager.isOnPrem && !connectionManager.userManager.CheckIfNonInteractiveSeatAvailable())
+            if (!controllerManager.isOnPrem && !controllerManager.userManager.CheckIfNonInteractiveSeatAvailable())
             {
                 MessageBox.Show("It seems that all Non Interactive seats are used.\n\nPlease free at least one to enjoy the functionalities of this plugin !", "Warning, Non Interactive seat needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -82,7 +82,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 Message = "Loading CRM Users...",
                 Work = (bw, e) =>
                 {
-                    listOfUsers = connectionManager.userManager.GetListOfUsers();
+                    listOfUsers = controllerManager.userManager.GetListOfUsers();
                 },
                 PostWorkCallBack = e =>
                 {
@@ -127,6 +127,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonCopySelectedViews.Enabled = enable;
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
+            btnViewSharings.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
             textBoxFilterCharts.Enabled = enable;
@@ -134,7 +135,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             textBoxFilterViews.Enabled = enable;
 
             // if onprem , we force the list to enabled only
-            if (connectionManager.isOnPrem)
+            if (controllerManager.isOnPrem)
             {
                 comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
                 comboBoxWhatUsersToDisplayDestination.Enabled = false;
@@ -223,13 +224,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         switch (type)
                         {
                             case UserDataType.Charts:
-                                cr.Target = this.connectionManager.chartManager.PrepareChartToMigrate(itemEntity);
+                                cr.Target = this.controllerManager.chartManager.PrepareChartToMigrate(itemEntity);
                                 break;
                             case UserDataType.Dashboards:
-                                cr.Target = this.connectionManager.dashboardManager.PrepareDashboardToMigrate(itemEntity);
+                                cr.Target = this.controllerManager.dashboardManager.PrepareDashboardToMigrate(itemEntity);
                                 break;
                             default:
-                                cr.Target = this.connectionManager.viewManager.PrepareViewToMigrate(itemEntity);
+                                cr.Target = this.controllerManager.viewManager.PrepareViewToMigrate(itemEntity);
                                 break;
                         }
 
@@ -241,15 +242,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         var userId = (Guid) itemUser.Tag;
 
-                        connectionManager.UpdateCallerId(userId);
-                        connectionManager.userDestination = userId;
+                        controllerManager.UpdateCallerId(userId);
+                        controllerManager.userDestination = userId;
 
                         // Check if we need to switch to NonInteractive mode
                         bw.ReportProgress(0, "Checking destination user accessibility...");
-                        var isUserModified = connectionManager.userManager.ManageImpersonification();
+                        var isUserModified = controllerManager.userManager.ManageImpersonification();
 
                         // check if user has any roles assigned
-                        if (!connectionManager.userManager.UserHasAnyRole(userId))
+                        if (!controllerManager.userManager.UserHasAnyRole(userId))
                         {
                             if (usersGuid.Length == 1)
                             {
@@ -261,12 +262,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         }
 
                         bw.ReportProgress(0, $"Copying the {type}(s)...");
-                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)connectionManager.service.Execute(requestWithResults);
+                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)controllerManager.service.Execute(requestWithResults);
 
                         if (isUserModified)
                         {
                             bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
-                            connectionManager.userManager.ManageImpersonification(isUserModified);
+                            controllerManager.userManager.ManageImpersonification(isUserModified);
                         }
 
                         foreach (var responseItem in responseWithResults.Responses)
@@ -290,7 +291,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         if (!success) return;
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are Copied !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were copied !", "Successful copy.", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     }
                 },
@@ -358,24 +359,24 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         bw.ReportProgress(0, $"Deleting the user {type}(s)...");
 
-                        connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
-                        connectionManager.userDestination = connectionManager.userFrom.Value;
+                        controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
+                        controllerManager.userDestination = controllerManager.userFrom.Value;
 
                         // Check if we need to switch to NonInteractive mode
                         bw.ReportProgress(0, "Checking user accessibility...");
-                        var isUserModified = connectionManager.userManager.ManageImpersonification();
+                        var isUserModified = controllerManager.userManager.ManageImpersonification();
 
                         DeleteRequest dr = new DeleteRequest()
                         {
                             Target = new EntityReference(entityDataToDelete, (Guid)itemView.Tag)
                         };
 
-                        connectionManager.proxy.Execute(dr);
+                        controllerManager.proxy.Execute(dr);
 
                         if (isUserModified)
                         {
                             bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
-                            connectionManager.userManager.ManageImpersonification(isUserModified);
+                            controllerManager.userManager.ManageImpersonification(isUserModified);
                         }
                     }
                 },
@@ -390,10 +391,99 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     else
                     {
                         foreach (ListViewItem view in dataGuid.ToList())
-                            listViewUserViewsList.Items.Remove(view);
+                            listViewUserData.Items.Remove(view);
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are now deleted !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were deleted !", "Successful deletion.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                },
+                ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
+            });
+        }
+
+        private void btnViewSharings_Click(object sender, EventArgs evt)
+        {
+            ListView listViewUserData = null;
+            string entityDataToMigrate = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    listViewUserData = listViewUserChartsList;
+                    entityDataToMigrate = "userqueryvisualization";
+                    break;
+                case "tabPageDashboards":
+                    listViewUserData = listViewUserDashboardsList;
+                    entityDataToMigrate = "userform";
+                    break;
+                default:
+                    listViewUserData = listViewUserViewsList;
+                    entityDataToMigrate = "userquery";
+                    break;
+            }
+
+            if (listViewUserData.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a record in order to view the related sharings.", "Select a record first.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+                if (listViewUserData.CheckedItems.Count > 1)
+            {
+                MessageBox.Show("Please select one record at a time.", "One record at a time.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            var itemToVerify = listViewUserData.CheckedItems[0];
+
+            // Managing owner if it"s shared item
+            var userForCRMCall = (itemToVerify.Group.Header == "Shared records")
+                ? (Guid)itemToVerify.SubItems[2].Tag
+                : controllerManager.userFrom.Value;
+            var isUserModified = false;
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Retrieving Sharings ...",
+                Work = (bw, e) =>
+                    {
+                        isUserModified = controllerManager.userManager.ManageImpersonification(false, userForCRMCall);
+                        e.Result = this.controllerManager.dataManager.retriveRecordSharings((Guid)itemToVerify.Tag, entityDataToMigrate);
+                    },
+                PostWorkCallBack = e =>
+                {
+                    if (e.Error != null)
+                    {
+                        log.LogData(EventType.Exception, LogAction.SharingsLoaded, e.Error);
+                        MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        var result = e.Result as List<Entity>;
+
+                        if (result.Count == 0)
+                        {
+                            MessageBox.Show("There are no sharings for this record.", "No Sharings",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+
+                        var diagSharings = new Sharings(this);
+
+                        if (diagSharings.sharingList != null)
+                            diagSharings.sharingList.Clear();
+
+                        diagSharings.loadSharings(result);
+                        diagSharings.title = $"Sharings for \"{itemToVerify.Text}\"";
+
+                        diagSharings.isUserModified = isUserModified;
+
+                        diagSharings.Show();
+
+                        log.LogData(EventType.Event, LogAction.SharingsLoaded);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -472,12 +562,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         foreach (ListViewItem itemUser in usersGuid)
                         {
-                            connectionManager.UpdateCallerId(connectionManager.userFrom.Value);
-                            connectionManager.userDestination = connectionManager.userFrom.Value;
+                            controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
+                            controllerManager.userDestination = controllerManager.userFrom.Value;
 
                             // Check if we need to switch to NonInteractive mode
                             bw.ReportProgress(0, "Checking destination user accessibility...");
-                            bool isUserModified = connectionManager.userManager.ManageImpersonification();
+                            bool isUserModified = controllerManager.userManager.ManageImpersonification();
 
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
@@ -488,12 +578,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                                 Target = new EntityReference(entityDataToMigrate, (Guid)itemView.Tag)
                             };
 
-                            connectionManager.proxy.Execute(ar);
+                            controllerManager.proxy.Execute(ar);
 
                             if (isUserModified)
                             {
                                 bw.ReportProgress(0, "Setting back the destination user to Read/Write mode...");
-                                connectionManager.userManager.ManageImpersonification(isUserModified);
+                                controllerManager.userManager.ManageImpersonification(isUserModified);
                             }
                         } 
                     }
@@ -509,12 +599,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     else
                     {
                         foreach(ListViewItem view in dataGuid.ToList())
-                        {
                             listViewUserData.Items.Remove(view);
-                        }
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are reassigned !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were reassigned !", "Successful reassignment", MessageBoxButtons.OK,MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -554,15 +642,14 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
             }
 
-            this.connectionManager.userFrom = (Guid)listViewUsers.SelectedItems[0].Tag;
-            this.connectionManager.userDestination = (Guid)listViewUsers.SelectedItems[0].Tag;
-            Guid userDestination = this.connectionManager.userDestination.Value;
-            this.connectionManager.UpdateCallerId(userDestination);
+            this.controllerManager.userFrom = (Guid)listViewUsers.SelectedItems[0].Tag;
+            this.controllerManager.userDestination = (Guid)listViewUsers.SelectedItems[0].Tag;
+            Guid userDestination = this.controllerManager.userDestination.Value;
+            this.controllerManager.UpdateCallerId(userDestination);
 
             List<Entity> listOfUserData = null;
             string actionToDo = null;
             ListView listViewOfData = null;
-            string fieldToEntity = null;
 
             WorkAsync(new WorkAsyncInfo
             {
@@ -570,10 +657,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 Work = (bw, e) =>
                 {
                     bw.ReportProgress(0, "Checking user accessibility...");
-                    var isUserModified = connectionManager.userManager.ManageImpersonification();
+                    var isUserModified = controllerManager.userManager.ManageImpersonification();
 
-                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
+                    if (!controllerManager.userManager.UserHasAnyRole(userDestination))
+                    {
+                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
+                    }
 
 
                     bw.ReportProgress(0, $"Retrieving user's {type}(s)...");
@@ -581,19 +671,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     switch (type)
                     {
                         case UserDataType.Charts:
-                            listOfUserData = connectionManager.chartManager.ListOfUserCharts(userDestination);
+                            listOfUserData = controllerManager.chartManager.ListOfUserCharts(userDestination);
                             listOfUserCharts = listOfUserData;
                             actionToDo = LogAction.UserChartsLoaded;
                             listViewOfData = listViewUserChartsList;
                             break;
                         case UserDataType.Dashboards:
-                            listOfUserData = connectionManager.dashboardManager.ListOfUserDashboards(userDestination);
+                            listOfUserData = controllerManager.dashboardManager.ListOfUserDashboards(userDestination);
                             listOfUserDashboards = listOfUserData;
                             actionToDo = LogAction.UserDashboardsLoaded;
                             listViewOfData = listViewUserDashboardsList;
                             break;
                         default:
-                            listOfUserData = connectionManager.viewManager.ListOfUserViews(userDestination);
+                            listOfUserData = controllerManager.viewManager.ListOfUserViews(userDestination);
                             listOfUserViews = listOfUserData;
                             actionToDo = LogAction.UserViewsLoaded;
                             listViewOfData = listViewUserViewsList;
@@ -603,7 +693,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     if (isUserModified)
                     {
                         bw.ReportProgress(0, "Setting back the user to Read/Write mode...");
-                        connectionManager.userManager.ManageImpersonification(isUserModified);
+                        controllerManager.userManager.ManageImpersonification(isUserModified);
 
                     }
                 },
@@ -621,15 +711,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         ManageUserDataToDisplay(listViewOfData, listOfUserData, type);
                     }
 
-                    // if user has no role, message and skip next check
-                    if (!connectionManager.userManager.UserHasAnyRole(userDestination))
-                    {
-                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
                     if (listOfUserData != null && !listOfUserData.Any())
-                        MessageBox.Show($"This user has no personal {type}(s) associated to his account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"This user has no personal {type}(s) associated to his user account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     log.LogData(EventType.Event, actionToDo);
                 },
@@ -720,6 +803,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             return usersToKeep;
         }
 
+
+
         private void ManageUserDataToDisplay(ListView listViewOfUserData, List<Entity> listOfUserData, string type, string filter = null)
         {
             listViewOfUserData.Items.Clear();
@@ -744,14 +829,37 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     break;
             }
 
+            var ownItems = new ListViewGroup()
+            {
+                Header = "Owned records",
+                Name = "ownRecordsHeader"
+            };
+            var sharedItems = new ListViewGroup()
+            {
+                Header = "Shared records",
+                Name = "sharedRecordsHeader"
+            };
+            listViewOfUserData.Groups.Add(ownItems);
+            listViewOfUserData.Groups.Add(sharedItems);
 
             foreach (Entity view in listToKeep)
             {
-                var item = new ListViewItem(view["name"].ToString());
-
-                if(entityNameField != null)
+                var item = new ListViewItem()
+                {
+                    Text = view.GetAttributeValue<string>("name"),
+                    Group = view.GetAttributeValue<EntityReference>("ownerid").Id ==
+                            this.controllerManager.userFrom.Value
+                        ? ownItems
+                        : sharedItems
+                };
+ 
+                if (entityNameField != null)
                     item.SubItems.Add(view[entityNameField].ToString());
-                item.SubItems.Add(((DateTime)view["createdon"]).ToLocalTime().ToString("dd-MMM-yyyy HH:mm"));
+                item.SubItems.Add(new ListViewItem.ListViewSubItem()
+                {
+                    Text = view.GetAttributeValue<DateTime>("createdon").ToLocalTime().ToString("dd-MMM-yyyy HH:mm"),
+                    Tag = view.GetAttributeValue<EntityReference>("ownerid").Id
+                });
                 item.Tag = view.Id;
 
                 listViewOfUserData.Items.Add(item);
@@ -776,12 +884,12 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (Service != null)
             {
                 // creating the controller
-                connectionManager = new ControllerManager(Service);
+                controllerManager = new ControllerManager(Service);
 
                 IsOnlineOrg(ConnectionDetail);
             }
 
-            if(connectionManager.isOnPrem)
+            if(controllerManager.isOnPrem)
                 log.LogData(EventType.Event, LogAction.EnvironmentOnPremise);
         }
 
@@ -794,7 +902,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             labelDisclaimer.Text =
                 "Make sure you have the necessary permissions to perform actions within the plugin.\nThe needed privilege is : \"prvActOnBehalfOfAnotherUser\" included in the Delegate security role.";
 
-            connectionManager.isOnPrem = true;
+            controllerManager.isOnPrem = true;
 
             // if onprem , we force the list to enabled only
             comboBoxWhatUsersToDisplayDestination.SelectedItem = "Enabled";
@@ -1016,6 +1124,28 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             helpDlg.ShowDialog(this);
         }
 
-        
+        private void listViewUsersDestination_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserViewsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserDashboardsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
+
+        private void listViewUserChartsList_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            if (e.IsSelected)
+                e.Item.Checked = e.IsSelected;
+        }
     }
 }
