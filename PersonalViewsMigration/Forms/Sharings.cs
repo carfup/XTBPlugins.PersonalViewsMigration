@@ -106,6 +106,8 @@ namespace Carfup.XTBPlugins.Forms
                     this.pvm.controllerManager.service.Execute(revokeAccessRequest);
                     listViewSharings.Items.Remove(sharing);
 
+                    sharingList.Remove(sharingList.FirstOrDefault(x => x.Id == sharingDetails.Id));
+
                     revoked++;
                 }
 
