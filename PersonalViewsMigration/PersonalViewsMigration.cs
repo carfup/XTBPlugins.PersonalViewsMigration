@@ -291,7 +291,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         if (!success) return;
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are Copied !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were copied !", "Successful copy.", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     }
                 },
@@ -391,10 +391,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     else
                     {
                         foreach (ListViewItem view in dataGuid.ToList())
-                            listViewUserViewsList.Items.Remove(view);
+                            listViewUserData.Items.Remove(view);
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are now deleted !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were deleted !", "Successful deletion.", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -438,11 +438,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             var itemToVerify = listViewUserData.CheckedItems[0];
 
+            // Managing owner if it"s shared item
+            var userForCRMCall = (itemToVerify.Group.Header == "Shared records")
+                ? (Guid)itemToVerify.SubItems[2].Tag
+                : controllerManager.userFrom.Value;
+            var isUserModified = false;
+
             WorkAsync(new WorkAsyncInfo
             {
                 Message = $"Retrieving Sharings ...",
                 Work = (bw, e) =>
                     {
+                        isUserModified = controllerManager.userManager.ManageImpersonification(false, userForCRMCall);
                         e.Result = this.controllerManager.dataManager.retriveRecordSharings((Guid)itemToVerify.Tag, entityDataToMigrate);
                     },
                 PostWorkCallBack = e =>
@@ -472,15 +479,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         diagSharings.loadSharings(result);
                         diagSharings.title = $"Sharings for \"{itemToVerify.Text}\"";
 
-                        // Managing owner if it"s shared item
-                        if (itemToVerify.Group.Header == "Shared records")
-                        {
-                            controllerManager.UpdateCallerId((Guid)itemToVerify.SubItems[2].Tag);
-                        }
-                        else
-                            controllerManager.UpdateCallerId(controllerManager.userFrom.Value);
-
-                        var isUserModified = controllerManager.userManager.ManageImpersonification();
                         diagSharings.isUserModified = isUserModified;
 
                         diagSharings.Show();
@@ -601,12 +599,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     else
                     {
                         foreach(ListViewItem view in dataGuid.ToList())
-                        {
                             listViewUserData.Items.Remove(view);
-                        }
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{type}(s) are reassigned !");
+                        MessageBox.Show($"{dataGuid.Length} {type}(s) were reassigned !", "Successful reassignment", MessageBoxButtons.OK,MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -664,7 +660,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     var isUserModified = controllerManager.userManager.ManageImpersonification();
 
                     if (!controllerManager.userManager.UserHasAnyRole(userDestination))
+                    {
+                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
+                    }
 
 
                     bw.ReportProgress(0, $"Retrieving user's {type}(s)...");
@@ -712,15 +711,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         ManageUserDataToDisplay(listViewOfData, listOfUserData, type);
                     }
 
-                    // if user has no role, message and skip next check
-                    if (!controllerManager.userManager.UserHasAnyRole(userDestination))
-                    {
-                        MessageBox.Show("The selected user has no security roles assigned.\nMake sure you assign at least one security role in order to perform any action for this user", "Warning, Security role needed.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
                     if (listOfUserData != null && !listOfUserData.Any())
-                        MessageBox.Show($"This user has no personal {type}(s) associated to his account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show($"This user has no personal {type}(s) associated to his user account.", $"No {type}(s) available.", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                     log.LogData(EventType.Event, actionToDo);
                 },
