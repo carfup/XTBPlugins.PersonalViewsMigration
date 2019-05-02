@@ -1,18 +1,24 @@
 ﻿<package>
   <metadata>
     <id>Carfup.XTBPlugins.PersonalViewsMigration</id>
-    <version>1.2019.3.7</version>
+    <version>1.2019.4.7</version>
     <title>Personal User Views Migration</title>
-    <authors>Clement O.</authors>
-    <owners>Clement O.</owners>
+    <authors>Clement Olivier</authors>
+    <owners>Clement Olivier</owners>
     <projectUrl>https://github.com/carfup/XTBPlugins.DeltaAssemblyvsCrm</projectUrl>
 	<iconUrl>http://www.gravatar.com/avatar/8b87aef303e872503c47ef3fdf83c801?s=64</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This tool will allow you to reassign or copy personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>
-    <summary>Really sweet plugin that does awesome things</summary>
+    <description>This tool will allow you to reassign, copy, delete, personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>
+    <summary>Manage personal views, dashboards and charts.</summary>
     <releaseNotes>
-1.2019.3.7
-The known actions for views are now available for Charts and Dashboards.
+1.2019.4.7
+Manage the sharings of views, dashboards and charts.
+Fixed issue with refresh of items list.
+Fixed issue with impersonation error.
+Background process improved.
+
+1.2019.3.6
+The known actions for views are now available for Charts and Dashboards
 Ability to sort and filter results for user views, charts and dashboards.
 Bug fixing.
 

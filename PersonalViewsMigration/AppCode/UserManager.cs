@@ -15,7 +15,7 @@ namespace Carfup.XTBPlugins.AppCode
         /// Crm web service
         /// </summary>
 
-        public ControllerManager connection = null;
+        public ControllerManager controller = null;
 
 
 
@@ -27,9 +27,9 @@ namespace Carfup.XTBPlugins.AppCode
         /// Initializes a new instance of the class Controller manager
         /// </summary>
         /// <param name="connection">Controller manager</param>
-        public UserManager(ControllerManager connection)
+        public UserManager(ControllerManager controller)
         {
-            this.connection = connection;
+            this.controller = controller;
         }
 
         #endregion Constructor
@@ -37,20 +37,23 @@ namespace Carfup.XTBPlugins.AppCode
         #region Methods
 
         
-        public Boolean ManageImpersonification(bool action = false)
+        public Boolean ManageImpersonification(bool action = false, Guid? userGuid = null)
         {
+            if (userGuid == null)
+                userGuid = controller.userDestination.Value;
+
             bool isUserModified = action;
 
             if (isUserModified)
             {
-                CheckIfUserEnabled(connection.userDestination.Value, 0);
+                CheckIfUserEnabled(userGuid.Value, 0);
             }
             else
             {
-                isUserModified = CheckIfUserEnabled(connection.userDestination.Value);
+                isUserModified = CheckIfUserEnabled(userGuid.Value);
             }
 
-            connection.UpdateCallerId(connection.userDestination.Value);
+            controller.UpdateCallerId(userGuid.Value);
 
             return isUserModified;
         }
@@ -60,13 +63,13 @@ namespace Carfup.XTBPlugins.AppCode
             bool ismodified = false;
 
             // We put back the admin user to be sure that he has permission to perform the following actions
-            connection.UpdateCallerId(connection.XTBUser.Value);
+            controller.UpdateCallerId(controller.XTBUser.Value);
 
             // By default i set it to the user
-            Entity user = this.connection.service.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
+            Entity user = this.controller.service.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
 
             //if user is null or is onprem, no need to manage the non interactive mode                    
-            if (user == null || connection.isOnPrem)
+            if (user == null || controller.isOnPrem)
                 return ismodified;
 
             // we check if the user exist in the crm  
@@ -76,7 +79,7 @@ namespace Carfup.XTBPlugins.AppCode
             {
                 user["accessmode"] = new OptionSetValue(accessmode);
 
-                connection.service.Update(user);
+                controller.service.Update(user);
                 Trace.TraceInformation($"updated User : {user["fullname"]} to accessmode : {accessmode}");
                 ismodified = true;
             }
@@ -86,7 +89,7 @@ namespace Carfup.XTBPlugins.AppCode
         
         public List<Entity> GetListOfUsers()
         {
-            return connection.service.RetrieveMultiple(new QueryExpression("systemuser")
+            return controller.service.RetrieveMultiple(new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
                 
@@ -106,7 +109,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public bool UserHasAnyRole(Guid userId)
         {
-            var retrieveRoles = connection.service.RetrieveMultiple(new QueryExpression("systemuserroles")
+            var retrieveRoles = controller.service.RetrieveMultiple(new QueryExpression("systemuserroles")
             {
                 ColumnSet = new ColumnSet(false),
                 Criteria = new FilterExpression
@@ -123,7 +126,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public bool CheckIfNonInteractiveSeatAvailable()
         {
-            var nonInteractiveCount = connection.service.RetrieveMultiple(new QueryExpression("systemuser")
+            var nonInteractiveCount = controller.service.RetrieveMultiple(new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet(false),
                 Criteria = new FilterExpression
