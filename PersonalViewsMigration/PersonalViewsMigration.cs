@@ -789,8 +789,18 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             foreach (Entity user in usersToKeep)
             {
                 var item = new ListViewItem(user["domainname"].ToString());
-                item.SubItems.Add(user["firstname"].ToString());
-                item.SubItems.Add(user["lastname"].ToString());
+                
+                //some users might not have a first/last name set, we should check it first
+                if (user.Contains("firstname"))
+                    item.SubItems.Add(user["firstname"].ToString());
+                else
+                    item.SubItems.Add("");
+
+                if (user.Contains("lastname"))
+                    item.SubItems.Add(user["lastname"].ToString());
+                else
+                    item.SubItems.Add("");
+                
                 item.SubItems.Add((bool)user["isdisabled"] ? "Disabled" : "Enabled");
                 item.Tag = user.Id;
 
