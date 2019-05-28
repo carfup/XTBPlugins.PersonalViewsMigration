@@ -45,9 +45,9 @@ namespace Carfup.XTBPlugins.AppCode
             metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
-        public List<Entity> ListOfUserViews(Guid userGuid)
+        public List<Entity> ListOfUserViews(UserInfo userInfo)
         {
-            var sharings = controller.dataManager.retrieveSharingsOfUser(userGuid, "userquery");
+            var sharings = controller.dataManager.retrieveSharingsOfUser(userInfo, "userquery");
 
             var filter = new FilterExpression(LogicalOperator.Or)
             {
@@ -71,7 +71,7 @@ namespace Carfup.XTBPlugins.AppCode
                         {
                             Conditions =
                             {
-                                new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                                new ConditionExpression("ownerid", ConditionOperator.Equal, userInfo.userId),
                                 new ConditionExpression("querytype", ConditionOperator.NotIn, new[] {16,512}), // 16 = OfflineFilters, 512 = AddressBookFilters
                             }
                         },

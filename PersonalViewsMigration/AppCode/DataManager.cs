@@ -69,7 +69,7 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
-        public Guid[] retrieveSharingsOfUser(Guid userGuid, string entityType)
+        public Guid[] retrieveSharingsOfUser(UserInfo userInfo, string entityType)
         {
             return this.connection.service.RetrieveMultiple(new QueryExpression()
             {
@@ -79,8 +79,8 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                        new ConditionExpression("principalid", ConditionOperator.Equal, userGuid),
-                        new ConditionExpression("principaltypecode", ConditionOperator.Equal, "systemuser"),
+                        new ConditionExpression("principalid", ConditionOperator.Equal, userInfo.userId),
+                        new ConditionExpression("principaltypecode", ConditionOperator.Equal, userInfo.userEntity),
                         new ConditionExpression("objecttypecode", ConditionOperator.Equal, entityType),
 
                     }

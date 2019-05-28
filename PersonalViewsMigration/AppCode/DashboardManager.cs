@@ -35,7 +35,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         #region Methods
 
-        private void RetrieveMetadataOfView()
+        private void RetrieveMetadataOfDashboard()
         {
             RetrieveEntityRequest retrieveEntityAttributesRequest = new RetrieveEntityRequest
             {
@@ -45,9 +45,9 @@ namespace Carfup.XTBPlugins.AppCode
             metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
-        public List<Entity> ListOfUserDashboards(Guid userGuid)
+        public List<Entity> ListOfUserDashboards(UserInfo userInfo)
         {
-            var sharings = controller.dataManager.retrieveSharingsOfUser(userGuid, "userform");
+            var sharings = controller.dataManager.retrieveSharingsOfUser(userInfo, "userform");
 
             var filter = new FilterExpression(LogicalOperator.Or)
             {
@@ -71,7 +71,7 @@ namespace Carfup.XTBPlugins.AppCode
                         {
                             Conditions =
                             {
-                                new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                                new ConditionExpression("ownerid", ConditionOperator.Equal, userInfo.userId),
                             }
                         },
                         filter
@@ -85,7 +85,7 @@ namespace Carfup.XTBPlugins.AppCode
             List<string> attributesList = new List<string> { "formjson", "formxml", "type", "objecttypecode", "name", "description" };
 
             if (metadata == null)
-                RetrieveMetadataOfView();
+                RetrieveMetadataOfDashboard();
             
             Entity dashboardToMigrate = new Entity("userform");
 

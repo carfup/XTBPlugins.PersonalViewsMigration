@@ -37,23 +37,26 @@ namespace Carfup.XTBPlugins.AppCode
         #region Methods
 
         
-        public Boolean ManageImpersonification(bool action = false, Guid? userGuid = null)
+        public Boolean ManageImpersonification(bool action = false, UserInfo userInfo = null)
         {
-            if (userGuid == null)
-                userGuid = controller.userDestination.Value;
+            if (controller.userDestination.userEntity == "team" || userInfo?.userEntity == "team")
+                return false;
+
+            if (userInfo == null)
+                userInfo = controller.userDestination;
 
             bool isUserModified = action;
 
             if (isUserModified)
             {
-                CheckIfUserEnabled(userGuid.Value, 0);
+                CheckIfUserEnabled(userInfo.userId.Value, 0);
             }
             else
             {
-                isUserModified = CheckIfUserEnabled(userGuid.Value);
+                isUserModified = CheckIfUserEnabled(userInfo.userId.Value);
             }
 
-            controller.UpdateCallerId(userGuid.Value);
+            controller.UpdateCallerId(userInfo.userId.Value);
 
             return isUserModified;
         }
@@ -73,14 +76,14 @@ namespace Carfup.XTBPlugins.AppCode
                 return ismodified;
 
             // we check if the user exist in the crm  
-            Trace.TraceInformation($"checking User : {user["fullname"]}, isdisabled : {user["isdisabled"]}, accessmode : {((OptionSetValue) user["accessmode"]).Value}");
+            Trace.TraceInformation($"checking User : {user.GetAttributeValue<string>("fullname")}, isdisabled : {user.GetAttributeValue<bool>("isdisabled")}, accessmode : {user.GetAttributeValue<OptionSetValue>("accessmode")?.Value}");
             // If the user is disabled or is in Non Interactive mode, we update it.
-            if (Boolean.Parse(user["isdisabled"].ToString()) || ((OptionSetValue)user["accessmode"]).Value == 4)
+            if (user.GetAttributeValue<bool>("isdisabled") || user.GetAttributeValue<OptionSetValue>("accessmode").Value == 4)
             {
                 user["accessmode"] = new OptionSetValue(accessmode);
 
                 controller.service.Update(user);
-                Trace.TraceInformation($"updated User : {user["fullname"]} to accessmode : {accessmode}");
+                Trace.TraceInformation($"updated User : {user.GetAttributeValue<string>("fullname")} to accessmode : {accessmode}");
                 ismodified = true;
             }
 
@@ -107,8 +110,19 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
-        public bool UserHasAnyRole(Guid userId)
+        public List<Entity> GetListOfTeams()
         {
+            return controller.service.RetrieveMultiple(new QueryExpression("team")
+            {
+                ColumnSet = new ColumnSet("name"),
+            }).Entities.ToList();
+        }
+
+        public bool UserHasAnyRole(UserInfo userInfo)
+        {
+            if (userInfo.userEntity == "team")
+                return true;
+
             var retrieveRoles = controller.service.RetrieveMultiple(new QueryExpression("systemuserroles")
             {
                 ColumnSet = new ColumnSet(false),
@@ -116,7 +130,7 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                        new ConditionExpression("systemuserid", ConditionOperator.Equal, userId)
+                        new ConditionExpression("systemuserid", ConditionOperator.Equal, userInfo.userId.Value)
                     }
                 }
             }).Entities.ToList();
@@ -139,6 +153,15 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.Count;
 
             return nonInteractiveCount < 5;
+        }
+
+        public UserInfo SetUserType(Guid userId, string userType)
+        {
+            return new UserInfo()
+            {
+                userId = userId,
+                userEntity = (userType == "user" || userType == "systemuser") ? "systemuser": "team"
+            };
         }
         #endregion Methods
     }

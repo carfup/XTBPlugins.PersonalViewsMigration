@@ -8,12 +8,14 @@ using McTools.Xrm.Connection;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Client;
+using Microsoft.Xrm.Tooling.Connector;
 
 namespace Carfup.XTBPlugins.AppCode
 {
     public class ControllerManager
     {
         public IOrganizationService service { get; private set; } = null;
+        public CrmServiceClient serviceClient { get; private set; } = null;
         public OrganizationServiceProxy proxy { get; private set; } = null;
         public ViewManager viewManager { get; private set; } = null;
         public UserManager userManager { get; private set; } = null;
@@ -21,13 +23,14 @@ namespace Carfup.XTBPlugins.AppCode
         public DashboardManager dashboardManager { get; private set; } = null;
         public DataManager dataManager { get; private set; } = null;
         public Guid? XTBUser { get; private set; } = null;
-        public Guid? userFrom { get; set; } = null;
-        public Guid? userDestination { get; set; } = null;
+        public UserInfo userFrom { get; set; } = null;
+        public UserInfo userDestination { get; set; } = null;
         public bool isOnPrem { get; set; } = false;
-        public ControllerManager(IOrganizationService service)
+        public ControllerManager(CrmServiceClient service)
         {
-            this.service = service;
-            this.proxy = (OrganizationServiceProxy)service;
+            this.serviceClient = service;
+            this.service = (IOrganizationService)service.OrganizationServiceProxy;
+            this.proxy = service.OrganizationServiceProxy;
             this.userManager = new UserManager(this);
             this.viewManager = new ViewManager(this);
             this.chartManager = new ChartManager(this);

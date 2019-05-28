@@ -5,7 +5,7 @@
     <title>Personal User Views Migration</title>
     <authors>Clement Olivier</authors>
     <owners>Clement Olivier</owners>
-    <projectUrl>https://github.com/carfup/XTBPlugins.DeltaAssemblyvsCrm</projectUrl>
+    <projectUrl>https://github.com/carfup/XTBPlugins.PersonalViewsMigration</projectUrl>
 	<iconUrl>http://www.gravatar.com/avatar/8b87aef303e872503c47ef3fdf83c801?s=64</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This tool will allow you to reassign, copy, delete, personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>

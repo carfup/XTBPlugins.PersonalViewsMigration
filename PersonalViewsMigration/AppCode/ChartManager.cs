@@ -35,7 +35,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         #region Methods
 
-        private void RetrieveMetadataOfView()
+        private void RetrieveMetadataOfChart()
         {
             RetrieveEntityRequest retrieveEntityAttributesRequest = new RetrieveEntityRequest
             {
@@ -45,9 +45,9 @@ namespace Carfup.XTBPlugins.AppCode
             metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
         }
 
-        public List<Entity> ListOfUserCharts(Guid userGuid)
+        public List<Entity> ListOfUserCharts(UserInfo userInfo)
         {
-            var sharings = controller.dataManager.retrieveSharingsOfUser(userGuid, "userqueryvisualization");
+            var sharings = controller.dataManager.retrieveSharingsOfUser(userInfo, "userqueryvisualization");
 
             var filter = new FilterExpression(LogicalOperator.Or)
             {
@@ -72,7 +72,7 @@ namespace Carfup.XTBPlugins.AppCode
                         {
                             Conditions =
                             {
-                                new ConditionExpression("ownerid", ConditionOperator.Equal, userGuid),
+                                new ConditionExpression("ownerid", ConditionOperator.Equal, userInfo.userId),
                             }
                         },
                         filter
@@ -87,7 +87,7 @@ namespace Carfup.XTBPlugins.AppCode
             List<string> attributesList = new List<string> { "primaryentitytypecode", "charttype", "presentationdescription", "isdefault", "datadescription", "name", "description" };
 
             if (metadata == null)
-                RetrieveMetadataOfView();
+                RetrieveMetadataOfChart();
             
             Entity chartToMigrate = new Entity("userqueryvisualization");
 
