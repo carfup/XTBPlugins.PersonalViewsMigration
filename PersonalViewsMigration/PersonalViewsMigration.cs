@@ -315,7 +315,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         }
 
                         bw.ReportProgress(0, $"Copying the {type}(s)...");
-                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)controllerManager.service.Execute(requestWithResults);
+                        ExecuteMultipleResponse responseWithResults = (ExecuteMultipleResponse)controllerManager.serviceClient.Execute(requestWithResults);
 
                         if (isUserModified)
                         {
@@ -325,6 +325,16 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                         foreach (var responseItem in responseWithResults.Responses)
                         {
+                            if (responseItem.Fault == null && itemUser.Text == "team")
+                            {
+                                var assigneEntity = itemUser.Text == "team" ? itemUser.Text : "systemuser";
+                                AssignRequest ar = new AssignRequest()
+                                {
+                                    Assignee = new EntityReference(assigneEntity, (Guid)itemUser.Tag),
+                                    Target = new EntityReference(listOfUserData.FirstOrDefault().LogicalName, (Guid)responseItem.Response.Results["id"])
+                                };
+                                controllerManager.serviceClient.Execute(ar);
+                            }
                             // An error has occurred.
                             if (responseItem.Fault != null)
                                 throw new Exception(responseItem.Fault.Message);
@@ -625,9 +635,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
                             //proxy.CallerId = (Guid)itemUser.Tag;
                             bw.ReportProgress(0, $"Changing ownership of the {type}(s)...");
+
+                            var assigneEntity = itemUser.Text == "team" ? itemUser.Text : "systemuser";
                             AssignRequest ar = new AssignRequest
                             {
-                                Assignee = new EntityReference("systemuser", (Guid)itemUser.Tag),
+                                Assignee = new EntityReference(assigneEntity, (Guid)itemUser.Tag),
                                 Target = new EntityReference(entityDataToMigrate, (Guid)itemView.Tag)
                             };
 

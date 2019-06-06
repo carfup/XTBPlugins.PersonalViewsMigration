@@ -776,6 +776,7 @@
             // columnHeader12
             // 
             this.columnHeader12.Text = "Type";
+            this.columnHeader12.Width = 65;
             // 
             // columnHeader3
             // 

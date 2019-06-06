@@ -82,6 +82,7 @@ namespace Carfup.XTBPlugins.AppCode
                         new ConditionExpression("principalid", ConditionOperator.Equal, userInfo.userId),
                         new ConditionExpression("principaltypecode", ConditionOperator.Equal, userInfo.userEntity),
                         new ConditionExpression("objecttypecode", ConditionOperator.Equal, entityType),
+                        new ConditionExpression("accessrightsmask", ConditionOperator.GreaterThan, 0),
 
                     }
                 }
