@@ -38,6 +38,12 @@ namespace Carfup.XTBPlugins.AppCode
         public const string Charts = "chart";
     }
 
+    public class UserInfo
+    {
+        public Guid? userId { get; set; }
+        public string userEntity { get; set; }
+    }
+
     // EventType to qualify which action was performed by the plugin
     static class LogAction
     {
