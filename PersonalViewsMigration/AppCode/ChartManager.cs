@@ -42,7 +42,7 @@ namespace Carfup.XTBPlugins.AppCode
                 EntityFilters = EntityFilters.Attributes,
                 LogicalName = "userqueryvisualization"
             };
-            metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
+            metadata = (RetrieveEntityResponse)controller.serviceClient.Execute(retrieveEntityAttributesRequest);
         }
 
         public List<Entity> ListOfUserCharts(UserInfo userInfo)
@@ -59,7 +59,7 @@ namespace Carfup.XTBPlugins.AppCode
             if (sharings.Length == 0)
                 filter = null;
 
-            return controller.proxy.RetrieveMultiple(new QueryExpression()
+            return controller.serviceClient.RetrieveMultiple(new QueryExpression()
             {
                 EntityName = "userqueryvisualization",
                 ColumnSet = new ColumnSet(true),

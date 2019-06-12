@@ -42,7 +42,7 @@ namespace Carfup.XTBPlugins.AppCode
                 EntityFilters = EntityFilters.Attributes,
                 LogicalName = "userquery"
             };
-            metadata = (RetrieveEntityResponse)controller.proxy.Execute(retrieveEntityAttributesRequest);
+            metadata = (RetrieveEntityResponse)controller.serviceClient.Execute(retrieveEntityAttributesRequest);
         }
 
         public List<Entity> ListOfUserViews(UserInfo userInfo)
@@ -59,7 +59,7 @@ namespace Carfup.XTBPlugins.AppCode
             if (sharings.Length == 0)
                 filter = null;
 
-            return controller.proxy.RetrieveMultiple(new QueryExpression("userquery")
+            return controller.serviceClient.RetrieveMultiple(new QueryExpression("userquery")
             {
                 ColumnSet = new ColumnSet(true),
                 Criteria = new FilterExpression

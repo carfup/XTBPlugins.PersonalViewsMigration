@@ -69,7 +69,7 @@ namespace Carfup.XTBPlugins.AppCode
             controller.UpdateCallerId(controller.XTBUser.Value);
 
             // By default i set it to the user
-            Entity user = this.controller.service.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
+            Entity user = this.controller.serviceClient.Retrieve("systemuser", userGuid, new ColumnSet("isdisabled", "accessmode", "fullname"));
 
             //if user is null or is onprem, no need to manage the non interactive mode                    
             if (user == null || controller.isOnPrem)
@@ -82,7 +82,7 @@ namespace Carfup.XTBPlugins.AppCode
             {
                 user["accessmode"] = new OptionSetValue(accessmode);
 
-                controller.service.Update(user);
+                controller.serviceClient.Update(user);
                 Trace.TraceInformation($"updated User : {user.GetAttributeValue<string>("fullname")} to accessmode : {accessmode}");
                 ismodified = true;
             }
@@ -92,7 +92,7 @@ namespace Carfup.XTBPlugins.AppCode
         
         public List<Entity> GetListOfUsers()
         {
-            return controller.service.RetrieveMultiple(new QueryExpression("systemuser")
+            return controller.serviceClient.RetrieveMultiple(new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
                 
@@ -112,7 +112,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public List<Entity> GetListOfTeams()
         {
-            return controller.service.RetrieveMultiple(new QueryExpression("team")
+            return controller.serviceClient.RetrieveMultiple(new QueryExpression("team")
             {
                 ColumnSet = new ColumnSet("name"),
             }).Entities.ToList();
@@ -123,7 +123,7 @@ namespace Carfup.XTBPlugins.AppCode
             if (userInfo.userEntity == "team")
                 return true;
 
-            var retrieveRoles = controller.service.RetrieveMultiple(new QueryExpression("systemuserroles")
+            var retrieveRoles = controller.serviceClient.RetrieveMultiple(new QueryExpression("systemuserroles")
             {
                 ColumnSet = new ColumnSet(false),
                 Criteria = new FilterExpression
@@ -140,7 +140,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public bool CheckIfNonInteractiveSeatAvailable()
         {
-            var nonInteractiveCount = controller.service.RetrieveMultiple(new QueryExpression("systemuser")
+            var nonInteractiveCount = controller.serviceClient.RetrieveMultiple(new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet(false),
                 Criteria = new FilterExpression

@@ -434,7 +434,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             Target = new EntityReference(entityDataToDelete, (Guid)itemView.Tag)
                         };
 
-                        controllerManager.proxy.Execute(dr);
+                        controllerManager.serviceClient.Execute(dr);
 
                         if (isUserModified)
                         {
@@ -643,7 +643,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                                 Target = new EntityReference(entityDataToMigrate, (Guid)itemView.Tag)
                             };
 
-                            controllerManager.proxy.Execute(ar);
+                            controllerManager.serviceClient.Execute(ar);
 
                             if (isUserModified)
                             {

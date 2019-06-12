@@ -14,9 +14,9 @@ namespace Carfup.XTBPlugins.AppCode
 {
     public class ControllerManager
     {
-        public IOrganizationService service { get; private set; } = null;
+     //   public IOrganizationService service { get; private set; } = null;
         public CrmServiceClient serviceClient { get; private set; } = null;
-        public OrganizationServiceProxy proxy { get; private set; } = null;
+      //  public OrganizationServiceProxy proxy { get; private set; } = null;
         public ViewManager viewManager { get; private set; } = null;
         public UserManager userManager { get; private set; } = null;
         public ChartManager chartManager { get; private set; } = null;
@@ -29,22 +29,22 @@ namespace Carfup.XTBPlugins.AppCode
         public ControllerManager(CrmServiceClient service)
         {
             this.serviceClient = service;
-            this.service = (IOrganizationService)service.OrganizationServiceProxy;
-            this.proxy = service.OrganizationServiceProxy;
+            //this.service = (IOrganizationService)service.OrganizationServiceProxy;
+            //this.proxy = service.OrganizationServiceProxy;
             this.userManager = new UserManager(this);
             this.viewManager = new ViewManager(this);
             this.chartManager = new ChartManager(this);
             this.dashboardManager = new DashboardManager(this);
             this.dataManager = new DataManager(this);
-            this.XTBUser = ((WhoAmIResponse)this.proxy.Execute(new WhoAmIRequest())).UserId;
+            this.XTBUser = ((WhoAmIResponse)this.serviceClient.Execute(new WhoAmIRequest())).UserId;
         }
 
         public void UpdateCallerId(Guid guid)
         {
             // We force the change of the caller id 
-            this.proxy.Authenticate();
-            this.proxy.CallerId = guid;
-            this.service = (IOrganizationService)this.proxy;
+            //this.proxy.Authenticate();
+            this.serviceClient.CallerId = guid;
+          //  this.service = (IOrganizationService)this.proxy;
         }
     }
 }

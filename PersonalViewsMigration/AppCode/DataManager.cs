@@ -32,7 +32,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public List<Entity> retriveRecordSharings(Guid guid, string entityType)
         {
-            return this.connection.service.RetrieveMultiple(new QueryExpression()
+            return this.connection.serviceClient.RetrieveMultiple(new QueryExpression()
             {
                 EntityName = "principalobjectaccess",
                 ColumnSet = new ColumnSet(true),
@@ -71,7 +71,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public Guid[] retrieveSharingsOfUser(UserInfo userInfo, string entityType)
         {
-            return this.connection.service.RetrieveMultiple(new QueryExpression()
+            return this.connection.serviceClient.RetrieveMultiple(new QueryExpression()
             {
                 EntityName = "principalobjectaccess",
                 ColumnSet = new ColumnSet("objectid"),

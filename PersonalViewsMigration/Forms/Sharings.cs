@@ -103,7 +103,7 @@ namespace Carfup.XTBPlugins.Forms
                         Target = new EntityReference(sharingDetails.GetAttributeValue<string>("objecttypecode"), sharingDetails.GetAttributeValue<Guid>("objectid")),
                     };
 
-                    this.pvm.controllerManager.service.Execute(revokeAccessRequest);
+                    this.pvm.controllerManager.serviceClient.Execute(revokeAccessRequest);
                     listViewSharings.Items.Remove(sharing);
 
                     sharingList.Remove(sharingList.FirstOrDefault(x => x.Id == sharingDetails.Id));
