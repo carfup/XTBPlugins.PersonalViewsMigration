@@ -500,10 +500,11 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
 
             var itemToVerify = listViewUserData.CheckedItems[0];
+            var subItemIndexTag = tabControlUserData.SelectedTab.Name == "tabPageDashboards" ? 1 : 2;
 
             // Managing owner if it"s shared item
             var userForCRMCall = (itemToVerify.Group.Header == "Shared records")
-                ? this.controllerManager.userManager.SetUserType(((EntityReference)itemToVerify.SubItems[2].Tag).Id, ((EntityReference)itemToVerify.SubItems[2].Tag).LogicalName)
+                ? this.controllerManager.userManager.SetUserType(((EntityReference)itemToVerify.SubItems[subItemIndexTag].Tag).Id, ((EntityReference)itemToVerify.SubItems[subItemIndexTag].Tag).LogicalName)
                 : controllerManager.userFrom;
             var isUserModified = false;
 
