@@ -32,7 +32,7 @@ namespace Carfup.XTBPlugins.AppCode
 
         public List<Entity> retriveRecordSharings(Guid guid, string entityType)
         {
-            return this.connection.service.RetrieveMultiple(new QueryExpression()
+            return this.connection.serviceClient.RetrieveMultiple(new QueryExpression()
             {
                 EntityName = "principalobjectaccess",
                 ColumnSet = new ColumnSet(true),
@@ -69,9 +69,9 @@ namespace Carfup.XTBPlugins.AppCode
             }).Entities.ToList();
         }
 
-        public Guid[] retrieveSharingsOfUser(Guid userGuid, string entityType)
+        public Guid[] retrieveSharingsOfUser(UserInfo userInfo, string entityType)
         {
-            return this.connection.service.RetrieveMultiple(new QueryExpression()
+            return this.connection.serviceClient.RetrieveMultiple(new QueryExpression()
             {
                 EntityName = "principalobjectaccess",
                 ColumnSet = new ColumnSet("objectid"),
@@ -79,9 +79,10 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                        new ConditionExpression("principalid", ConditionOperator.Equal, userGuid),
-                        new ConditionExpression("principaltypecode", ConditionOperator.Equal, "systemuser"),
+                        new ConditionExpression("principalid", ConditionOperator.Equal, userInfo.userId),
+                        new ConditionExpression("principaltypecode", ConditionOperator.Equal, userInfo.userEntity),
                         new ConditionExpression("objecttypecode", ConditionOperator.Equal, entityType),
+                        new ConditionExpression("accessrightsmask", ConditionOperator.GreaterThan, 0),
 
                     }
                 }

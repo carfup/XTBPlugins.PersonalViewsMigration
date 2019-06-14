@@ -43,6 +43,7 @@
             this.textBoxFilterUsersDestination = new System.Windows.Forms.TextBox();
             this.comboBoxWhatUsersToDisplayDestination = new System.Windows.Forms.ComboBox();
             this.listViewUsersDestination = new System.Windows.Forms.ListView();
+            this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader8 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader9 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -83,6 +84,7 @@
             this.comboBoxWhatUsersToDisplay = new System.Windows.Forms.ComboBox();
             this.buttonLoadUsers = new System.Windows.Forms.Button();
             this.listViewUsers = new System.Windows.Forms.ListView();
+            this.columnHeader12 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -212,7 +214,7 @@
             this.groupBox4.Size = new System.Drawing.Size(555, 773);
             this.groupBox4.TabIndex = 1;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "User List Destination";
+            this.groupBox4.Text = "User/Team List Destination";
             // 
             // tableLayoutPanel2
             // 
@@ -254,7 +256,8 @@
             this.comboBoxWhatUsersToDisplayDestination.Items.AddRange(new object[] {
             "All",
             "Enabled",
-            "Disabled"});
+            "Disabled",
+            "Teams"});
             this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(6, 6);
             this.comboBoxWhatUsersToDisplayDestination.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplayDestination.Name = "comboBoxWhatUsersToDisplayDestination";
@@ -269,6 +272,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewUsersDestination.CheckBoxes = true;
             this.listViewUsersDestination.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader17,
             this.columnHeader4,
             this.columnHeader8,
             this.columnHeader9,
@@ -284,6 +288,10 @@
             this.listViewUsersDestination.View = System.Windows.Forms.View.Details;
             this.listViewUsersDestination.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUsersDestination_ColumnClick);
             this.listViewUsersDestination.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewUsersDestination_ItemSelectionChanged);
+            // 
+            // columnHeader17
+            // 
+            this.columnHeader17.Text = "Type";
             // 
             // columnHeader4
             // 
@@ -674,7 +682,7 @@
             this.groupBox1.Size = new System.Drawing.Size(553, 773);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "User List";
+            this.groupBox1.Text = "User/Team List";
             // 
             // tableLayoutPanel3
             // 
@@ -717,7 +725,8 @@
             this.comboBoxWhatUsersToDisplay.Items.AddRange(new object[] {
             "All",
             "Enabled",
-            "Disabled"});
+            "Disabled",
+            "Teams"});
             this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(165, 6);
             this.comboBoxWhatUsersToDisplay.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplay.Name = "comboBoxWhatUsersToDisplay";
@@ -734,7 +743,7 @@
             this.buttonLoadUsers.Name = "buttonLoadUsers";
             this.buttonLoadUsers.Size = new System.Drawing.Size(147, 42);
             this.buttonLoadUsers.TabIndex = 6;
-            this.buttonLoadUsers.Text = "Load users";
+            this.buttonLoadUsers.Text = "Load users/teams";
             this.buttonLoadUsers.UseVisualStyleBackColor = true;
             this.buttonLoadUsers.Click += new System.EventHandler(this.buttonLoadUsers_Click);
             // 
@@ -744,6 +753,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listViewUsers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader12,
             this.columnHeader3,
             this.columnHeader6,
             this.columnHeader7,
@@ -762,6 +772,11 @@
             this.listViewUsers.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewUsers_ColumnClick);
             this.listViewUsers.SelectedIndexChanged += new System.EventHandler(this.listViewUsers_SelectedIndexChanged);
             this.listViewUsers.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewUsers_MouseDoubleClick);
+            // 
+            // columnHeader12
+            // 
+            this.columnHeader12.Text = "Type";
+            this.columnHeader12.Width = 65;
             // 
             // columnHeader3
             // 
@@ -906,5 +921,7 @@
         private System.Windows.Forms.Button buttonLoadUserCharts;
         private System.Windows.Forms.TextBox textBoxFilterCharts;
         private System.Windows.Forms.Button btnViewSharings;
+        private System.Windows.Forms.ColumnHeader columnHeader17;
+        private System.Windows.Forms.ColumnHeader columnHeader12;
     }
 }
