@@ -92,10 +92,16 @@ namespace Carfup.XTBPlugins.AppCode
         
         public List<Entity> GetListOfUsers()
         {
-            return controller.serviceClient.RetrieveMultiple(new QueryExpression("systemuser")
+            List<Entity> userList = new List<Entity>();
+            int queryCount = 5000;
+            int pageNumber = 1;
+            int recordCount = 0;
+
+
+            var userQuery = new QueryExpression("systemuser")
             {
                 ColumnSet = new ColumnSet("domainname", "firstname", "lastname", "systemuserid", "isdisabled"),
-                
+
                 Criteria = new FilterExpression
                 {
                     Conditions =
@@ -104,10 +110,42 @@ namespace Carfup.XTBPlugins.AppCode
                         new ConditionExpression("domainname", ConditionOperator.NotNull),
                         new ConditionExpression("domainname", ConditionOperator.NotEqual, ""),
                         new ConditionExpression("domainname", ConditionOperator.NotIn, new string[] {"bap_sa@microsoft.com", "crmoln2@microsoft.com"}),
-                    }, 
+                    },
                     FilterOperator = LogicalOperator.And
                 }
-            }).Entities.ToList();
+            };
+
+            userQuery.PageInfo = new PagingInfo();
+            userQuery.PageInfo.Count = queryCount;
+            userQuery.PageInfo.PageNumber = pageNumber;
+            userQuery.PageInfo.PagingCookie = null;
+
+
+            while (true)
+            {
+                EntityCollection results = controller.serviceClient.RetrieveMultiple(userQuery);
+                if (results.Entities != null)
+                {
+                    foreach (Entity user in results.Entities)
+                    {
+                        userList.Add(user);
+                    }
+                }
+
+                // Check for more records, if it returns true.
+                if (results.MoreRecords)
+                {
+                    userQuery.PageInfo.PageNumber++;
+                    userQuery.PageInfo.PagingCookie = results.PagingCookie;
+                }
+                else
+                {
+                    // If no more records are in the result nodes, exit the loop.
+                    break;
+                }
+            }
+
+            return userList;
         }
 
         public List<Entity> GetListOfTeams()
@@ -115,6 +153,13 @@ namespace Carfup.XTBPlugins.AppCode
             return controller.serviceClient.RetrieveMultiple(new QueryExpression("team")
             {
                 ColumnSet = new ColumnSet("name"),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression("teamtype", ConditionOperator.Equal, 0)
+                    }
+                }
             }).Entities.ToList();
         }
 
