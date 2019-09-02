@@ -36,6 +36,9 @@ namespace Carfup.XTBPlugins.AppCode
         public const string Views = "view";
         public const string Dashboards = "dashboard";
         public const string Charts = "chart";
+        public const string ViewLogicalName = "userquery";
+        public const string DashboardLogicalName = "userform";
+        public const string ChartLogicalName = "userqueryvisualization";
     }
 
     public class UserInfo
