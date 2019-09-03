@@ -194,6 +194,8 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             ListView listViewUserData = null;
             string action = null;
             List<Entity> listOfUserData = null;
+            string typeLogicalName = null;
+            Dictionary<int,List<Entity>> sharingsToCopy = new Dictionary<int, List<Entity>>();
 
             switch (tabControlUserData.SelectedTab.Name)
             {
@@ -202,18 +204,21 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     listViewUserData = listViewUserChartsList;
                     action = LogAction.ChartsCopied;
                     listOfUserData = listOfUserCharts;
+                    typeLogicalName = UserDataType.ChartLogicalName;
                     break;
                 case "tabPageDashboards":
                     type = UserDataType.Dashboards;
                     listViewUserData = listViewUserDashboardsList;
                     action = LogAction.DashboardsCopied;
                     listOfUserData = listOfUserDashboards;
+                    typeLogicalName = UserDataType.DashboardLogicalName;
                     break;
                 default:
                     type = UserDataType.Views;
                     listViewUserData = listViewUserViewsList;
                     action = LogAction.ViewsCopied;
                     listOfUserData = listOfUserViews;
+                    typeLogicalName = UserDataType.ViewLogicalName;
                     break;
             }
 
@@ -233,6 +238,13 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             }
 
             bool success = true;
+            bool copySharings = false;
+
+            var copySharingsDialogResult = MessageBox.Show("Do you want to copy the sharings (if any) as well ?",
+                "Copy sharings as well ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (copySharingsDialogResult == DialogResult.Yes)
+                copySharings = true;
 
             WorkAsync(new WorkAsyncInfo
             {
@@ -249,6 +261,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     if (dataGuid == null && usersGuid == null)
                         return;
 
+
                     var requestWithResults = new ExecuteMultipleRequest()
                     {
                         // Assign settings that define execution behavior: continue on error, return responses. 
@@ -262,12 +275,19 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     };
 
                     var isUserFromModified = controllerManager.userManager.ManageImpersonification(false, controllerManager.userFrom);
-                    foreach (ListViewItem itemView in dataGuid)
+                    for(int i = 0; i < dataGuid.Length; i++)
                     {
-                        Entity itemEntity = listOfUserData.Find(x => x.Id == (Guid) itemView.Tag);
+                        ListViewItem itemView = dataGuid[i];
+                            Entity itemEntity = listOfUserData.Find(x => x.Id == (Guid) itemView.Tag);
+
+                        if (copySharings)
+                        {
+                            sharingsToCopy.Add(i,
+                                controllerManager.dataManager.retriveRecordSharings((Guid) itemView.Tag,
+                                    typeLogicalName));
+                        }
 
                         CreateRequest cr = new CreateRequest();
-
                         switch (type)
                         {
                             case UserDataType.Charts:
@@ -323,17 +343,38 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             controllerManager.userManager.ManageImpersonification(isUserModified);
                         }
 
-                        foreach (var responseItem in responseWithResults.Responses)
+                        for(int j = 0; j< responseWithResults.Responses.Count; j++)
                         {
+                            var assigneEntity = itemUser.Text == "team" ? itemUser.Text : "systemuser";
+                            var responseItem = responseWithResults.Responses[j];
                             if (responseItem.Fault == null && itemUser.Text == "team")
                             {
-                                var assigneEntity = itemUser.Text == "team" ? itemUser.Text : "systemuser";
+                                
                                 AssignRequest ar = new AssignRequest()
                                 {
                                     Assignee = new EntityReference(assigneEntity, (Guid)itemUser.Tag),
                                     Target = new EntityReference(listOfUserData.FirstOrDefault().LogicalName, (Guid)responseItem.Response.Results["id"])
                                 };
                                 controllerManager.serviceClient.Execute(ar);
+                            }
+
+                            if (responseItem.Fault == null && copySharings)
+                            {
+                                bw.ReportProgress(0, "Copying the sharings...");
+                                foreach (var sharing in sharingsToCopy[j])
+                                {
+                                    GrantAccessRequest grant = new GrantAccessRequest()
+                                    {
+                                        Target = new EntityReference(typeLogicalName, (Guid)responseItem.Response.Results["id"]),
+                                        PrincipalAccess = new PrincipalAccess()
+                                        {
+                                            AccessMask = sharing.GetAttributeValue<AccessRights>("accessrightsmask"),
+                                            Principal = new EntityReference(sharing.GetAttributeValue<string>("principaltypecode"), sharing.GetAttributeValue<Guid>("principalid"))
+                                        }
+                                    };
+
+                                    controllerManager.serviceClient.Execute(grant);
+                                }
                             }
                             // An error has occurred.
                             if (responseItem.Fault != null)
@@ -473,15 +514,15 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             {
                 case "tabPageCharts":
                     listViewUserData = listViewUserChartsList;
-                    entityDataToMigrate = "userqueryvisualization";
+                    entityDataToMigrate = UserDataType.ChartLogicalName;
                     break;
                 case "tabPageDashboards":
                     listViewUserData = listViewUserDashboardsList;
-                    entityDataToMigrate = "userform";
+                    entityDataToMigrate = UserDataType.DashboardLogicalName;
                     break;
                 default:
                     listViewUserData = listViewUserViewsList;
-                    entityDataToMigrate = "userquery";
+                    entityDataToMigrate = UserDataType.ViewLogicalName;
                     break;
             }
 
