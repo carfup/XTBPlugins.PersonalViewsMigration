@@ -74,6 +74,7 @@
             this.buttonLoadUserCharts = new System.Windows.Forms.Button();
             this.textBoxFilterCharts = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnConvertToSystemView = new System.Windows.Forms.Button();
             this.btnViewSharings = new System.Windows.Forms.Button();
             this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
             this.buttonMigrateSelectedViews = new System.Windows.Forms.Button();
@@ -256,7 +257,8 @@
             "All",
             "Enabled",
             "Disabled",
-            "Teams"});
+            "Users only",
+            "Teams only"});
             this.comboBoxWhatUsersToDisplayDestination.Location = new System.Drawing.Point(6, 6);
             this.comboBoxWhatUsersToDisplayDestination.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplayDestination.Name = "comboBoxWhatUsersToDisplayDestination";
@@ -610,6 +612,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox3.Controls.Add(this.btnConvertToSystemView);
             this.groupBox3.Controls.Add(this.btnViewSharings);
             this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
             this.groupBox3.Controls.Add(this.buttonMigrateSelectedViews);
@@ -622,6 +625,17 @@
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Actions";
+            // 
+            // btnConvertToSystemView
+            // 
+            this.btnConvertToSystemView.Location = new System.Drawing.Point(24, 306);
+            this.btnConvertToSystemView.Margin = new System.Windows.Forms.Padding(6);
+            this.btnConvertToSystemView.Name = "btnConvertToSystemView";
+            this.btnConvertToSystemView.Size = new System.Drawing.Size(130, 67);
+            this.btnConvertToSystemView.TabIndex = 6;
+            this.btnConvertToSystemView.Text = "Convert to System";
+            this.btnConvertToSystemView.UseVisualStyleBackColor = true;
+            this.btnConvertToSystemView.Click += new System.EventHandler(this.btnConvertToSystemView_Click);
             // 
             // btnViewSharings
             // 
@@ -725,7 +739,8 @@
             "All",
             "Enabled",
             "Disabled",
-            "Teams"});
+            "Users only",
+            "Teams only"});
             this.comboBoxWhatUsersToDisplay.Location = new System.Drawing.Point(165, 6);
             this.comboBoxWhatUsersToDisplay.Margin = new System.Windows.Forms.Padding(6);
             this.comboBoxWhatUsersToDisplay.Name = "comboBoxWhatUsersToDisplay";
@@ -922,5 +937,6 @@
         private System.Windows.Forms.Button btnViewSharings;
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.ColumnHeader columnHeader12;
+        private System.Windows.Forms.Button btnConvertToSystemView;
     }
 }

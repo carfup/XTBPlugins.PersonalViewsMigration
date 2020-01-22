@@ -20,6 +20,8 @@ using Microsoft.Crm.Sdk.Messages;
 using System.Diagnostics;
 using Carfup.XTBPlugins.Forms;
 using McTools.Xrm.Connection;
+using XrmToolBox;
+using Options = Carfup.XTBPlugins.Forms.Options;
 
 namespace Carfup.XTBPlugins.PersonalViewsMigration
 {
@@ -174,6 +176,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonMigrateSelectedViews.Enabled = enable;
             buttonDeleteSelectedViews.Enabled = enable;
             btnViewSharings.Enabled = enable;
+            btnConvertToSystemView.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
             textBoxFilterCharts.Enabled = enable;
@@ -395,7 +398,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         if (!success) return;
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{dataGuid.Length} {type}(s) were copied !", "Successful copy.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"{dataGuid.Length} {type}{(dataGuid.Length == 1 ? "was" : "(s) were")} copied !", "Successful copy.", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     }
                 },
@@ -498,7 +501,94 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserData.Items.Remove(view);
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{dataGuid.Length} {type}(s) were deleted !", "Successful deletion.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"{dataGuid.Length} {type}{(dataGuid.Length == 1 ? " was" : "(s) were")} deleted !", "Successful deletion.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                },
+                ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
+            });
+        }
+
+        private void btnConvertToSystemView_Click(object sender, EventArgs evt)
+        {
+            string type = null;
+            ListView listViewUserData = null;
+            string action = null;
+            List<Entity> listOfUserData = null;
+
+            switch (tabControlUserData.SelectedTab.Name)
+            {
+                case "tabPageCharts":
+                    type = UserDataType.Charts;
+                    listViewUserData = listViewUserChartsList;
+                    action = LogAction.Personal2SystemChart;
+                    listOfUserData = listOfUserCharts;
+                    break;
+                case "tabPageDashboards":
+                    type = UserDataType.Dashboards;
+                    listViewUserData = listViewUserDashboardsList;
+                    action = LogAction.Personal2SystemDashboard;
+                    listOfUserData = listOfUserDashboards;
+                    break;
+                default:
+                    type = UserDataType.Views;
+                    listViewUserData = listViewUserViewsList;
+                    action = LogAction.Personal2SystemView;
+                    listOfUserData = listOfUserViews;
+                    break;
+            }
+
+            if (listViewUserData.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a record in order to view the related sharings.", "Select a record first.", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            ListViewItem[] dataGuid = new ListViewItem[listViewUserData.CheckedItems.Count];
+
+            WorkAsync(new WorkAsyncInfo
+            {
+                Message = $"Converting the personal {type}(s) to system...",
+                Work = (bw, e) =>
+                {
+                    Invoke(new Action(() =>
+                    {
+                        listViewUserData.CheckedItems.CopyTo(dataGuid, 0);
+                    }));
+
+                    foreach (ListViewItem item in dataGuid)
+                    {
+                        Entity itemEntity = listOfUserData.Find(x => x.Id == (Guid)item.Tag);
+                        Entity systemToCreate = null;
+                        switch (type)
+                        {
+                            case UserDataType.Charts:
+                                systemToCreate = this.controllerManager.chartManager.ConvertChartToMigrate(itemEntity);
+                                break;
+                            case UserDataType.Dashboards:
+                                systemToCreate = this.controllerManager.dashboardManager.ConvertDashboardToSystem(itemEntity);
+                                break;
+                            default:
+                                systemToCreate = this.controllerManager.viewManager.ConvertViewToSystem(itemEntity);
+                                break;
+                        }
+                        
+
+                        this.Service.Create(systemToCreate);
+                    }
+                },
+                PostWorkCallBack = e =>
+                {
+                    if (e.Error != null)
+                    {
+                        log.LogData(EventType.Exception, action, e.Error);
+                        MessageBox.Show(this, e.Error.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    else
+                    {
+                        log.LogData(EventType.Event, action);
+                        MessageBox.Show($@"{dataGuid.Length} {type}{(dataGuid.Length == 1 ? " was" : "(s) were")} converted in system !", @"Successful conversion", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -533,7 +623,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 return;
             }
 
-                if (listViewUserData.CheckedItems.Count > 1)
+            if (listViewUserData.CheckedItems.Count > 1)
             {
                 MessageBox.Show("Please select one record at a time.", "One record at a time.", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -709,7 +799,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                             listViewUserData.Items.Remove(view);
 
                         log.LogData(EventType.Event, action);
-                        MessageBox.Show($"{dataGuid.Length} {type}(s) were reassigned !", "Successful reassignment", MessageBoxButtons.OK,MessageBoxIcon.Information);
+                        MessageBox.Show($"{dataGuid.Length} {type}{(dataGuid.Length == 1 ? " was" : "(s) were")} reassigned !", "Successful reassignment", MessageBoxButtons.OK,MessageBoxIcon.Information);
                     }
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
@@ -895,8 +985,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 usersToKeep = bothLists.Where(x => !x.GetAttributeValue<bool>("isdisabled")).ToList();
             else if (comboxBoxValue == "Disabled")
                 usersToKeep = bothLists.Where(x => x.GetAttributeValue<bool>("isdisabled")).ToList();
-            else if (comboxBoxValue == "Teams")
+            else if (comboxBoxValue == "Teams only")
                 usersToKeep = bothLists.Where(x => x.LogicalName == "team").ToList();
+            else if (comboxBoxValue == "Users only")
+                usersToKeep = bothLists.Where(x => x.LogicalName == "systemuser").ToList();
 
             if (!string.IsNullOrEmpty(filter))
                 usersToKeep = usersToKeep.Where(x => (x.LogicalName == "team" && x.GetAttributeValue<string>("name").ToLower().Contains(filter)) ||
@@ -930,8 +1022,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
             return usersToKeep;
         }
-
-
 
         private void ManageUserDataToDisplay(ListView listViewOfUserData, List<Entity> listOfUserData, string type, string filter = null)
         {
@@ -996,8 +1086,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (listToKeep.Any())
                 listViewOfUserData.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
-
-        
 
         public void SaveSettings(bool closeApp = false)
         {
@@ -1237,5 +1325,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             if (e.IsSelected)
                 e.Item.Checked = e.IsSelected;
         }
+
+        
     }
 }
