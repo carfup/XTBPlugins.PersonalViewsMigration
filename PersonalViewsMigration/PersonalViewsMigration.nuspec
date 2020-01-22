@@ -1,7 +1,7 @@
 ﻿<package>
   <metadata>
     <id>Carfup.XTBPlugins.PersonalViewsMigration</id>
-    <version>1.2019.7.9</version>
+    <version>1.2020.1.10</version>
     <title>Personal User Views Migration</title>
     <authors>Clement Olivier</authors>
     <owners>Clement Olivier</owners>
@@ -11,7 +11,12 @@
     <description>This tool will allow you to reassign, copy, delete, personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>
     <summary>Manage personal views, dashboards and charts.</summary>
     <releaseNotes>
-1.2019.7.9
+1.2020.1.10
+Ability to convert personal View, Chart and Dashboard into System component.
+Ability to filter by Users only
+Fix various issues.
+
+1.2019.9.9
 Ability to load more than 5000 users and teams.
 When copying, you can also copy the sharings.
 Fix various issues.

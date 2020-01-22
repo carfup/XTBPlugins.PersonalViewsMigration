@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace Carfup.XTBPlugins.AppCode
@@ -150,6 +152,17 @@ namespace Carfup.XTBPlugins.AppCode
 
         public List<Entity> GetListOfTeams()
         {
+            RetrieveEntityRequest retrieveEntityAttributesRequest = new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Attributes,
+                LogicalName = "team"
+            };
+            var metadata = (RetrieveEntityResponse)controller.serviceClient.Execute(retrieveEntityAttributesRequest);
+
+            var condition = new ConditionExpression("teamtype", ConditionOperator.Equal, 0);
+            if (!metadata.EntityMetadata.Attributes.Any(x => x.LogicalName == "teamtype"))
+                condition = null;
+
             return controller.serviceClient.RetrieveMultiple(new QueryExpression("team")
             {
                 ColumnSet = new ColumnSet("name"),
@@ -157,7 +170,7 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                        new ConditionExpression("teamtype", ConditionOperator.Equal, 0)
+                        condition
                     }
                 }
             }).Entities.ToList();

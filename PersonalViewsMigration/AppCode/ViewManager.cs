@@ -101,6 +101,26 @@ namespace Carfup.XTBPlugins.AppCode
 
             return viewToMigrate;
         }
+
+        public Entity ConvertViewToSystem(Entity getViewDetails)
+        {
+            List<string> attributesList = new List<string> { "fetchxml", "returnedtypecode", "layoutxml", "querytype", "name", "advancedgroupby", "columnsetxml", "description", "offlinesqlquery" };
+
+            if (metadata == null)
+                RetrieveMetadataOfView();
+
+            Entity viewToMigrate = new Entity("savedquery");
+
+            foreach (var mapping in attributesList)
+            {
+                if(getViewDetails.Contains(mapping))
+                    viewToMigrate[mapping] = getViewDetails[mapping];
+            }
+
+            viewToMigrate["querytype"] = 0;
+
+            return viewToMigrate;
+        }
         #endregion Methods
     }
 }
