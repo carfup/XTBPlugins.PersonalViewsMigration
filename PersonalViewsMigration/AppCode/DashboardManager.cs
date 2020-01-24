@@ -99,6 +99,21 @@ namespace Carfup.XTBPlugins.AppCode
 
             return dashboardToMigrate;
         }
+
+        public Entity ConvertDashboardToSystem(Entity getDashboardDetails)
+        {
+            List<string> attributesList = new List<string> { "formjson", "formxml", "type", "objecttypecode", "name", "description" };
+
+            Entity dashboardToMigrate = new Entity("systemform");
+
+            foreach (var mapping in attributesList)
+            {
+                if (getDashboardDetails.Contains(mapping))
+                    dashboardToMigrate[mapping] = getDashboardDetails[mapping];
+            }
+
+            return dashboardToMigrate;
+        }
         #endregion Methods
     }
 }

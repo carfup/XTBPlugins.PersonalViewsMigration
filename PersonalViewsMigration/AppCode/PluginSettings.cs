@@ -74,5 +74,8 @@ namespace Carfup.XTBPlugins.AppCode
         public const string SharingsLoaded = "SharingsLoaded";
         public const string SharingsRevoked = "SharingsRevoked";
         public const string SharingsToListViewLoaded = "SharingsToListViewLoaded";
+        public const string Personal2SystemView = "Personal2SystemView";
+        public const string Personal2SystemDashboard = "Personal2SystemDashboard";
+        public const string Personal2SystemChart = "Personal2SystemChart";
     }
 }

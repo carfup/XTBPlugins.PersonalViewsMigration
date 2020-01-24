@@ -101,6 +101,21 @@ namespace Carfup.XTBPlugins.AppCode
 
             return chartToMigrate;
         }
+
+        public Entity ConvertChartToMigrate(Entity getChartDetails)
+        {
+            List<string> attributesList = new List<string> { "primaryentitytypecode", "charttype", "presentationdescription", "isdefault", "datadescription", "name", "description" };
+            
+            Entity chartToMigrate = new Entity("savedqueryvisualization");
+
+            foreach (var att in attributesList)
+            {
+                if (getChartDetails.Contains(att))
+                    chartToMigrate[att] = getChartDetails[att];
+            }
+
+            return chartToMigrate;
+        }
         #endregion Methods
     }
 }
