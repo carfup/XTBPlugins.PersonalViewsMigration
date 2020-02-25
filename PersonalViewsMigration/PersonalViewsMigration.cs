@@ -14,6 +14,7 @@ using XrmToolBox.Extensibility.Interfaces;
 using System.Collections.Generic;
 using Microsoft.Xrm.Sdk.Client;
 using System;
+using System.Collections.Concurrent;
 using Microsoft.Xrm.Sdk.Messages;
 using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
@@ -597,6 +598,38 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
 
         private void btnViewSharings_Click(object sender, EventArgs evt)
         {
+            List<Entity> sharings = new List<Entity>()
+            {
+                new Entity("principalobjectaccess")
+                {
+                    ["name"] = "crwd",
+                    ["principaltypecode"] = "systemuser",
+                    ["systemuser.domainname"] = "clement@carfup.com",
+                    ["accessrightsmask"] = 65543,
+                    ["principalid"] = new Guid()
+                },
+                new Entity("principalobjectaccess") {
+                    ["name"] = "rw",
+                    ["principaltypecode"] = "systemuser",
+                    ["systemuser.domainname"] = "clement@carfup.com",
+                    ["accessrightsmask"] = 6,
+                    ["principalid"] = new Guid()
+                }
+            };
+
+            var diagSharings2 = new Sharings(this);
+
+            if (diagSharings2.sharingList != null)
+                diagSharings2.sharingList.Clear();
+
+            //diagSharings2.loadSharings(sharings);
+          //  diagSharings.title = $"Sharings for \"{itemToVerify.Text}\"";
+
+           // diagSharings.isUserModified = isUserModified;
+
+          //  diagSharings.Show();
+
+            
             ListView listViewUserData = null;
             string entityDataToMigrate = null;
 
@@ -646,6 +679,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     {
                         isUserModified = controllerManager.userManager.ManageImpersonification(false, userForCRMCall);
                         e.Result = this.controllerManager.dataManager.retriveRecordSharings((Guid)itemToVerify.Tag, entityDataToMigrate);
+
                     },
                 PostWorkCallBack = e =>
                 {
@@ -683,6 +717,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 },
                 ProgressChanged = e => { SetWorkingMessage(e.UserState.ToString()); }
             });
+            
         }
 
         private void buttonMigrateSelectedViews_Click(object sender, System.EventArgs evt)
@@ -997,7 +1032,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                                                      (x.GetAttributeValue<string>("lastname") != null && x.GetAttributeValue<string>("lastname").ToLower().Contains(filter)) ||
                                                      (x.GetAttributeValue<string>("firstname") != null && x.GetAttributeValue<string>("firstname").ToLower().Contains(filter))))).ToList();
 
-            foreach (Entity user in usersToKeep)
+            ConcurrentBag<ListViewItem> cbItems = new ConcurrentBag<ListViewItem>();
+
+            Parallel.ForEach(usersToKeep, user =>
             {
                 var item = user.LogicalName == "systemuser" ? new ListViewItem("user") : new ListViewItem("team");
                 if (user.LogicalName == "systemuser")
@@ -1017,8 +1054,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                     item.Tag = user.Id;
                 }
 
-                listToAccess.Items.Add(item);
-            }
+                cbItems.Add(item);
+            });
+
+            listToAccess.Items.AddRange((ListViewItem[])cbItems.ToArray());
 
             return usersToKeep;
         }
@@ -1060,7 +1099,9 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             listViewOfUserData.Groups.Add(ownItems);
             listViewOfUserData.Groups.Add(sharedItems);
 
-            foreach (Entity view in listToKeep)
+            ConcurrentBag<ListViewItem> cbItems = new ConcurrentBag<ListViewItem>();
+
+            Parallel.ForEach(listToKeep, view =>
             {
                 var item = new ListViewItem()
                 {
@@ -1070,7 +1111,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         ? ownItems
                         : sharedItems
                 };
- 
+
                 if (entityNameField != null)
                     item.SubItems.Add(view[entityNameField].ToString());
                 item.SubItems.Add(new ListViewItem.ListViewSubItem()
@@ -1080,8 +1121,10 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 });
                 item.Tag = view.Id;
 
-                listViewOfUserData.Items.Add(item);
-            }
+                cbItems.Add(item);
+            });
+
+            listViewOfUserData.Items.AddRange((ListViewItem[])cbItems.ToArray());
 
             if (listToKeep.Any())
                 listViewOfUserData.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
