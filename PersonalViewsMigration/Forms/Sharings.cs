@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls.WebParts;
 using System.Windows.Forms;
 using Carfup.XTBPlugins.AppCode;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
-using XrmToolBox.Extensibility;
 
 namespace Carfup.XTBPlugins.Forms
 {
@@ -100,7 +93,6 @@ namespace Carfup.XTBPlugins.Forms
                 for (int i = 0; i < sharingDetailsList.Where(x => x.selected).Count(); i++)
                 {
                     var sharing = sharingDetailsList[i];
-                    // var sharingDetails = sharingList.FirstOrDefault(x => x.GetAttributeValue<Guid>("principalid") == (Guid)sharing.Tag);
 
                     var revokeAccessRequest = new RevokeAccessRequest
                     {
@@ -109,7 +101,6 @@ namespace Carfup.XTBPlugins.Forms
                     };
 
                     this.pvm.controllerManager.serviceClient.Execute(revokeAccessRequest);
-                    //    listViewSharings.Items.Remove(sharing);
 
                     sharingDetailsList.Remove(sharingDetailsList.FirstOrDefault(x => x.entity.Id == sharing.entity.Id));
 
@@ -117,8 +108,6 @@ namespace Carfup.XTBPlugins.Forms
                 }
 
                 dgvSharingsSource.ResetBindings(false);
-                //dgvSharingsSource.DataSource = sharingDetailsList;
-                //dgvSharings.DataSource = dgvSharingsSource;
             }
             catch (Exception exception)
             {
@@ -178,16 +167,13 @@ namespace Carfup.XTBPlugins.Forms
             int arm = sharing.GetAttributeValue<int>("accessrightsmask");
             int valueleft = arm;
 
-            string userteam = "";//sharing.GetAttributeValue<string>("name");
+            string userteam = "";
             if (sharing.GetAttributeValue<string>("principaltypecode") == "systemuser")
                 userteam = sharing.GetAttributeValue<AliasedValue>("systemuser.domainname").Value.ToString();
             if (sharing.GetAttributeValue<string>("principaltypecode") == "team")
             {
                 userteam = sharing.GetAttributeValue<AliasedValue>("team.name").Value.ToString();
-                //lvGroup = listViewSharings.Groups[1];
             }
-
-
 
             result.sharedWith = userteam;
 
@@ -238,33 +224,32 @@ namespace Carfup.XTBPlugins.Forms
 
         private void btnModifySharings_Click(object sender, EventArgs e)
         {
-            var request = new ExecuteMultipleRequest()
+            try
             {
-                Requests = new OrganizationRequestCollection(),
-                Settings = new ExecuteMultipleSettings
+                foreach (var item in sharingDetailsList.Where(x => x.modified))
                 {
-                    ContinueOnError = false,
-                    ReturnResponses = true
-                }
-            };
 
-            foreach (var item in sharingDetailsList.Where(x => x.modified))
-            {
-             
-                var modifyAccess = new ModifyAccessRequest()
-                {
-                    Target = new EntityReference(item.entity.GetAttributeValue<string>("objecttypecode"), item.entity.GetAttributeValue<Guid>("objectid")),
-                    PrincipalAccess = new PrincipalAccess()
+                    var modifyAccess = new ModifyAccessRequest()
                     {
-                        AccessMask = getNewAccessRightMask(item),
-                        Principal = new EntityReference(item.entity.GetAttributeValue<string>("principaltypecode"), item.entity.GetAttributeValue<Guid>("principalid"))
-                    }
-                };
-                
-                this.pvm.controllerManager.serviceClient.Execute(modifyAccess);
+                        Target = new EntityReference(item.entity.GetAttributeValue<string>("objecttypecode"), item.entity.GetAttributeValue<Guid>("objectid")),
+                        PrincipalAccess = new PrincipalAccess()
+                        {
+                            AccessMask = getNewAccessRightMask(item),
+                            Principal = new EntityReference(item.entity.GetAttributeValue<string>("principaltypecode"), item.entity.GetAttributeValue<Guid>("principalid"))
+                        }
+                    };
+
+                    this.pvm.controllerManager.serviceClient.Execute(modifyAccess);
+                }
+            }
+            catch (Exception exception)
+            {
+                this.pvm.log.LogData(EventType.Exception, LogAction.SharingsUpdated, exception);
+                throw;
             }
 
-            MessageBox.Show("Update successfull");
+            MessageBox.Show("The sharings were updated successfully !", "Sharing Updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            this.pvm.log.LogData(EventType.Event, LogAction.SharingsUpdated);
         }
 
         private AccessRights getNewAccessRightMask(SharingsWithDetailedAccessMask sharing)
@@ -284,12 +269,84 @@ namespace Carfup.XTBPlugins.Forms
             if (sharing.assign)
                 masks.Add(AccessRights.AssignAccess);
 
-
             AccessRights mask = masks[0];
             for(int i = 1; i < masks.Count; i++)
                 mask |= masks[i];
 
             return mask;
+        }
+
+        private void Sharings_Leave(object sender, EventArgs e)
+        {
+            if (sharingDetailsList.Where(x => x.modified).Count() > 0)
+            {
+                var close = MessageBox.Show(
+                    "You have sharing modifications in progress, do you really want to close this window ?",
+                    "Sharing updates in progress", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (close == DialogResult.No) return;
+            }
+        }
+
+        private void dgvSharings_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex == -1)
+                return;
+
+            var columnName = dgvSharings.Columns[e.ColumnIndex].Name;
+
+            var allSelected = false;
+
+            switch (columnName)
+            {
+                case "read":
+                    allSelected = sharingDetailsList.Where(x => x.read).Count() == sharingDetailsList.Count;
+                    break;
+                case "write":
+                    allSelected = sharingDetailsList.Where(x => x.write).Count() == sharingDetailsList.Count;
+                    break;
+                case "append":
+                    allSelected = sharingDetailsList.Where(x => x.append).Count() == sharingDetailsList.Count;
+                    break;
+                case "share":
+                    allSelected = sharingDetailsList.Where(x => x.share).Count() == sharingDetailsList.Count;
+                    break;
+                case "delete":
+                    allSelected = sharingDetailsList.Where(x => x.delete).Count() == sharingDetailsList.Count;
+                    break;
+                case "assign":
+                    allSelected = sharingDetailsList.Where(x => x.assign).Count() == sharingDetailsList.Count;
+                    break;
+            }
+
+            foreach (var item in sharingDetailsList)
+            {
+                switch (columnName)
+                {
+                    case "read":
+                        item.read = !allSelected;
+                        break;
+                    case "write":
+                        item.write = !allSelected;
+                        break;
+                    case "append":
+                        item.append = !allSelected;
+                        break;
+                    case "share":
+                        item.share = !allSelected;
+                        break;
+                    case "delete":
+                        item.delete = !allSelected;
+                        break;
+                    case "assign":
+                        item.assign = !allSelected;
+                        break;
+                }
+
+                item.modified = true;
+            }
+
+            dgvSharingsSource.ResetBindings(false);
         }
     }
 

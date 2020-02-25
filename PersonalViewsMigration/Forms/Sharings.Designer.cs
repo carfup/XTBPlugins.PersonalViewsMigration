@@ -48,9 +48,9 @@
             this.btnDeleteSharings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteSharings.Location = new System.Drawing.Point(927, 3);
+            this.btnDeleteSharings.Location = new System.Drawing.Point(1024, 3);
             this.btnDeleteSharings.Name = "btnDeleteSharings";
-            this.btnDeleteSharings.Size = new System.Drawing.Size(417, 44);
+            this.btnDeleteSharings.Size = new System.Drawing.Size(417, 54);
             this.btnDeleteSharings.TabIndex = 13;
             this.btnDeleteSharings.Text = "Delete selected sharings";
             this.btnDeleteSharings.UseVisualStyleBackColor = true;
@@ -59,9 +59,6 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 4;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38.71682F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 61.28318F));
@@ -72,13 +69,14 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnModifySharings, 3, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 1F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1702, 648);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1799, 672);
             this.tableLayoutPanel1.TabIndex = 14;
             // 
             // dgvSharings
@@ -88,13 +86,14 @@
             this.dgvSharings.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.tableLayoutPanel1.SetColumnSpan(this.dgvSharings, 4);
             this.dgvSharings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvSharings.Location = new System.Drawing.Point(3, 54);
+            this.dgvSharings.Location = new System.Drawing.Point(3, 64);
             this.dgvSharings.Name = "dgvSharings";
             this.dgvSharings.RowHeadersWidth = 72;
             this.dgvSharings.RowTemplate.Height = 31;
-            this.dgvSharings.Size = new System.Drawing.Size(1696, 591);
+            this.dgvSharings.Size = new System.Drawing.Size(1793, 605);
             this.dgvSharings.TabIndex = 15;
             this.dgvSharings.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSharings_CellValueChanged);
+            this.dgvSharings.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvSharings_ColumnHeaderMouseClick);
             // 
             // panel1
             // 
@@ -105,7 +104,7 @@
             this.panel1.Controls.Add(this.linkLabelUnSelect);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(352, 44);
+            this.panel1.Size = new System.Drawing.Size(389, 54);
             this.panel1.TabIndex = 15;
             // 
             // linkLabelSelectAll
@@ -136,9 +135,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.Controls.Add(this.textBoxFilterSharings);
-            this.panel2.Location = new System.Drawing.Point(361, 3);
+            this.panel2.Location = new System.Drawing.Point(398, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(560, 44);
+            this.panel2.Size = new System.Drawing.Size(620, 54);
             this.panel2.TabIndex = 19;
             // 
             // textBoxFilterSharings
@@ -149,7 +148,7 @@
             this.textBoxFilterSharings.Location = new System.Drawing.Point(6, 9);
             this.textBoxFilterSharings.Margin = new System.Windows.Forms.Padding(6);
             this.textBoxFilterSharings.Name = "textBoxFilterSharings";
-            this.textBoxFilterSharings.Size = new System.Drawing.Size(548, 29);
+            this.textBoxFilterSharings.Size = new System.Drawing.Size(608, 29);
             this.textBoxFilterSharings.TabIndex = 12;
             this.textBoxFilterSharings.Text = "Search in results ...";
             this.textBoxFilterSharings.Click += new System.EventHandler(this.textBoxFilterSharings_Click);
@@ -158,9 +157,9 @@
             // btnModifySharings
             // 
             this.btnModifySharings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnModifySharings.Location = new System.Drawing.Point(1350, 3);
+            this.btnModifySharings.Location = new System.Drawing.Point(1447, 3);
             this.btnModifySharings.Name = "btnModifySharings";
-            this.btnModifySharings.Size = new System.Drawing.Size(349, 44);
+            this.btnModifySharings.Size = new System.Drawing.Size(349, 54);
             this.btnModifySharings.TabIndex = 20;
             this.btnModifySharings.Text = "Modify Sharings";
             this.btnModifySharings.UseVisualStyleBackColor = true;
@@ -170,13 +169,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1726, 672);
+            this.ClientSize = new System.Drawing.Size(1799, 672);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MinimizeBox = false;
             this.Name = "Sharings";
             this.ShowIcon = false;
             this.Text = "Sharings";
             this.Load += new System.EventHandler(this.Sharings_Load);
+            this.Leave += new System.EventHandler(this.Sharings_Leave);
             this.tableLayoutPanel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvSharings)).EndInit();
             this.panel1.ResumeLayout(false);

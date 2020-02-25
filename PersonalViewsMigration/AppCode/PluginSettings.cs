@@ -77,5 +77,6 @@ namespace Carfup.XTBPlugins.AppCode
         public const string Personal2SystemView = "Personal2SystemView";
         public const string Personal2SystemDashboard = "Personal2SystemDashboard";
         public const string Personal2SystemChart = "Personal2SystemChart";
+        public const string SharingsUpdated = "SharingsUpdated";
     }
 }
