@@ -163,7 +163,14 @@ namespace Carfup.XTBPlugins.AppCode
             if (!metadata.EntityMetadata.Attributes.Any(x => x.LogicalName == "teamtype"))
                 condition = null;
 
-            return controller.serviceClient.RetrieveMultiple(new QueryExpression("team")
+
+            List<Entity> teamList = new List<Entity>();
+
+            int queryCount = 5000;
+            int pageNumber = 1;
+            int recordCount = 0;
+
+            var teamQuery = new QueryExpression("team")
             {
                 ColumnSet = new ColumnSet("name"),
                 Criteria =
@@ -173,7 +180,38 @@ namespace Carfup.XTBPlugins.AppCode
                         condition
                     }
                 }
-            }).Entities.ToList();
+            };
+
+            teamQuery.PageInfo = new PagingInfo();
+            teamQuery.PageInfo.Count = queryCount;
+            teamQuery.PageInfo.PageNumber = pageNumber;
+            teamQuery.PageInfo.PagingCookie = null;
+
+            while (true)
+            {
+                EntityCollection results = controller.serviceClient.RetrieveMultiple(teamQuery);
+                if (results.Entities != null)
+                {
+                    foreach (Entity team in results.Entities)
+                    {
+                        teamList.Add(team);
+                    }
+                }
+
+                // Check for more records, if it returns true.
+                if (results.MoreRecords)
+                {
+                    teamQuery.PageInfo.PageNumber++;
+                    teamQuery.PageInfo.PagingCookie = results.PagingCookie;
+                }
+                else
+                {
+                    // If no more records are in the result nodes, exit the loop.
+                    break;
+                }
+            }
+
+            return teamList;
         }
 
         public bool UserHasAnyRole(UserInfo userInfo)
