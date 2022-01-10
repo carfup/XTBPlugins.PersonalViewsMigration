@@ -243,12 +243,13 @@ namespace Carfup.XTBPlugins.AppCode
                 {
                     Conditions =
                     {
-                        new ConditionExpression("accessmode", ConditionOperator.Equal, 4)                        
+                        new ConditionExpression("accessmode", ConditionOperator.Equal, 4),
+                        new ConditionExpression("firstname", ConditionOperator.NotEqual, "#")
                     }
                 }
             }).Entities.Count;
 
-            return nonInteractiveCount < 5;
+            return nonInteractiveCount < 7;
         }
 
         public UserInfo SetUserType(Guid userId, string userType)
