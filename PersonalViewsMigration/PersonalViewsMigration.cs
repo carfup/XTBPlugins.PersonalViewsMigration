@@ -900,7 +900,6 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                         return;
                     }
 
-
                     bw.ReportProgress(0, $"Retrieving user's {type}(s)...");
 
                     switch (type)
