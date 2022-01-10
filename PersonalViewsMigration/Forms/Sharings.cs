@@ -90,9 +90,11 @@ namespace Carfup.XTBPlugins.Forms
 
             try
             {
-                for (int i = 0; i < sharingDetailsList.Where(x => x.selected).Count(); i++)
+                var toBeRemoved = sharingDetailsList.Where(x => x.selected).Select(x => x.entity.Id).ToArray();
+                //for (int i = 0; i < sharingDetailsList.Where(x => x.selected).Count(); i++)
+                foreach(var sharing in sharingDetailsList.Where(x => x.selected))
                 {
-                    var sharing = sharingDetailsList[i];
+                    //var sharing = sharingDetailsList[i];
 
                     var revokeAccessRequest = new RevokeAccessRequest
                     {
@@ -102,10 +104,11 @@ namespace Carfup.XTBPlugins.Forms
 
                     this.pvm.controllerManager.serviceClient.Execute(revokeAccessRequest);
 
-                    sharingDetailsList.Remove(sharingDetailsList.FirstOrDefault(x => x.entity.Id == sharing.entity.Id));
-
                     revoked++;
                 }
+
+                for(int i = 0; i < toBeRemoved.Count(); i++)
+                    sharingDetailsList.Remove(sharingDetailsList.FirstOrDefault(x => x.entity.Id == toBeRemoved[i]));
 
                 dgvSharingsSource.ResetBindings(false);
             }
