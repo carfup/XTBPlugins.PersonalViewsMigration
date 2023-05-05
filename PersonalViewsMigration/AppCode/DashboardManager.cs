@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using System.Text.RegularExpressions;
 
 namespace Carfup.XTBPlugins.AppCode
 {
@@ -86,10 +87,10 @@ namespace Carfup.XTBPlugins.AppCode
 
             if (metadata == null)
                 RetrieveMetadataOfDashboard();
-            
+
             Entity dashboardToMigrate = new Entity("userform");
 
-            foreach(var att in attributesList)
+            foreach (var att in attributesList)
             {
                 if (metadata.EntityMetadata.Attributes.Any(x => x.LogicalName == att))
                 {
@@ -112,7 +113,32 @@ namespace Carfup.XTBPlugins.AppCode
                     dashboardToMigrate[mapping] = getDashboardDetails[mapping];
             }
 
-            return dashboardToMigrate;
+            return GenerateUniqueIDsForSystem(dashboardToMigrate);
+        }
+
+        public Entity GenerateUniqueIDsForSystem(Entity dashboard)
+        {
+            string outxml = (string)dashboard["formxml"];
+            string outjson = (string)dashboard["formjson"];
+            string idPattern = @"\{([a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12})\}";
+            string attrPattern = @"( id=""| uniqueid="").*?""";
+            string tagPattern = @"[\<](tab |section |cell |control ).*?[\>]";
+            foreach (Match match in Regex.Matches((string)dashboard["formxml"], tagPattern))
+            {
+                string swap = Guid.NewGuid().ToString("B");
+                foreach (Match attr in Regex.Matches(match.Value, attrPattern))
+                {
+                    Match orig = Regex.Match(attr.Value, idPattern);
+                    if (orig.Value != String.Empty)
+                    {
+                        outxml = outxml.Replace(orig.Value, swap);
+                        outjson = outjson.Replace(orig.Value, swap);
+                    }
+                }
+            }
+            dashboard["formxml"] = outxml;
+            dashboard["formjson"] = outjson;
+            return dashboard;
         }
         #endregion Methods
     }

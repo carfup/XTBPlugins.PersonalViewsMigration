@@ -1,7 +1,7 @@
 ﻿<package>
   <metadata>
     <id>Carfup.XTBPlugins.PersonalViewsMigration</id>
-    <version>1.2022.1.12</version>
+    <version>1.2023.5.13</version>
     <title>Personal User Views Migration</title>
     <authors>Clement Olivier</authors>
     <owners>Clement Olivier</owners>
@@ -11,6 +11,9 @@
     <description>This tool will allow you to reassign, copy, delete, personal views, charts and dashboards from one user to another. This is really useful when someone left a company and forgot to migrate his own views; charts, dashboards to somebody else.</description>
     <summary>Manage personal views, dashboards and charts.</summary>
     <releaseNotes>
+1.2023.5.13
+Fix when converting a dashboard to system one if it was once coming from a system dashboard itself. Thanks to @greensweater
+
 1.2022.1.12
 Fix the deletion issue of sharings
 Updated the maximum number of non-interactive users in an instance to 7 (https://docs.microsoft.com/en-us/power-platform/admin/create-users#user-types)
