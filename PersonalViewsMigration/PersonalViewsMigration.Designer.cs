@@ -92,6 +92,7 @@
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnShareWithUser = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -338,7 +339,7 @@
             this.tabPageViews.Controls.Add(this.tableLayoutPanel5);
             this.tabPageViews.Location = new System.Drawing.Point(4, 22);
             this.tabPageViews.Name = "tabPageViews";
-            this.tabPageViews.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageViews.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageViews.Size = new System.Drawing.Size(287, 354);
             this.tabPageViews.TabIndex = 0;
             this.tabPageViews.Text = "Views";
@@ -425,7 +426,7 @@
             this.tabPageDashboards.Controls.Add(this.tableLayoutPanel4);
             this.tabPageDashboards.Location = new System.Drawing.Point(4, 22);
             this.tabPageDashboards.Name = "tabPageDashboards";
-            this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageDashboards.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageDashboards.Size = new System.Drawing.Size(287, 354);
             this.tabPageDashboards.TabIndex = 1;
             this.tabPageDashboards.Text = "Dashboards";
@@ -506,7 +507,7 @@
             this.tabPageCharts.Controls.Add(this.tableLayoutPanel6);
             this.tabPageCharts.Location = new System.Drawing.Point(4, 22);
             this.tabPageCharts.Name = "tabPageCharts";
-            this.tabPageCharts.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageCharts.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageCharts.Size = new System.Drawing.Size(287, 354);
             this.tabPageCharts.TabIndex = 2;
             this.tabPageCharts.Text = "Charts";
@@ -591,6 +592,7 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.groupBox3.Controls.Add(this.btnShareWithUser);
             this.groupBox3.Controls.Add(this.btnConvertToSystemView);
             this.groupBox3.Controls.Add(this.btnViewSharings);
             this.groupBox3.Controls.Add(this.buttonDeleteSelectedViews);
@@ -799,6 +801,16 @@
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
             // 
+            // btnShareWithUser
+            // 
+            this.btnShareWithUser.Location = new System.Drawing.Point(13, 209);
+            this.btnShareWithUser.Name = "btnShareWithUser";
+            this.btnShareWithUser.Size = new System.Drawing.Size(71, 37);
+            this.btnShareWithUser.TabIndex = 7;
+            this.btnShareWithUser.Text = "Share with User";
+            this.btnShareWithUser.UseVisualStyleBackColor = true;
+            this.btnShareWithUser.Click += new System.EventHandler(this.btnShareWithUser_Click);
+            // 
             // PersonalViewsMigration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -901,5 +913,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader17;
         private System.Windows.Forms.ColumnHeader columnHeader12;
         private System.Windows.Forms.Button btnConvertToSystemView;
+        private System.Windows.Forms.Button btnShareWithUser;
     }
 }
