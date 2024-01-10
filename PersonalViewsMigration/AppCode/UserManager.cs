@@ -97,7 +97,6 @@ namespace Carfup.XTBPlugins.AppCode
             List<Entity> userList = new List<Entity>();
             int queryCount = 5000;
             int pageNumber = 1;
-            int recordCount = 0;
 
 
             var userQuery = new QueryExpression("systemuser")
