@@ -28,7 +28,7 @@ namespace Carfup.XTBPlugins.AppCode
 
     public static class CustomParameter
     {
-        public static string INSIGHTS_INTRUMENTATIONKEY = "INSIGHTS_INTRUMENTATIONKEY_TOREPLACE";
+        public static string INSIGHTS_INTRUMENTATIONKEY = $"InstrumentationKey=INSIGHTS_INTRUMENTATIONKEY_TOREPLACE;IngestionEndpoint=https://westeurope-2.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/";
     }
 
     static class UserDataType
