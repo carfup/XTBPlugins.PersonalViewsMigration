@@ -1368,6 +1368,89 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
                 e.Item.Checked = e.IsSelected;
         }
 
-        
+        private void btnShareWithUser_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ListView currentListView;
+                String itemToShareType;
+                //select the view and entity type
+                switch (tabControlUserData.SelectedTab.Name)
+                {
+                    case "tabPageCharts":
+                        currentListView = listViewUserChartsList;
+                        itemToShareType = "userqueryvisualization";
+                        break;
+                    case "tabPageDashboards":
+                        currentListView = listViewUserDashboardsList;
+                        itemToShareType = "userform";
+                        break;
+                    default:
+                        currentListView = listViewUserViewsList;
+                        itemToShareType = "userquery";
+                        break;
+                }
+
+                if (currentListView.CheckedItems.Count != 1)
+                {
+                    MessageBox.Show("Please select only one item to share", "Error", MessageBoxButtons.OK);
+                    return;
+                }
+
+                //find the selected item, that needs to be shared
+                var itemToShare = currentListView.CheckedItems[0];
+
+                //at least one item has to be selected in the destination view
+                if (listViewUsersDestination.CheckedItems.Count < 1)
+                {
+                    MessageBox.Show("Please select at least one user to share with", "Error", MessageBoxButtons.OK);
+                    return;
+                }
+
+                //exactly one user has to be selected in the "source" view, it will be used as CallerId
+                if (listViewUsers.SelectedItems.Count != 1)
+                {
+                    //TODO needs proper error message
+                    return;
+                }
+
+                ListViewItem[] destinationUsers = new ListViewItem[listViewUsersDestination.CheckedItems.Count];
+                listViewUsersDestination.CheckedItems.CopyTo(destinationUsers, 0);
+                
+                //iterating through destination list and share the selected item with eash user
+                foreach (var selectedDestinationUser in destinationUsers)
+                {
+                    Guid destinationUserId = (Guid)selectedDestinationUser.Tag;
+                    String destinationType = (String)selectedDestinationUser.Text;
+
+                    //Share only with Users and skip Teams
+                    if (destinationType != "user")
+                        continue;
+
+                    //Populate request with details
+                    GrantAccessRequest request = new GrantAccessRequest();
+                    request.Target = new EntityReference(itemToShareType, (Guid)itemToShare.Tag);
+                    PrincipalAccess access = new PrincipalAccess();
+                    access.Principal = new EntityReference("systemuser", destinationUserId);
+                    access.AccessMask = AccessRights.ReadAccess;
+                    request.PrincipalAccess = access;
+
+                    //set callerid to the selected user, cause only user himself can grant access to own records
+                    this.controllerManager.serviceClient.CallerId = (Guid)listViewUsers.SelectedItems[0].Tag;
+
+                    this.controllerManager.serviceClient.Execute(request);
+
+                    //drop CallerId back to null
+                    this.controllerManager.serviceClient.CallerId = Guid.Empty;
+                }
+
+                MessageBox.Show("Selected item was successfully shared with selected user(s).");
+            }
+            catch (Exception ex)
+            {
+                //TODO meaningfull error message? 
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
