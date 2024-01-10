@@ -178,6 +178,7 @@ namespace Carfup.XTBPlugins.PersonalViewsMigration
             buttonDeleteSelectedViews.Enabled = enable;
             btnViewSharings.Enabled = enable;
             btnConvertToSystemView.Enabled = enable;
+            btnShareWithUser.Enabled = enable;
             textBoxFilterUsersDestination.Enabled = enable;
             textBoxFilterUsers.Enabled = enable;
             textBoxFilterCharts.Enabled = enable;

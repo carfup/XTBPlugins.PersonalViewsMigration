@@ -74,6 +74,7 @@
             this.buttonLoadUserCharts = new System.Windows.Forms.Button();
             this.textBoxFilterCharts = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnShareWithUser = new System.Windows.Forms.Button();
             this.btnConvertToSystemView = new System.Windows.Forms.Button();
             this.btnViewSharings = new System.Windows.Forms.Button();
             this.buttonDeleteSelectedViews = new System.Windows.Forms.Button();
@@ -92,7 +93,6 @@
             this.State = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.labelDisclaimer = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnShareWithUser = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -605,6 +605,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Actions";
             // 
+            // btnShareWithUser
+            // 
+            this.btnShareWithUser.Location = new System.Drawing.Point(13, 209);
+            this.btnShareWithUser.Name = "btnShareWithUser";
+            this.btnShareWithUser.Size = new System.Drawing.Size(71, 37);
+            this.btnShareWithUser.TabIndex = 7;
+            this.btnShareWithUser.Text = "Share with User";
+            this.btnShareWithUser.UseVisualStyleBackColor = true;
+            this.btnShareWithUser.Click += new System.EventHandler(this.btnShareWithUser_Click);
+            // 
             // btnConvertToSystemView
             // 
             this.btnConvertToSystemView.Location = new System.Drawing.Point(13, 166);
@@ -800,16 +810,6 @@
             this.label1.Size = new System.Drawing.Size(64, 13);
             this.label1.TabIndex = 5;
             this.label1.Text = "Disclaimer : ";
-            // 
-            // btnShareWithUser
-            // 
-            this.btnShareWithUser.Location = new System.Drawing.Point(13, 209);
-            this.btnShareWithUser.Name = "btnShareWithUser";
-            this.btnShareWithUser.Size = new System.Drawing.Size(71, 37);
-            this.btnShareWithUser.TabIndex = 7;
-            this.btnShareWithUser.Text = "Share with User";
-            this.btnShareWithUser.UseVisualStyleBackColor = true;
-            this.btnShareWithUser.Click += new System.EventHandler(this.btnShareWithUser_Click);
             // 
             // PersonalViewsMigration
             // 

@@ -34,7 +34,7 @@ namespace Carfup.XTBPlugins.AppCode
                 this.telemetry.Context.Device.Id = this.pvm.GetType().Name;
                 this.telemetry.Context.User.Id = Guid.NewGuid().ToString();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //toobad
             }
