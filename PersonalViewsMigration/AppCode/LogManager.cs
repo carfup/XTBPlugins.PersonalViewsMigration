@@ -22,12 +22,23 @@ namespace Carfup.XTBPlugins.AppCode
         public LogUsageManager(PersonalViewsMigration.PersonalViewsMigration pvm)
         {
             this.pvm = pvm;
+            try
+            {
+                var configuration = new TelemetryConfiguration
+                {
+                    ConnectionString = CustomParameter.INSIGHTS_INTRUMENTATIONKEY
+                };
 
-            TelemetryConfiguration.Active.InstrumentationKey = CustomParameter.INSIGHTS_INTRUMENTATIONKEY;
-            this.telemetry = new TelemetryClient();
-            this.telemetry.Context.Component.Version = PersonalViewsMigration.PersonalViewsMigration.CurrentVersion;
-            this.telemetry.Context.Device.Id = this.pvm.GetType().Name;
-            this.telemetry.Context.User.Id = Guid.NewGuid().ToString();
+                this.telemetry = new TelemetryClient(configuration);
+                this.telemetry.Context.Component.Version = PersonalViewsMigration.PersonalViewsMigration.CurrentVersion;
+                this.telemetry.Context.Device.Id = this.pvm.GetType().Name;
+                this.telemetry.Context.User.Id = Guid.NewGuid().ToString();
+            }
+            catch (Exception)
+            {
+                //toobad
+            }
+            
         }
 
         public void UpdateForceLog()
@@ -37,27 +48,34 @@ namespace Carfup.XTBPlugins.AppCode
 
         public void LogData(string type, string action, Exception exception = null)
         {
-            if (pvm.settings.AllowLogUsage == true || forceLog)
+            try
             {
-                switch (type)
+                if (pvm.settings.AllowLogUsage == true || forceLog)
                 {
-                    case EventType.Event:
-                        telemetry.TrackEvent(action, CompleteLog(action));
-                        break;
-                    case EventType.Dependency:
-                        //this.telemetry.TrackDependency(todo);
-                        break;
-                    case EventType.Exception:
-                        telemetry.TrackException(exception, CompleteLog(action));
-                        break;
-                    case EventType.Trace:
-                        telemetry.TrackTrace(action, CompleteLog(action));
-                        break;
+                    switch (type)
+                    {
+                        case EventType.Event:
+                            telemetry.TrackEvent(action, CompleteLog(action));
+                            break;
+                        case EventType.Dependency:
+                            //this.telemetry.TrackDependency(todo);
+                            break;
+                        case EventType.Exception:
+                            telemetry.TrackException(exception, CompleteLog(action));
+                            break;
+                        case EventType.Trace:
+                            telemetry.TrackTrace(action, CompleteLog(action));
+                            break;
+                    }
                 }
-            }
 
-            if (forceLog)
-                forceLog = false;
+                if (forceLog)
+                    forceLog = false;
+            }
+            catch (Exception)
+            {
+                //toobad
+            }
         }
 
         public void Flush()
